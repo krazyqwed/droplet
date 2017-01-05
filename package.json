@@ -1,0 +1,34 @@
+{
+  "name": "droplet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf dist && mkdir dist && yarn run build:pug && yarn run build:sass && yarn run build:js && yarn run build:js-vendor && yarn run build:static",
+    "start": "yarn run build && npm-run-all --parallel watch:**",
+    "build:pug": "pug ./src/pug/app.pug --out dist",
+    "build:sass": "node-sass ./src/scss/app.scss ./dist/app.css",
+    "build:js": "cross-env NODE_ENV=production rollup -c",
+    "build:js-vendor": "cpy \"./src/js/vendor/**/*\" \"./dist/vendor/\"",
+    "build:static": "cpy \"./src/static/**/*\" \"./dist/static/\"",
+    "watch:pug": "chokidar \"./src/pug/\" -c \"yarn run build:pug\"",
+    "watch:sass": "chokidar \"./src/scss/\" -c \"yarn run build:sass\"",
+    "watch:js": "chokidar \"./src/js/\" -c \"yarn run build:js\"",
+    "watch:js-vendor": "chokidar \"./src/js/vendor/\" -c \"yarn run build:js-vendor\"",
+    "watch:static": "chokidar \"./src/static/\" -c \"yarn run build:static\""
+  },
+  "license": "MIT",
+  "dependencies": {
+    "babel-plugin-external-helpers": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "chokidar-cli": "^1.2.0",
+    "cpy-cli": "^1.0.1",
+    "cross-env": "^3.1.3",
+    "node-sass": "^3.13.0",
+    "npm-run-all": "^3.1.2",
+    "pug-cli": "^1.0.0-alpha6",
+    "rimraf": "^2.5.4",
+    "rollup": "^0.36.4",
+    "rollup-plugin-uglify": "^1.0.1",
+    "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony"
+  }
+}
