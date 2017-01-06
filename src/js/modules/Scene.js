@@ -1,5 +1,6 @@
 class Scene {
   init() {
+    this._input();
     this._load();
   }
 

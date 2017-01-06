@@ -1,7 +1,86 @@
 body {
+  font-family: 'Arial', sans-serif;
   margin: 0;
 }
 
 canvas {
   vertical-align: top;
+}
+
+.b_textbox,
+.b_textbox-helper {
+  background-color: rgba(0,0,0,.4);
+  bottom: 0;
+  color: #FFF;
+  font-size: 38px;
+  font-weight: bold;
+  height: 250px;
+  left: 0;
+  line-height: 1.35;
+  padding: 10px 30px;
+  position: absolute;
+  right: 0;
+  text-align: left;
+  text-shadow: 2px 2px 0 #000;
+  word-wrap: break-word;
+
+  &:not([running]) {
+    &:before {
+      animation: blink 1s ease-out infinite;
+      border: 20px solid transparent;
+      border-bottom-width: 0;
+      border-top: 20px solid white;
+      bottom: 20px;
+      content: '';
+      filter: drop-shadow(2px 2px 0 #000);
+      left: 0;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      width: 0;
+    }
+  }
+}
+
+.b_textbox-helper {
+  height: auto;
+  pointer-events: 0;
+  visibility: hidden;
+}
+
+d-text {
+  @for $i from 1 through 5 {
+    .b_textbox:not([running]) &[d-blink="#{$i}"] {
+      animation: blink $i * 0.2s ease-out infinite;
+    }
+  }
+
+  &[d-italic] {
+    font-style: italic;
+  }
+
+  &[d-underline] {
+    text-decoration: underline;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: .25;
+  }
+}
+
+.b_character_name {
+  bottom: 270px;
+  background-color: rgba(0,0,0,.4);
+  color: #FFF;
+  font-size: 32px;
+  font-weight: bold;
+  height: 34px;
+  left: 10px;
+  padding: 10px 20px;
+  position: absolute;
+  text-align: center;
+  text-shadow: 2px 2px 0 #000; 
+  word-wrap: break-word;
 }
