@@ -52,7 +52,7 @@ class Scene {
   _input() {
     window.addEventListener('keydown', (event) => {
       switch(event.which) {
-        case 32: this._fastForward(); break;
+        case 32: event.preventDefault(); this._fastForward(); break;
       }
     }, false);
   }

@@ -7,11 +7,6 @@ class DText extends HTMLElement {
     if (this.getAttribute('d-color')) {
       this.style.color = this.getAttribute('d-color');
     }
-
-    if (this.getAttribute('d-var')) {
-      const variable = document.createTextNode(D.Variable.get(this.getAttribute('d-var')));
-      this.appendChild(variable);
-    }
   }
 }
 
@@ -150,12 +145,26 @@ class Text {
     textContainer.innerHTML = this._text;
 
     document.body.appendChild(textContainer);
+    this._insertVariables();
     this._text = this._insertWraps(textContainer);
     textContainer.parentNode.removeChild(textContainer);
 
     this._textLength = this._text.length;
 
     this._writeStart();
+  }
+
+  _insertVariables() {
+    for (let i = 0; i <= this._text.length; i++) {
+      if (this._text.substring(i, i + 7) === '<d-text') {
+        const match = this._text.substring(i).match(/<\s*\/?\s*d-text\s*.*?>/i);
+        const attributes = this._getAttributes(match[0]);
+        
+        i += match[0].length - 1;
+
+        this._handleVar(attributes['d-var'], i);
+      }
+    }
   }
 
   _insertWraps(container) {
@@ -272,6 +281,13 @@ class Text {
     this._writeSpeed.pop();
 
     this._timer.setTickRate('write', this._writeSpeed.slice(-1)[0]);
+  }
+
+  _handleVar(name, i) {
+    if (name) {
+      const variable = D.Variable.get(name);
+      this._text = this._text.splice(i + 1, 0, variable);
+    }
   }
 }
 
