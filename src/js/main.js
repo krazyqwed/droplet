@@ -1,25 +1,37 @@
 import Scene from './modules/Scene';
 import Text from './modules/Text';
+import Variable from './modules/Variable';
 import PixiStore from './stores/PixiStore';
 import SceneStore from './stores/SceneStore';
+import TextStore from './stores/TextStore';
 
-window.pixiStore = new PixiStore();
-window.sceneStore = new SceneStore();
+window.D = {
+  Renderer: null,
+  Stage: null,
 
-window.meter = new FPSMeter();
+  PixiStore: new PixiStore(),
+  SceneStore: new SceneStore(),
+  TextStore: new TextStore(),
+
+  Scene: Scene,
+  Text: Text,
+  Variable: Variable,
+
+  FPSMeter: new FPSMeter()
+};
 
 //Create the renderer
-window.renderer = PIXI.autoDetectRenderer(1920, 1080, {
+D.Renderer = PIXI.autoDetectRenderer(1920, 1080, {
   antialias: false,
   transparent: false,
   resolution: 1
 });
 
 //Add the canvas to the HTML document
-document.body.appendChild(renderer.view);
+document.body.appendChild(D.Renderer.view);
 
 //Create a container object called the `stage`
-window.stage = new PIXI.Container();
+D.Stage = new PIXI.Container();
 
 var landscapeTexture = PIXI.Texture.fromImage('static/test.jpg');
 
@@ -31,18 +43,18 @@ background.anchor.y = 0;
 background.position.x = 0;
 background.position.y = 0;
 
-window.stage.addChild(background);
+D.Stage.addChild(background);
 
-Scene.init();
-Text.init();
+D.Scene.init();
+D.Text.init();
 
 function update() {
   requestAnimationFrame(() => {
-    if (window.sceneStore.getData('fastForward')) {
+    if (D.SceneStore.getData('fastForward')) {
       console.log('skipped');
     }
 
-    window.renderer.render(window.stage);
+    D.Renderer.render(D.Stage);
 
     update();
   });

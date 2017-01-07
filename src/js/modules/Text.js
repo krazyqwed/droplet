@@ -7,6 +7,11 @@ class DText extends HTMLElement {
     if (this.getAttribute('d-color')) {
       this.style.color = this.getAttribute('d-color');
     }
+
+    if (this.getAttribute('d-var')) {
+      const variable = document.createTextNode(D.Variable.get(this.getAttribute('d-var')));
+      this.appendChild(variable);
+    }
   }
 }
 
@@ -40,6 +45,7 @@ class Timer {
   start(name) {
     for (let i in this._events) {
       if (this._events[i].name === name) {
+        this._events[i].over = false;
         this._events[i].running = true;
       }
     }
@@ -57,6 +63,10 @@ class Timer {
     for (let i in this._events) {
       if (this._events[i].name === name) {
         this._events[i].over = true;
+        this._events[i].running = false;
+        this._events[i].runCount = 0;
+        this._events[i].ticker = 0;
+        this._events[i].tickRate = 1;
       }
     }
   }
@@ -104,28 +114,27 @@ class Text {
     this._text = '';
     this._textFormatActive = false;
     this._writeSpeed = [1];
-    this._writeRunning = false;
-    this._timer = new Timer();
+
     this._dom = {};
+    this._dom.textBox = document.querySelector('.js_textbox');
+
+    this._timer = new Timer();
+    this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
   }
 
   init() {
-    this._dom.textBox = document.querySelector('.js_textbox');
-    this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
-
-    this._load();
+    this._update();
   }
 
-  _load() {
-    //this._setText('You can use <d-text d-color="#f00">Formatted <d-text d-color="#0f0" d-italic d-underline>text</d-text>!</d-text> and you can <d-text d-color="#f0f" d-speed="3">change <d-text d-color="#00f">speeeed</d-text> dasd s dsa</d-text> as <d-text d-blink="3">well</d-text>. You can use <d-text d-color="#f00">Formatted <d-text d-color="#0f0">text</d-text>!</d-text> and you can <d-text d-color="#f0f" d-speed="3">change <d-text d-color="#00f">speeeed</d-text> dasd s dsa</d-text> as <d-text d-blink="3">well</d-text>. You can use <d-text d-color="#f00">Formatted <d-text d-color="#0f0">text</d-text>!</d-text> and you can <d-text d-color="#f0f" d-speed="3">change <d-text d-color="#00f">speeeed</d-text> dasd s dsa</d-text> as <d-text d-blink="3">well</d-text>. You can use <d-text d-color="#f00">Formatted <d-text d-color="#0f0">text</d-text>!</d-text> and you can <d-text d-color="#f0f" d-speed="3">change <d-text d-color="#00f">speeeed</d-text> dasd s dsa</d-text> as <d-text d-blink="3">well</d-text>.');
-    this._setText('Lorem ipsum dolor sit amet, &gt;.&lt; consectetur adipisicing elit. Nobis aut sed explicabo ullam repellat est ipsa quaerat, alias omnis suscipit perspiciatis recusandae vitae, porro nisi maxime nulla, nesciunt nam et. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et magni ea commodi, facilis accusamus perspiciatis inventore earum vel qui accusantium error ipsa animi quisquam minus.');
-
-    this._update();
+  loadText(text) {
+    this._writeReset();
+    this._setText(text);
   }
 
   _update() {
     requestAnimationFrame(() => {
-      if (window.sceneStore.getData('fastForward') && this._writeRunning) {
+      if (D.SceneStore.getData('fastForward')) {
+        this._writeReset();
         this._writeEnd();
       }
 
@@ -172,7 +181,7 @@ class Text {
       if (height < container.offsetHeight) {
         height = container.offsetHeight;
 
-        if (this._text[i - 1] !== ' ') {
+        if (this._text[i - 1] !== ' ' && container.textContent.indexOf(' ') !== -1) {
           do {
             i--;
           } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '>');
@@ -187,22 +196,26 @@ class Text {
   }
 
   _writeStart() {
-    this._writeRunning = true;
+    D.TextStore.setData('writeRunning', true);
     this._dom.textBox.setAttribute('running', '');
     this._timer.start('write');
   }
 
-  _writeEnd() {
-    this._writeRunning = false;
+  _writeReset() {
+    this._cursorPosition = 0;
+    D.TextStore.setData('writeRunning', false);
     this._writeSpeed = [1];
     this._timer.destroy('write');
+  }
+
+  _writeEnd() {
     this._dom.textBox.innerHTML = this._text;
     this._dom.textBox.removeAttribute('running');
   }
 
   _writeEvent() {
     if (this._cursorPosition > this._textLength) {
-      this._writeEnd();
+      this._writeReset();
 
       return;
     }
