@@ -7,6 +7,10 @@ canvas {
   vertical-align: top;
 }
 
+.b_textbox_wrap {
+  display: none;
+}
+
 .b_textbox,
 .b_textbox-helper {
   background-color: rgba(0,0,0,.4);
@@ -21,7 +25,7 @@ canvas {
   position: absolute;
   right: 0;
   text-align: left;
-  text-shadow: 2px 2px 0 #000;
+  text-shadow: 4px 4px 0 #000;
   word-wrap: break-word;
 
   &:not([running]) {
@@ -32,7 +36,7 @@ canvas {
       border-top: 20px solid white;
       bottom: 20px;
       content: '';
-      filter: drop-shadow(2px 2px 0 #000);
+      filter: drop-shadow(4px 4px 0 #000);
       left: 0;
       margin: auto;
       position: absolute;

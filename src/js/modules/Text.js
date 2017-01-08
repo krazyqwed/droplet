@@ -1,6 +1,4 @@
-String.prototype.splice = function(idx, rem, str) {
-  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
-};
+import Timer from './Timer'; 
 
 class DText extends HTMLElement {
   connectedCallback() {
@@ -12,96 +10,6 @@ class DText extends HTMLElement {
 
 customElements.define('d-text', DText);
 
-class Timer {
-  constructor () {
-    this._events = [];
-    this._ticker = 0;
-
-    this._tick();
-  }
-
-  addEvent(name, callback, tickRate, repeat) {
-    let event = {
-      name: name,
-      running: false,
-      callback: callback,
-      tickRate: tickRate,
-      repeat: repeat,
-      over: false,
-      runCount: 0,
-      ticker: 0
-    };
-
-    this._events.push(event);
-
-    return event;
-  }
-
-  start(name) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].over = false;
-        this._events[i].running = true;
-      }
-    }
-  }
-
-  stop(name) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].running = false;
-      }
-    }
-  }
-
-  destroy(name) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].over = true;
-        this._events[i].running = false;
-        this._events[i].runCount = 0;
-        this._events[i].ticker = 0;
-        this._events[i].tickRate = 1;
-      }
-    }
-  }
-
-  setTickRate(name, rate) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].ticker = 0;
-        this._events[i].tickRate = rate;
-      }
-    }
-  }
-
-  _tick() {
-    requestAnimationFrame(() => {
-      for (let i in this._events) {
-        if (this._events[i].running && !this._events[i].over) {
-          this._events[i].ticker++;
-
-          if (this._events[i].ticker % this._events[i].tickRate === 0) {
-            this._events[i].runCount++;
-
-            if (!this._events[i].repeat) {
-              this._events[i].over = true;
-            }
-
-            this._events[i].callback(this._events[i].runCount);
-          }
-
-          if (this._events[i] && this._events[i].ticker == this._events[i].tickRate) {
-            this._events[i].ticker = 0;
-          }
-        }
-      }
-
-      this._tick();
-    });
-  }
-}
-
 class Text {
   constructor() {
     this._cursorPosition = 0;
@@ -110,7 +18,10 @@ class Text {
     this._textFormatActive = false;
     this._writeSpeed = [1];
 
+    this._fastForwarded = true;
+
     this._dom = {};
+    this._dom.textBoxWrap = document.querySelector('.js_textbox_wrap');
     this._dom.textBox = document.querySelector('.js_textbox');
 
     this._timer = new Timer();
@@ -122,13 +33,25 @@ class Text {
   }
 
   loadText(text) {
+    this._fastForwarded = false;
     this._writeReset();
     this._setText(text);
   }
 
+  showTextBox() {
+    this._dom.textBoxWrap.style.display = 'block';
+  }
+
+  hideTextBox() {
+    this._dom.textBoxWrap.style.display = 'none';
+    this._writeReset();
+  }
+
   _update() {
     requestAnimationFrame(() => {
-      if (D.SceneStore.getData('fastForward')) {
+      if (!this._fastForwarded && D.SceneStore.getData('fastForward')) {
+        this._fastForwarded = true;
+
         this._writeReset();
         this._writeEnd();
       }
@@ -195,7 +118,7 @@ class Text {
             i--;
           } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '>');
 
-          this._text = this._text.splice(i + 1, 0, '<br>');
+          this._text = D.StringHelper.splice(this._text, i + 1, 0, '<br>');
           i += 4;
         }
       }
@@ -206,7 +129,7 @@ class Text {
 
   _writeStart() {
     D.TextStore.setData('writeRunning', true);
-    this._dom.textBox.setAttribute('running', '');
+    this._dom.textBox.setAttribute('running', 'true');
     this._timer.start('write');
   }
 
@@ -214,10 +137,12 @@ class Text {
     this._cursorPosition = 0;
     D.TextStore.setData('writeRunning', false);
     this._writeSpeed = [1];
+    this._dom.textBox.innerHTML = '';
     this._timer.destroy('write');
   }
 
   _writeEnd() {
+    D.TextStore.setData('writeRunning', false);
     this._dom.textBox.innerHTML = this._text;
     this._dom.textBox.removeAttribute('running');
   }
@@ -286,7 +211,7 @@ class Text {
   _handleVar(name, i) {
     if (name) {
       const variable = D.Variable.get(name);
-      this._text = this._text.splice(i + 1, 0, variable);
+      this._text = D.StringHelper.splice(this._text, i + 1, 0, variable);
     }
   }
 }

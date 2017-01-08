@@ -6,9 +6,20 @@ let sampleScene = {
       type: 'dialog',
       condition: 'test == 0',
       dialog: [
-        'Your variable is <d-text d-var="test"></d-text>',
-        'Your nested variable is <d-text d-var="test_group.inner_group.inner"></d-text>'
+        'Your variable is <d-text d-var="test" d-color="#f80"></d-text>',
+        'Your nested variable is <d-text d-var="test_group.inner_group.inner" d-color="#f80"></d-text>'
       ]
+    },
+    {
+      type: 'character',
+      action: 'show',
+      options: {
+        id: 2,
+        pose: '8',
+        position: [40, 'bottom'],
+        from: [-5, 0]
+      },
+      fastForward: true
     },
     {
       type: 'dialog',
@@ -17,8 +28,19 @@ let sampleScene = {
         value: '+10.5'
       }],
       dialog: [
-        'Great! You\'ve set a variable! [test_group.inner_group.inner => <d-text d-var="test_group.inner_group.inner"></d-text>]'
+        'Great! You\'ve set a variable! [test_group.inner_group.inner => <d-text d-var="test_group.inner_group.inner" d-color="#f80"></d-text>]'
       ]
+    },
+    {
+      type: 'character',
+      action: 'show',
+      options: {
+        id: 1,
+        pose: '8',
+        position: [60, 'bottom'],
+        from: [5, 0]
+      },
+      fastForward: true
     },
     {
       type: 'dialog',
@@ -27,6 +49,26 @@ let sampleScene = {
         'Test string to demonstrate <d-text d-speed="10">[speed]</d-text> change inside string.',
         'Test string to demonstrate entities &gt;.&lt;'
       ]
+    },
+    {
+      type: 'character',
+      action: 'move',
+      options: {
+        id: 2,
+        relative: false,
+        position: [20, 'bottom'],
+      },
+      fastForward: true
+    },
+    {
+      type: 'character',
+      action: 'move',
+      options: {
+        id: 2,
+        relative: true,
+        position: [-5, 0],
+      },
+      fastForward: true
     }
   ]
 };
@@ -37,6 +79,7 @@ class Scene {
     this._subframe = 0;
 
     this._textFinished = false;
+    this._characterFinished = false;
   }
 
   init() {
@@ -48,6 +91,13 @@ class Scene {
       }
     });
 
+    D.CharacterStore.subscribe('animationRunning', (data) => {
+      if (data === false) { 
+        this._characterFinished = true;
+      }
+    });
+
+    this._prepareScene();
     this._loadKeyframe(0, 0);
     this._update();
   }
@@ -60,18 +110,21 @@ class Scene {
     }, false);
   }
 
+  _prepareScene() {
+    let landscapeTexture = PIXI.Texture.fromImage('static/school_1.jpg');
+    let background = new PIXI.Sprite(landscapeTexture);
+    background.anchor.x = 0;
+    background.anchor.y = 0;
+    background.position.x = 0;
+    background.position.y = 0;
+
+    D.Stage.addChild(background);
+  }
+
   _fastForward() {
     if (D.SceneStore.getData('fastForward')) {
       D.SceneStore.setData('fastForward', false);
-
-      if (this._subframeCount - 1 > this._subframe) {
-        this._loadSubframe();
-      } else {
-        this._keyframe++;
-        this._subframe = 0;
-
-        this._loadKeyframe(this._keyframe, this._subframe);
-      }
+      this._loadNextFrame();
     } else {
       D.SceneStore.setData('fastForward', true);
     }
@@ -84,16 +137,40 @@ class Scene {
       return;
     }
 
+    this._setFinishedSubscriptions(sampleScene.keyframes[keyframe].type);
+
     this._handleVariables();
 
     switch (sampleScene.keyframes[keyframe].type) {
       case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
+      case 'character': this._handleTypeCharacter(keyframe); break;
     }
   }
 
   _loadSubframe() {
     this._subframe++;
     this._loadKeyframe(this._keyframe, this._subframe);
+  }
+
+  _loadNextFrame() {
+    if (this._subframeCount - 1 > this._subframe) {
+      this._loadSubframe();
+    } else {
+      this._keyframe++;
+      this._subframe = 0;
+
+      this._loadKeyframe(this._keyframe, this._subframe);
+    }
+  }
+
+  _setFinishedSubscriptions(type) {
+    this._textFinished = true;
+    this._characterFinished = true;
+
+    switch (type) {
+      case 'dialog': this._textFinished = false; break;
+      case 'character': this._characterFinished = false; break;
+    }
   }
 
   _handleVariables() {
@@ -107,25 +184,36 @@ class Scene {
   }
 
   _handleTypeDialog(keyframe, subframe) {
-    this._subframeCount = sampleScene.keyframes[keyframe].dialog.length;
-    D.Text.loadText(sampleScene.keyframes[keyframe].dialog[subframe]);
+    keyframe = sampleScene.keyframes[keyframe];
+    this._subframeCount = keyframe.dialog.length;
+
+    D.Text.showTextBox();
+    D.Text.loadText(keyframe.dialog[subframe]);
+  }
+
+  _handleTypeCharacter(keyframe) {
+    keyframe = sampleScene.keyframes[keyframe];
+    this._subframeCount = 1;
+
+    switch (keyframe.action) {
+      case 'show': D.Character.showCharacter(keyframe.options); break;
+      case 'hide': D.Character.hideCharacter(keyframe.options); break;
+      case 'move': D.Character.moveCharacter(keyframe.options); break;
+    }
   }
 
   _update() {
-    D.FPSMeter.tickStart();
-
     requestAnimationFrame(() => {
-      if (this._textFinished) {
+      if (this._textFinished && this._characterFinished) {
         D.SceneStore.setData('fastForward', true);
+
+        if (sampleScene.keyframes[this._keyframe].fastForward) {
+          this._fastForward();
+        }
       }
 
-      this._render();
       this._update();
     });
-  }
-
-  _render() {
-    D.FPSMeter.tick();
   }
 }
 

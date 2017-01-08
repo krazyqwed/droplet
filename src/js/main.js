@@ -1,63 +1,92 @@
+import Variable from './modules/Variable';
 import Scene from './modules/Scene';
 import Text from './modules/Text';
-import Variable from './modules/Variable';
+import Character from './modules/Character';
 import PixiStore from './stores/PixiStore';
 import SceneStore from './stores/SceneStore';
 import TextStore from './stores/TextStore';
+import CharacterStore from './stores/CharacterStore';
+import StringHelper from './helpers/String';
 
-window.D = {
-  Renderer: null,
-  Stage: null,
+class Main {
+  constructor() {
+    window.D = {
+      Renderer: null,
+      Stage: null,
 
-  PixiStore: new PixiStore(),
-  SceneStore: new SceneStore(),
-  TextStore: new TextStore(),
+      PixiStore: new PixiStore(),
+      SceneStore: new SceneStore(),
+      TextStore: new TextStore(),
+      CharacterStore: new CharacterStore(),
 
-  Scene: Scene,
-  Text: Text,
-  Variable: Variable,
+      Variable: Variable,
+      Scene: Scene,
+      Text: Text,
+      Character: Character,
 
-  FPSMeter: new FPSMeter()
-};
+      StringHelper: StringHelper,
 
-//Create the renderer
-D.Renderer = PIXI.autoDetectRenderer(1920, 1080, {
-  antialias: false,
-  transparent: false,
-  resolution: 1
-});
+      FPSMeter: new FPSMeter()
+    };
 
-//Add the canvas to the HTML document
-document.body.appendChild(D.Renderer.view);
+    this._init();
+  }
 
-//Create a container object called the `stage`
-D.Stage = new PIXI.Container();
+  _init() {
+    D.Renderer = PIXI.autoDetectRenderer(1920, 1080, {
+      antialias: false,
+      transparent: false,
+      resolution: 1
+    });
+    D.Stage = new PIXI.Container();
 
-var landscapeTexture = PIXI.Texture.fromImage('static/test.jpg');
+    this._load();
+  }
 
-// new sprite
-var background = new PIXI.Sprite(landscapeTexture);
+  _load() {
+    var assetsToLoader = [
+      'static/school_1.jpg',
+      'static/school_2.jpg',
+      'static/school_3.jpg',
+      'static/char_1.json',
+      'static/char_2.json'
+    ];
 
-background.anchor.x = 0;
-background.anchor.y = 0;
-background.position.x = 0;
-background.position.y = 0;
+    let loader = new PIXI.loaders.Loader();
+    loader.add(assetsToLoader);
+    loader.on('progress', this._loadProgress.bind(this));
+    loader.load(this._loadFinished.bind(this));
+  }
 
-D.Stage.addChild(background);
+  _loadProgress(event, resource) {
+    
+  }
 
-D.Scene.init();
-D.Text.init();
+  _loadFinished() {
+    document.body.appendChild(D.Renderer.view);
 
-function update() {
-  requestAnimationFrame(() => {
-    if (D.SceneStore.getData('fastForward')) {
-      console.log('skipped');
-    }
+    D.Scene.init();
+    D.Text.init();
+    D.Character.init();
 
+    this._update();
+  }
+
+  _update() {
+    D.FPSMeter.tickStart();
+
+    requestAnimationFrame(() => {
+      this._render();
+      this._update();
+    });
+  }
+
+  _render() {
     D.Renderer.render(D.Stage);
-
-    update();
-  });
+    D.FPSMeter.tick();
+  }
 }
 
-update();
+(function() {
+  new Main();
+})();

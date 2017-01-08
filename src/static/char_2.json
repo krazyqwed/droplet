@@ -1,0 +1,94 @@
+{"frames":{
+
+"char_2_10":
+{
+	"frame":{"x":0,"y":0,"w":386,"h":790},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":386,"y":790},
+	"sourceSize":{"w":386,"h":790}
+},
+"char_2_6":
+{
+	"frame":{"x":387,"y":0,"w":386,"h":790},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":386,"y":790},
+	"sourceSize":{"w":386,"h":790}
+},
+"char_2_7":
+{
+	"frame":{"x":774,"y":0,"w":386,"h":790},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":386,"y":790},
+	"sourceSize":{"w":386,"h":790}
+},
+"char_2_8":
+{
+	"frame":{"x":1161,"y":0,"w":386,"h":790},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":386,"y":790},
+	"sourceSize":{"w":386,"h":790}
+},
+"char_2_9":
+{
+	"frame":{"x":1548,"y":0,"w":386,"h":790},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":386,"y":790},
+	"sourceSize":{"w":386,"h":790}
+},
+"char_2_11":
+{
+	"frame":{"x":0,"y":791,"w":359,"h":802},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":359,"y":802},
+	"sourceSize":{"w":359,"h":802}
+},
+"char_2_1":
+{
+	"frame":{"x":360,"y":791,"w":348,"h":803},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":348,"y":803},
+	"sourceSize":{"w":348,"h":803}
+},
+"char_2_2":
+{
+	"frame":{"x":709,"y":791,"w":348,"h":803},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":348,"y":803},
+	"sourceSize":{"w":348,"h":803}
+},
+"char_2_3":
+{
+	"frame":{"x":1058,"y":791,"w":348,"h":803},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":348,"y":803},
+	"sourceSize":{"w":348,"h":803}
+},
+"char_2_4":
+{
+	"frame":{"x":1407,"y":791,"w":348,"h":798},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":348,"y":798},
+	"sourceSize":{"w":348,"h":798}
+},
+"char_2_5":
+{
+	"frame":{"x":1935,"y":0,"w":348,"h":798},
+	"rotated":false,
+	"trimmed":false,
+	"spriteSourceSize":{"x":0,"y":0,"w":348,"y":798},
+	"sourceSize":{"w":348,"h":798}
+}},
+"meta": {
+	"image": "char_2.png"
+}
+}
