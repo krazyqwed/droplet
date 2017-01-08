@@ -56,7 +56,7 @@ let sampleScene = {
       options: {
         id: 2,
         relative: false,
-        position: [20, 'bottom'],
+        position: [30, 'bottom'],
       },
       fastForward: true
     },
@@ -67,6 +67,16 @@ let sampleScene = {
         id: 2,
         relative: true,
         position: [-5, 0],
+      },
+      fastForward: true
+    },
+    {
+      type: 'character',
+      action: 'hide',
+      options: {
+        id: 2,
+        relative: true,
+        position: [-10, 0]
       },
       fastForward: true
     }

@@ -27,7 +27,7 @@ class Character {
 
     this._timer = new Timer();
     this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('hide', this._showEvent.bind(this), 1, true, 30);
+    this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
     this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
   }
 
@@ -56,7 +56,7 @@ class Character {
     D.CharacterStore.setData('animationRunning', true);
 
     const character = this._loadCharacterById(options.id);
-    const position = this._calculatePosition(character.sprite, options);
+    const position = this._calculatePositionFrom(character.sprite, options);
 
     this._timer.start('hide', {
       character: character,
