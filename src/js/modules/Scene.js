@@ -7,14 +7,17 @@ let sampleScene = {
       condition: 'test == 0',
       dialog: [
         'Your variable is <d-text d-var="test"></d-text>',
-        'Your nested variable is <d-text d-var="test_group_1.inner"></d-text>'
+        'Your nested variable is <d-text d-var="test_group.inner_group.inner"></d-text>'
       ]
     },
     {
       type: 'dialog',
-      condition: 'test == 1',
+      variable: [{
+        name: 'test_group.inner_group.inner',
+        value: '+10.5'
+      }],
       dialog: [
-        'Great! You\'ve set a variable!'
+        'Great! You\'ve set a variable! [test_group.inner_group.inner => <d-text d-var="test_group.inner_group.inner"></d-text>]'
       ]
     },
     {
@@ -81,6 +84,8 @@ class Scene {
       return;
     }
 
+    this._handleVariables();
+
     switch (sampleScene.keyframes[keyframe].type) {
       case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
     }
@@ -89,6 +94,16 @@ class Scene {
   _loadSubframe() {
     this._subframe++;
     this._loadKeyframe(this._keyframe, this._subframe);
+  }
+
+  _handleVariables() {
+    if (sampleScene.keyframes[this._keyframe].variable) {
+      const variables = sampleScene.keyframes[this._keyframe].variable;
+
+      variables.forEach((variable) => {
+        D.Variable.set(variable.name, variable.value);
+      });
+    }
   }
 
   _handleTypeDialog(keyframe, subframe) {

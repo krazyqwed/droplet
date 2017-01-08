@@ -1,7 +1,10 @@
 let sampleVariable = {
   test: 'test',
-  test_group_1: {
-    inner: 'test inner'
+  test_group: {
+    inner: 'test inner',
+    inner_group: {
+      inner: 0
+    }
   }
 };
 
@@ -11,22 +14,46 @@ class Variable {
   }
 
   get(name) {
-    return eval('this._variables.' + name);
-  }
+    name = name.split('.');
 
-  set(name, value) {
-    value = value.toString();
+    let obj = Object.assign({}, this._variables);
+    let len = name.length;
 
-    let operator = '';
-    const regexp = /[+\-*\/\^]/;
-    const firstChar = value.charAt(0);
-
-    if (regexp.test(firstChar)){
-      operator = firstChar;
-      value = value.slice(1);
+    for (let i = 0; i < len - 1; i++) {
+      obj = obj[name[i]];
     }
 
-    eval('this._variables.' + name + ' ' + operator + '= ' + value);
+    return obj[name[len - 1]];
+  }
+
+  set(name, value, _obj) {
+    if (!_obj) {
+      _obj = this._variables;
+    }
+
+    if (typeof(name) === 'string') {
+      name = name.split('.');
+    }
+
+    if (name.length > 1) {
+      this.set(name, value, _obj[name.shift()]);
+    } else {
+      let operator = '';
+      const firstChar = value.charAt(0);
+      
+      if (/[+\-*\/\^]/.test(firstChar)) {
+        operator = firstChar;
+        value = value.slice(1);
+      }
+
+      switch (operator) {
+        case '+': _obj[name[0]] += Number(value); break;
+        case '-': _obj[name[0]] -= Number(value); break;
+        case '*': _obj[name[0]] *= Number(value); break;
+        case '/': _obj[name[0]] /= Number(value); break;
+        default: _obj[name[0]] = Number(value);
+      }
+    }
   }
 }
 
