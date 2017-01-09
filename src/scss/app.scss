@@ -13,7 +13,10 @@ canvas {
 
 .b_textbox,
 .b_textbox-helper {
-  background-color: rgba(0,0,0,.4);
+  background: linear-gradient(0deg, rgba(#000,.1) 60%, rgba(#000,0) 40%, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,.4);
+  background-position: center, center, center;
+  background-size: 34px auto, cover, auto;
+  border-top: 2px solid rgba(#000,.4);
   bottom: 0;
   color: #fff;
   font-size: 38px;
@@ -21,11 +24,12 @@ canvas {
   height: 250px;
   left: 0;
   line-height: 1.35;
+  outline: 2px solid #fff;
   padding: 10px 30px;
   position: absolute;
   right: 0;
   text-align: left;
-  text-shadow: 4px 4px 0 #000;
+  text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   word-wrap: break-word;
 
   &:not([running]) {
@@ -75,17 +79,21 @@ d-text {
 }
 
 .b_speaker {
-  border-radius: 12px;
-  bottom: 280px;
-  background-color: #000;
+  background-image: linear-gradient(0deg, rgba(#000,.1) 60%, rgba(#000,0) 40%, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.4), rgba(#000,0));
+  background-position: center, center;
+  background-size: 20px auto, cover;
+  bottom: 292px;
+  box-shadow: inset 0 0 0px 2px rgba(0,0,0,0.2);
   color: #fff;
-  filter: drop-shadow(4px 4px 0 rgba(0,0,0,.4));
+  filter: drop-shadow(4px 4px 0 rgba(#000,.4));
   font-size: 32px;
   font-weight: bold;
   height: 34px;
-  left: 10px;
+  left: 12px;
+  outline: 2px solid #fff;
   padding: 10px 20px;
   position: absolute;
   text-align: center;
+  text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   word-wrap: break-word;
 }
