@@ -5,17 +5,15 @@ let sampleCharacters = [
     id: 1,
     full_name: 'Katsumata Kahori',
     nickname: 'Kahori',
-    name_color: '#DCBFFF',
-    image: 'char_1',
-    text_color: '#DCBFFF'
+    color: '#454b78',
+    image: 'char_1'
   },
   {
     id: 2,
     full_name: 'Tsukamoto Fumiko',
     nickname: 'Fumiko',
-    name_color: '#FFDFBF',
-    image: 'char_2',
-    text_color: '#FFDFBF'
+    color: '#ca7d78',
+    image: 'char_2'
   }
 ];
 
@@ -29,14 +27,15 @@ class Character {
     this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 30);
     this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
     this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
+    this._timer.addEvent('pose', this._poseEvent.bind(this), 1, true, 30);
   }
 
   init() {
     D.SceneStore.subscribe('skipAsync', (value) => {
-      console.log(value);
       this._timer.over('show');
       this._timer.over('hide');
       this._timer.over('move');
+      this._timer.over('pose');
     });
 
     this._prepareCharacters();
@@ -47,19 +46,20 @@ class Character {
     this._fastForwarded = false;
     D.CharacterStore.setData('animationRunning', true);
 
-    const character = this._loadCharacterById(options.id);
+    const character = this.loadCharacterById(options.id);
     let position;
 
     switch (action) {
       case 'show': position = this._calculatePosition(character.sprite, options); this._showCharacter(character); break;
-      case 'hide': position = this._calculatePositionFrom(character.sprite, options); this._hideCharacter(); break;
-      case 'move': position = this._calculatePositionFrom(character.sprite, options); this._moveCharacter(); break;
+      case 'hide': position = this._calculatePositionFrom(character.sprite, options); break;
+      case 'move': position = this._calculatePositionFrom(character.sprite, options); break;
+      case 'pose': this._poseCharacter(character, options); break;
     }
 
-    this._timer.setRunLimit(action, options.duration ? options.duration : 240);
+    this._timer.setRunLimit(action, options.duration ? options.duration : 30);
     this._timer.start(action, {
       character: character,
-      position: position,
+      position: position ? position : false,
       async: async
     });
 
@@ -68,29 +68,46 @@ class Character {
     }
   }
 
+  loadCharacterById(id) {
+    return this._characters.filter((character) => {
+      if (character.id === id) {
+        return character;
+      }
+    })[0];
+  }
+
   _showCharacter(character) {
     character.sprite.visible = true;
   }
 
-  _hideCharacter() {}
+  _poseCharacter(character, options) {
+    character.pose = options.pose;
 
-  _moveCharacter() {}
+    character.clone.alpha = 0;
+    character.clone.position.x = character.sprite.position.x;
+    character.clone.position.y = character.sprite.position.y;
+    character.clone.setTexture(PIXI.Texture.fromFrame(character.image + '_' + options.pose));
+  }
 
   _prepareCharacters() {
-    this._characters.forEach((char, i) => {
-      let sprite = new PIXI.Sprite.fromImage(char.image);
-      
-      sprite.visible = false;
-      sprite.alpha = 0;
-      sprite.anchor.x = 0.5;
-      sprite.anchor.y = 0.5;
-      sprite.position.x = 0;
-      sprite.position.y = 0;
-      sprite.setTexture(PIXI.Texture.fromFrame(char.image + '_' + 1));
+    this._characters.forEach((character, i) => {
+      this._characters[i].pose = character.pose ? character.pose : 1;
+      this._characters[i].image = character.image;
 
-      D.Stage.addChild(sprite);
+      this._characters[i].sprite = new PIXI.Sprite();
+      this._characters[i].sprite.visible = false;
+      this._characters[i].sprite.alpha = 0;
+      this._characters[i].sprite.anchor.x = 0.5;
+      this._characters[i].sprite.anchor.y = 0.5;
+      this._characters[i].sprite.position.x = 0;
+      this._characters[i].sprite.position.y = 0;
+      this._characters[i].sprite.setTexture(PIXI.Texture.fromFrame(this._characters[i].image + '_' + this._characters[i].pose));
+      D.Stage.addChild(this._characters[i].sprite);
 
-      this._characters[i].sprite = sprite;
+      this._characters[i].clone = new PIXI.Sprite();
+      this._characters[i].clone.anchor.x = 0.5;
+      this._characters[i].clone.anchor.y = 0.5;
+      D.Stage.addChild(this._characters[i].clone);
     });
   }
 
@@ -155,14 +172,6 @@ class Character {
     sprite.position.new_y = position.dest_y;
 
     return position;
-  }
-
-  _loadCharacterById(id) {
-    return this._characters.filter((char) => {
-      if (char.id === id) {
-        return char;
-      }
-    })[0];
   }
 
   _update() {
@@ -231,6 +240,24 @@ class Character {
 
       D.CharacterStore.setData('animationRunning', false);
       this._timer.destroy('move');
+    }
+  }
+
+  _poseEvent(event) {
+    let character = event.params.character.sprite;
+    let clone = event.params.character.clone;
+    let percent = event.runCount / event.runLimit;
+
+    character.alpha = 1 - percent;
+    clone.alpha = percent;
+
+    if (event.over || (this._fastForwarded && !event.params.async)) {
+      character.setTexture(PIXI.Texture.fromFrame(event.params.character.image + '_' + event.params.character.pose));
+      character.alpha = 1;
+      clone.alpha = 0;
+
+      D.CharacterStore.setData('animationRunning', false);
+      this._timer.destroy('pose');
     }
   }
 

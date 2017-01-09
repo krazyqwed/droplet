@@ -15,7 +15,7 @@ let sampleScene = {
       action: 'show',
       options: {
         id: 2,
-        pose: '8',
+        pose: 1,
         position: [40, 'bottom'],
         from: [-5, 0]
       },
@@ -33,10 +33,19 @@ let sampleScene = {
     },
     {
       type: 'character',
+      action: 'pose',
+      options: {
+        id: 2,
+        pose: 8
+      },
+      async: true
+    },
+    {
+      type: 'character',
       action: 'show',
       options: {
         id: 1,
-        pose: '8',
+        pose: 1,
         duration: 120,
         position: [60, 'bottom'],
         from: [5, 0]
@@ -56,10 +65,31 @@ let sampleScene = {
     {
       type: 'dialog',
       dialog: [
+        'What\'s with that pose?'
+      ],
+      options: {
+        character: 1
+      }
+    },
+    {
+      type: 'dialog',
+      dialog: [
+        'Tee-hee'
+      ],
+      options: {
+        character: 2
+      }
+    },
+    {
+      type: 'dialog',
+      dialog: [
         'Test string for <d-text d-color="#f00">formatting.</d-text>',
         'Test string to demonstrate <d-text d-speed="10">[speed]</d-text> change inside string.',
         'Test string to demonstrate entities &gt;.&lt;'
-      ]
+      ],
+      options: {
+        character: 'player'
+      }
     },
     {
       type: 'character',
@@ -89,6 +119,12 @@ let sampleScene = {
         position: [-10, 0]
       },
       fastForward: true
+    },
+    {
+      type: 'dialog',
+      dialog: [
+        'Thanks for watching!'
+      ]
     }
   ]
 };
@@ -221,7 +257,7 @@ class Scene {
     this._subframeCount = keyframe.dialog.length;
 
     D.Text.showTextBox();
-    D.Text.loadText(keyframe.dialog[subframe]);
+    D.Text.loadText(keyframe.dialog[subframe], keyframe.options);
   }
 
   _handleTypeCharacter(keyframe) {

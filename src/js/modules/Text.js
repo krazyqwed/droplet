@@ -23,6 +23,7 @@ class Text {
     this._dom = {};
     this._dom.textBoxWrap = document.querySelector('.js_textbox_wrap');
     this._dom.textBox = document.querySelector('.js_textbox');
+    this._dom.speaker = document.querySelector('.js_speaker');
 
     this._timer = new Timer();
     this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
@@ -32,10 +33,10 @@ class Text {
     this._update();
   }
 
-  loadText(text) {
+  loadText(text, options) {
     this._fastForwarded = false;
     this._writeReset();
-    this._setText(text);
+    this._setText(text, options);
   }
 
   showTextBox() {
@@ -60,7 +61,7 @@ class Text {
     });
   }
 
-  _setText(text) {
+  _setText(text, options) {
     this._text = text;
 
     let textContainer = document.createElement('div');
@@ -73,6 +74,8 @@ class Text {
     textContainer.parentNode.removeChild(textContainer);
 
     this._textLength = this._text.length;
+
+    this._showSpeaker(options);
 
     this._writeStart();
   }
@@ -125,6 +128,21 @@ class Text {
     }
 
     return this._text;
+  }
+
+  _showSpeaker(options) {
+    if (options && options.character) {
+      this._dom.speaker.style.display = 'block';
+
+      if (options.character !== 'player') {
+        const character = D.Character.loadCharacterById(options.character);
+        this._dom.speaker.style.backgroundColor = character.color;
+      } else {
+        this._dom.speaker.style.backgroundColor = '#56b30c';
+      }
+    } else {
+      this._dom.speaker.style.display = 'none';
+    }
   }
 
   _writeStart() {

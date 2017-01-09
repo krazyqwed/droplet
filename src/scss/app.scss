@@ -15,7 +15,7 @@ canvas {
 .b_textbox-helper {
   background-color: rgba(0,0,0,.4);
   bottom: 0;
-  color: #FFF;
+  color: #fff;
   font-size: 38px;
   font-weight: bold;
   height: 250px;
@@ -74,10 +74,12 @@ d-text {
   }
 }
 
-.b_character_name {
-  bottom: 270px;
-  background-color: rgba(0,0,0,.4);
-  color: #FFF;
+.b_speaker {
+  border-radius: 12px;
+  bottom: 280px;
+  background-color: #000;
+  color: #fff;
+  filter: drop-shadow(4px 4px 0 rgba(0,0,0,.4));
   font-size: 32px;
   font-weight: bold;
   height: 34px;
@@ -85,6 +87,5 @@ d-text {
   padding: 10px 20px;
   position: absolute;
   text-align: center;
-  text-shadow: 2px 2px 0 #000; 
   word-wrap: break-word;
 }
