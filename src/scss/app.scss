@@ -1,18 +1,53 @@
 body {
+  background: #000;
   font-family: 'Arial', sans-serif;
   margin: 0;
+  text-align: center;
+  user-select: none;
+
+  *,
+  *:before,
+  *:after {
+    pointer-events: none;
+    touch-action: none;
+  }
 }
 
 canvas {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-origin: left center;
   vertical-align: top;
 }
 
-.b_textbox_wrap {
-  display: none;
+.b_main-wrapper {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
-.b_textbox,
-.b_textbox-helper {
+.b_textbox-wrap {
+  bottom: 0;
+  display: none;
+  height: 1080px;
+  left: 0;
+  margin: auto;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-origin: left center;
+  width: 1920px;
+}
+
+.b_textbox {
   background: linear-gradient(0deg, rgba(#000,.1) 60%, rgba(#000,0) 40%, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,.4);
   background-position: center, center, center;
   background-size: 34px auto, cover, auto;
@@ -52,8 +87,15 @@ canvas {
 
 .b_textbox-helper {
   height: auto;
-  pointer-events: 0;
   visibility: hidden;
+  font-size: 38px;
+  font-weight: bold;
+  height: 250px;
+  padding: 10px 30px;
+  position: absolute;
+  text-align: left;
+  word-wrap: break-word;
+  width: 1920px;
 }
 
 d-text {

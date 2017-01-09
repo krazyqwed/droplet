@@ -1,0 +1,7 @@
+{
+  "short_name": "Droplet",
+  "name": "Droplet Visual Novel Engine",
+  "start_url": "../app.html",
+  "display": "standalone",
+  "orientation": "landscape"
+}

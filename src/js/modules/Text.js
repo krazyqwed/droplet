@@ -121,6 +121,10 @@ class Text {
             i--;
           } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '>');
 
+          if (i === 0) {
+            i = this._text.length;
+          }
+
           this._text = D.StringHelper.splice(this._text, i + 1, 0, '<br>');
           i += 4;
         }

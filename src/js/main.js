@@ -38,9 +38,43 @@ class Main {
       transparent: false,
       resolution: 1
     });
+    document.body.insertBefore(D.Renderer.view, document.querySelector('.js_main_wrapper'));
+
     D.Stage = new PIXI.Container();
 
+    this._resize();
     this._load();
+  }
+
+  _resize() {
+    const canvas = document.querySelector('canvas');
+    const wrapper = document.querySelector('.js_main_wrapper');
+    const wWidth = wrapper.offsetWidth;
+    const wHeight = wrapper.offsetHeight;
+    let newWidth, newHeight;
+    let scale = false, scaleX = wWidth / 1920, scaleY = wHeight / 1080;
+
+    if (scaleX > scaleY){
+      scale = scaleY;
+
+      wrapper.style.width = parseInt(1920 * scale) + 'px';
+      wrapper.style.height = wHeight + 'px';
+    }else if (scaleY >= scaleX){
+      scale = scaleX;
+
+      wrapper.style.width = wWidth + 'px';
+      wrapper.style.height = parseInt(1080 * scale) + 'px';
+    }
+
+    canvas.style.transform = 'scale(' + scale + ')';
+
+    wrapper.querySelector('.js_gui_element').style.transform = 'scale(' + scale + ')';
+    wrapper.style.position = 'static';
+
+    const margin = window.getComputedStyle(wrapper).getPropertyValue('margin-left');
+
+    wrapper.querySelector('.js_gui_element').style.marginLeft = margin;
+    canvas.style.marginLeft = margin;
   }
 
   _load() {
@@ -63,8 +97,6 @@ class Main {
   }
 
   _loadFinished() {
-    document.body.appendChild(D.Renderer.view);
-
     D.Scene.init();
     D.Text.init();
     D.Character.init();

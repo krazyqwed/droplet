@@ -173,6 +173,11 @@ class Scene {
         this._fastForward();
       }
     }, false);
+
+    window.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+      this._fastForward();
+    }, false);
   }
 
   _prepareScene() {

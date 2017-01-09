@@ -1,14 +1,15 @@
 doctype html
 html
   head
-    link(rel="stylesheet" href="app.css")
+    link(rel="manifest" href="static/manifest.json")
+    link(rel="stylesheet" href="app.css?v=5")
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
   body
-    .b_textbox_wrap.js_textbox_wrap
-      .b_speaker.js_speaker Sample Name
-      .b_textbox.js_textbox
-    .b_main-wrapper
+    .b_main-wrapper.js_main_wrapper
+      .b_textbox-wrap.js_textbox_wrap.js_gui_element
+        .b_speaker.js_speaker Sample Name
+        .b_textbox.js_textbox
     script(src="vendor/pixi.min.js")
     script(src="vendor/fpsmeter.min.js")
-    script(src="app.js")
+    script(src="app.js?v=5")
