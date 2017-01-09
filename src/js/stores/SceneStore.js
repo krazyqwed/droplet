@@ -6,6 +6,7 @@ class SceneStore extends Store {
 
     this._data = {
       fastForward: false,
+      skipAsync: false,
       nextScene: false
     };
   }

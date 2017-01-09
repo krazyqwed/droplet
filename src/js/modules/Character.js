@@ -32,51 +32,49 @@ class Character {
   }
 
   init() {
+    D.SceneStore.subscribe('skipAsync', (value) => {
+      console.log(value);
+      this._timer.over('show');
+      this._timer.over('hide');
+      this._timer.over('move');
+    });
+
     this._prepareCharacters();
     this._update();
   }
 
-  showCharacter(options) {
+  setAction(action, options, async) {
     this._fastForwarded = false;
     D.CharacterStore.setData('animationRunning', true);
 
     const character = this._loadCharacterById(options.id);
-    const position = this._calculatePosition(character.sprite, options);
+    let position;
 
+    switch (action) {
+      case 'show': position = this._calculatePosition(character.sprite, options); this._showCharacter(character); break;
+      case 'hide': position = this._calculatePositionFrom(character.sprite, options); this._hideCharacter(); break;
+      case 'move': position = this._calculatePositionFrom(character.sprite, options); this._moveCharacter(); break;
+    }
+
+    this._timer.setRunLimit(action, options.duration ? options.duration : 240);
+    this._timer.start(action, {
+      character: character,
+      position: position,
+      async: async
+    });
+
+    if (async) {
+      D.CharacterStore.setData('animationRunning', false);
+    }
+  }
+
+  _showCharacter(character) {
     character.sprite.visible = true;
-
-    this._timer.start('show', {
-      character: character,
-      position: position
-    });
   }
 
-  hideCharacter(options) {
-    this._fastForwarded = false;
-    D.CharacterStore.setData('animationRunning', true);
+  _hideCharacter() {}
 
-    const character = this._loadCharacterById(options.id);
-    const position = this._calculatePositionFrom(character.sprite, options);
-
-    this._timer.start('hide', {
-      character: character,
-      position: position
-    });
-  }
-
-  moveCharacter(options) {
-    this._fastForwarded = false;
-    D.CharacterStore.setData('animationRunning', true);
-
-    const character = this._loadCharacterById(options.id);
-    const position = this._calculatePositionFrom(character.sprite, options);
-    console.log(position);
-
-    this._timer.start('move', {
-      character: character,
-      position: position
-    });
-  }
+  _moveCharacter() {}
 
   _prepareCharacters() {
     this._characters.forEach((char, i) => {
@@ -123,6 +121,9 @@ class Character {
       position.src_y = parseInt(1080 * position.src_y / 100 - sprite.height / 2);
     }
 
+    sprite.position.new_x = position.dest_x;
+    sprite.position.new_y = position.dest_y;
+
     return position;
   }
 
@@ -130,8 +131,8 @@ class Character {
     let position = {
       dest_x: options.position[0],
       dest_y: options.position[1],
-      src_x: sprite.position.x,
-      src_y: sprite.position.y
+      src_x: sprite.position.new_x,
+      src_y: sprite.position.new_y
     };
 
     if (options.position[0] === 'center') {
@@ -149,6 +150,9 @@ class Character {
       position.dest_x = parseInt(1920 * options.position[0] / 100);
       position.dest_y = parseInt(1080 * options.position[1] / 100 - sprite.height / 2);
     }
+
+    sprite.position.new_x = position.dest_x;
+    sprite.position.new_y = position.dest_y;
 
     return position;
   }
@@ -181,12 +185,13 @@ class Character {
     character.position.x = newPosition.x;
     character.position.y = newPosition.y;
 
-    if (event.over || this._fastForwarded) {
+    if (event.over || (this._fastForwarded && !event.params.async)) {
       character.alpha = 1;
       character.position.x = position.dest_x;
       character.position.y = position.dest_y;
 
       D.CharacterStore.setData('animationRunning', false);
+      this._timer.destroy('show');
     }
   }
 
@@ -200,13 +205,14 @@ class Character {
     character.position.x = newPosition.x;
     character.position.y = newPosition.y;
 
-    if (event.over || this._fastForwarded) {
+    if (event.over || (this._fastForwarded && !event.params.async)) {
       character.alpha = 0;
       character.position.x = position.dest_x;
       character.position.y = position.dest_y;
-      character.sprite.visible = false;
+      character.visible = false;
 
       D.CharacterStore.setData('animationRunning', false);
+      this._timer.destroy('hide');
     }
   }
 
@@ -219,11 +225,12 @@ class Character {
     character.position.x = newPosition.x;
     character.position.y = newPosition.y;
 
-    if (event.over || this._fastForwarded) {
+    if (event.over || (this._fastForwarded && !event.params.async)) {
       character.position.x = position.dest_x;
       character.position.y = position.dest_y;
 
       D.CharacterStore.setData('animationRunning', false);
+      this._timer.destroy('move');
     }
   }
 

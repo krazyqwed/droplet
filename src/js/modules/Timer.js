@@ -27,7 +27,7 @@ class Timer {
 
   start(name, params) {
     for (let i in this._events) {
-      if (this._events[i].name === name) {
+      if (this._events[i].name === name && !this._events[i].running) {
         this._events[i].over = false;
         this._events[i].runCount = 0;
         this._events[i].running = true;
@@ -43,8 +43,18 @@ class Timer {
 
   stop(name) {
     for (let i in this._events) {
-      if (this._events[i].name === name) {
+      if (this._events[i].name === name && this._events[i].running) {
         this._events[i].running = false;
+      }
+    }
+  }
+
+  over(name) {
+    for (let i in this._events) {
+      if (this._events[i].name === name && this._events[i].running) {
+        this._events[i].over = true;
+        this._events[i].running = false;
+        this._events[i].callback(this._events[i]);
       }
     }
   }
@@ -66,6 +76,14 @@ class Timer {
       if (this._events[i].name === name) {
         this._events[i].ticker = 0;
         this._events[i].tickRate = rate;
+      }
+    }
+  }
+
+  setRunLimit(name, limit) {
+    for (let i in this._events) {
+      if (this._events[i].name === name) {
+        this._events[i].runLimit = limit;
       }
     }
   }

@@ -150,6 +150,7 @@ class Text {
   _writeEvent() {
     if (this._cursorPosition > this._textLength) {
       this._writeReset();
+      this._timer.destroy('write');
 
       return;
     }

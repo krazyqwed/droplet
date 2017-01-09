@@ -19,7 +19,7 @@ let sampleScene = {
         position: [40, 'bottom'],
         from: [-5, 0]
       },
-      fastForward: true
+      async: true
     },
     {
       type: 'dialog',
@@ -37,10 +37,21 @@ let sampleScene = {
       options: {
         id: 1,
         pose: '8',
+        duration: 120,
         position: [60, 'bottom'],
         from: [5, 0]
       },
       fastForward: true
+    },
+    {
+      type: 'character',
+      action: 'move',
+      options: {
+        id: 1,
+        relative: true,
+        position: [10, 0]
+      },
+      async: true
     },
     {
       type: 'dialog',
@@ -55,8 +66,7 @@ let sampleScene = {
       action: 'move',
       options: {
         id: 2,
-        relative: false,
-        position: [30, 'bottom'],
+        position: [30, 'bottom']
       },
       fastForward: true
     },
@@ -66,7 +76,7 @@ let sampleScene = {
       options: {
         id: 2,
         relative: true,
-        position: [-5, 0],
+        position: [-5, 0]
       },
       fastForward: true
     },
@@ -132,17 +142,21 @@ class Scene {
   }
 
   _fastForward() {
-    if (D.SceneStore.getData('fastForward')) {
-      D.SceneStore.setData('fastForward', false);
-      this._loadNextFrame();
-    } else {
-      D.SceneStore.setData('fastForward', true);
+    if (sampleScene.keyframes[this._keyframe]) {
+      if (!sampleScene.keyframes[this._keyframe].async) {
+        D.SceneStore.setData('skipAsync', Math.random());
+      }
+
+      if (D.SceneStore.getData('fastForward')) {
+        D.SceneStore.setData('fastForward', false);
+        this._loadNextFrame();
+      } else {
+        D.SceneStore.setData('fastForward', true);
+      }
     }
   }
 
   _loadKeyframe(keyframe, subframe) {
-    this._textFinished = false;
-
     if (!sampleScene.keyframes[keyframe]) {
       return;
     }
@@ -205,24 +219,22 @@ class Scene {
     keyframe = sampleScene.keyframes[keyframe];
     this._subframeCount = 1;
 
-    switch (keyframe.action) {
-      case 'show': D.Character.showCharacter(keyframe.options); break;
-      case 'hide': D.Character.hideCharacter(keyframe.options); break;
-      case 'move': D.Character.moveCharacter(keyframe.options); break;
-    }
+    D.Character.setAction(keyframe.action, keyframe.options, keyframe.async);
   }
 
   _update() {
     requestAnimationFrame(() => {
-      if (this._textFinished && this._characterFinished) {
-        D.SceneStore.setData('fastForward', true);
+      if (sampleScene.keyframes[this._keyframe]) {
+        if (this._textFinished && this._characterFinished) {
+          D.SceneStore.setData('fastForward', true);
 
-        if (sampleScene.keyframes[this._keyframe].fastForward) {
-          this._fastForward();
+          if (sampleScene.keyframes[this._keyframe].fastForward || sampleScene.keyframes[this._keyframe].async) {
+            this._fastForward();
+          }
         }
-      }
 
-      this._update();
+        this._update();
+      }
     });
   }
 }
