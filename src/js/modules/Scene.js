@@ -124,8 +124,17 @@ class Scene {
 
   _input() {
     window.addEventListener('keydown', (event) => {
-      switch(event.which) {
+      switch (event.which) {
         case 32: event.preventDefault(); this._fastForward(); break;
+      }
+    }, false);
+
+    window.addEventListener('mousewheel', (event) => {
+      const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+
+      if (delta === -1) {
+        event.preventDefault();
+        this._fastForward();
       }
     }, false);
   }
