@@ -142,13 +142,13 @@ class Scene {
     this._input();
 
     D.TextStore.subscribe('writeRunning', (data) => {
-      if (data === false) { 
+      if (data === false) {
         this._textFinished = true;
       }
     });
 
     D.CharacterStore.subscribe('animationRunning', (data) => {
-      if (data === false) { 
+      if (data === false) {
         this._characterFinished = true;
       }
     });
@@ -278,9 +278,11 @@ class Scene {
         if (this._textFinished && this._characterFinished) {
           D.SceneStore.setData('fastForward', true);
 
-          if (sampleScene.keyframes[this._keyframe].fastForward || sampleScene.keyframes[this._keyframe].async) {
+          if (sampleScene.keyframes[this._keyframe].fastForward) {
             this._fastForward();
           }
+        } else if (sampleScene.keyframes[this._keyframe].async) {
+          this._fastForward();
         }
 
         this._update();

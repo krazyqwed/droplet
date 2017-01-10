@@ -17,20 +17,42 @@ let sampleCharacters = [
   }
 ];
 
-class Character {
-  constructor() {
-    this._characters = sampleCharacters;
-
-    this._fastForwarded = true;
-
+class Actor {
+  constructor(data) {
+    this._id = data.id;
+    this._full_name = data.full_name;
+    this._nickname = data.nickname;
+    this._pose = data.pose ? data.pose : 1;
+    this._color = data.color;
+    this._image = data.image;
+    this._sprite = new PIXI.Sprite();
+    this._clone = new PIXI.Sprite();
     this._timer = new Timer();
+    this._fastForwarded = true;
+    this._animationRunning = false;
+
+    this._init();
+  }
+
+  _init() {
+    this._sprite.visible = false;
+    this._sprite.alpha = 0;
+    this._sprite.anchor.x = 0.5;
+    this._sprite.anchor.y = 0.5;
+    this._sprite.position.x = 0;
+    this._sprite.position.y = 0;
+    this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+    D.Stage.addChild(this._sprite);
+
+    this._clone.anchor.x = 0.5;
+    this._clone.anchor.y = 0.5;
+    D.Stage.addChild(this._clone);
+
     this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 30);
     this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
     this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
     this._timer.addEvent('pose', this._poseEvent.bind(this), 1, true, 30);
-  }
 
-  init() {
     D.SceneStore.subscribe('skipAsync', (value) => {
       this._timer.over('show');
       this._timer.over('hide');
@@ -38,80 +60,66 @@ class Character {
       this._timer.over('pose');
     });
 
-    this._prepareCharacters();
     this._update();
+  }
+
+  getId() {
+    return this._id;
+  }
+
+  getData() {
+    return {
+      id: this._id,
+      full_name: this._full_name,
+      nickname: this._nickname,
+      color: this._color,
+      pose: this._pose,
+      image: this._image
+    };
+  }
+
+  isAnimationRunning() {
+    return this._animationRunning;
   }
 
   setAction(action, options, async) {
     this._fastForwarded = false;
-    D.CharacterStore.setData('animationRunning', true);
+    this._animationRunning = true;
 
-    const character = this.loadCharacterById(options.id);
     let position;
 
     switch (action) {
-      case 'show': position = this._calculatePosition(character.sprite, options); this._showCharacter(character); break;
-      case 'hide': position = this._calculatePositionFrom(character.sprite, options); break;
-      case 'move': position = this._calculatePositionFrom(character.sprite, options); break;
-      case 'pose': this._poseCharacter(character, options); break;
+      case 'show': position = this._calculatePosition(options); this._showCharacter(); break;
+      case 'hide': position = this._calculatePositionFrom(options); break;
+      case 'move': position = this._calculatePositionFrom(options); break;
+      case 'pose': this._poseCharacter(options); break;
     }
 
     this._timer.setRunLimit(action, options.duration ? options.duration : 30);
     this._timer.start(action, {
-      character: character,
       position: position ? position : false,
       async: async
     });
 
     if (async) {
-      D.CharacterStore.setData('animationRunning', false);
+      this._animationRunning = false;
     }
   }
 
-  loadCharacterById(id) {
-    return this._characters.filter((character) => {
-      if (character.id === id) {
-        return character;
-      }
-    })[0];
+  _showCharacter() {
+    this._sprite.visible = true;
   }
 
-  _showCharacter(character) {
-    character.sprite.visible = true;
+  _poseCharacter(options) {
+    this._pose = options.pose;
+
+    this._clone.alpha = 0;
+    this._clone.position.x = this._sprite.position.x;
+    this._clone.position.y = this._sprite.position.y;
+    this._clone.setTexture(PIXI.Texture.fromFrame(this._image + '_' + options.pose));
   }
 
-  _poseCharacter(character, options) {
-    character.pose = options.pose;
-
-    character.clone.alpha = 0;
-    character.clone.position.x = character.sprite.position.x;
-    character.clone.position.y = character.sprite.position.y;
-    character.clone.setTexture(PIXI.Texture.fromFrame(character.image + '_' + options.pose));
-  }
-
-  _prepareCharacters() {
-    this._characters.forEach((character, i) => {
-      this._characters[i].pose = character.pose ? character.pose : 1;
-      this._characters[i].image = character.image;
-
-      this._characters[i].sprite = new PIXI.Sprite();
-      this._characters[i].sprite.visible = false;
-      this._characters[i].sprite.alpha = 0;
-      this._characters[i].sprite.anchor.x = 0.5;
-      this._characters[i].sprite.anchor.y = 0.5;
-      this._characters[i].sprite.position.x = 0;
-      this._characters[i].sprite.position.y = 0;
-      this._characters[i].sprite.setTexture(PIXI.Texture.fromFrame(this._characters[i].image + '_' + this._characters[i].pose));
-      D.Stage.addChild(this._characters[i].sprite);
-
-      this._characters[i].clone = new PIXI.Sprite();
-      this._characters[i].clone.anchor.x = 0.5;
-      this._characters[i].clone.anchor.y = 0.5;
-      D.Stage.addChild(this._characters[i].clone);
-    });
-  }
-
-  _calculatePosition(sprite, options) {
+  _calculatePosition(options) {
     let position = {
       dest_x: options.position[0],
       dest_y: options.position[1],
@@ -128,28 +136,28 @@ class Character {
     }
 
     position.dest_x = parseInt(1920 * options.position[0] / 100);
-    position.dest_y = parseInt(1080 * options.position[1] / 100 - sprite.height / 2);
+    position.dest_y = parseInt(1080 * options.position[1] / 100 - this._sprite.height / 2);
 
     if (options.from) {
       position.src_x = options.position[0] + options.from[0];
       position.src_y = options.position[1] + options.from[1];
 
       position.src_x = parseInt(1920 * position.src_x / 100);
-      position.src_y = parseInt(1080 * position.src_y / 100 - sprite.height / 2);
+      position.src_y = parseInt(1080 * position.src_y / 100 - this._sprite.height / 2);
     }
 
-    sprite.position.new_x = position.dest_x;
-    sprite.position.new_y = position.dest_y;
+    this._sprite.position.new_x = position.dest_x;
+    this._sprite.position.new_y = position.dest_y;
 
     return position;
   }
 
-  _calculatePositionFrom(sprite, options) {
+  _calculatePositionFrom(options) {
     let position = {
       dest_x: options.position[0],
       dest_y: options.position[1],
-      src_x: sprite.position.new_x,
-      src_y: sprite.position.new_y
+      src_x: this._sprite.position.new_x,
+      src_y: this._sprite.position.new_y
     };
 
     if (options.position[0] === 'center') {
@@ -165,11 +173,11 @@ class Character {
       position.dest_y = parseInt(position.src_y + 1080 * options.position[1] / 100);
     } else {
       position.dest_x = parseInt(1920 * options.position[0] / 100);
-      position.dest_y = parseInt(1080 * options.position[1] / 100 - sprite.height / 2);
+      position.dest_y = parseInt(1080 * options.position[1] / 100 - this._sprite.height / 2);
     }
 
-    sprite.position.new_x = position.dest_x;
-    sprite.position.new_y = position.dest_y;
+    this._sprite.position.new_x = position.dest_x;
+    this._sprite.position.new_y = position.dest_y;
 
     return position;
   }
@@ -185,7 +193,7 @@ class Character {
   }
 
   _showEvent(event) {
-    let character = event.params.character.sprite;
+    let character = this._sprite;
     let position = event.params.position;
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
@@ -199,13 +207,13 @@ class Character {
       character.position.x = position.dest_x;
       character.position.y = position.dest_y;
 
-      D.CharacterStore.setData('animationRunning', false);
+      this._animationRunning = false;
       this._timer.destroy('show');
     }
   }
 
   _hideEvent(event) {
-    let character = event.params.character.sprite;
+    let character = this._sprite;
     let position = event.params.position;
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
@@ -220,13 +228,13 @@ class Character {
       character.position.y = position.dest_y;
       character.visible = false;
 
-      D.CharacterStore.setData('animationRunning', false);
+      this._animationRunning = false;
       this._timer.destroy('hide');
     }
   }
 
   _moveEvent(event) {
-    let character = event.params.character.sprite;
+    let character = this._sprite;
     let position = event.params.position;
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
@@ -238,25 +246,25 @@ class Character {
       character.position.x = position.dest_x;
       character.position.y = position.dest_y;
 
-      D.CharacterStore.setData('animationRunning', false);
+      this._animationRunning = false;
       this._timer.destroy('move');
     }
   }
 
   _poseEvent(event) {
-    let character = event.params.character.sprite;
-    let clone = event.params.character.clone;
+    let character = this._sprite;
+    let clone = this._clone;
     let percent = event.runCount / event.runLimit;
 
     character.alpha = 1 - percent;
     clone.alpha = percent;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
-      character.setTexture(PIXI.Texture.fromFrame(event.params.character.image + '_' + event.params.character.pose));
+      character.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
       character.alpha = 1;
       clone.alpha = 0;
 
-      D.CharacterStore.setData('animationRunning', false);
+      this._animationRunning = false;
       this._timer.destroy('pose');
     }
   }
@@ -269,6 +277,60 @@ class Character {
       x: x,
       y: y
     };
+  }
+}
+
+class Character {
+  constructor() {
+    this._characters = sampleCharacters;
+  }
+
+  init() {
+    this._prepareCharacters();
+    this._update();
+  }
+
+  setAction(action, options, async) {
+    const character = this.loadCharacterById(options.id);
+    character.setAction(action, options, async);
+  }
+
+  loadCharacterById(id) {
+    return this._characters.filter((character) => {
+      if (character.getId() === id) {
+        return character;
+      }
+    })[0];
+  }
+
+  _isAnimationRunning() {
+    let animationRunning = false;
+
+    this._characters.forEach((character, i) => {
+      if (character.isAnimationRunning()) {
+        animationRunning = true;
+      }
+    });
+
+    return animationRunning;
+  }
+
+  _prepareCharacters() {
+    this._characters.forEach((character, i) => {
+      this._characters[i] = new Actor(character);
+    });
+  }
+
+  _update() {
+    requestAnimationFrame(() => {
+      if (this._isAnimationRunning()) {
+        D.CharacterStore.setData('animationRunning', true);
+      } else {
+        D.CharacterStore.setData('animationRunning', false);
+      }
+
+      this._update();
+    });
   }
 }
 

@@ -140,7 +140,7 @@ class Text {
 
       if (options.character !== 'player') {
         const character = D.Character.loadCharacterById(options.character);
-        this._dom.speaker.style.backgroundColor = character.color;
+        this._dom.speaker.style.backgroundColor = character.getData().color;
       } else {
         this._dom.speaker.style.backgroundColor = '#56b30c';
       }
