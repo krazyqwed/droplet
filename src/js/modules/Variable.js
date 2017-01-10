@@ -39,7 +39,11 @@ class Variable {
       this.set(name, value, _obj[name.shift()]);
     } else {
       let operator = '';
-      const firstChar = value.charAt(0);
+      let firstChar = value.charAt(0);
+
+      if (firstChar === '-') {
+        firstChar = value.charAt(1);
+      }
       
       if (/[+\-*\/\^]/.test(firstChar)) {
         operator = firstChar;

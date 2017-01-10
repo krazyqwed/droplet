@@ -1,9 +1,22 @@
+@mixin stripe {
+  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,.4);
+  background-position: center, center, center;
+  background-size: auto 4px, cover, auto;
+}
+
+html {
+  height: 100%;
+}
+
 body {
   background: #000;
   font-family: 'Arial', sans-serif;
+  height: 100%;
   margin: 0;
+  overflow: hidden;
   text-align: center;
   user-select: none;
+  width: 100%;
 
   *,
   *:before,
@@ -31,26 +44,46 @@ canvas {
   position: absolute;
   right: 0;
   top: 0;
+
+  &:before,
+  &:after {
+    background: #000;
+    bottom: -10px;
+    content: '';
+    left: -10px;
+    position: absolute;
+    top: -10px;
+    width: 10px;
+  }
+
+  &:after {
+    left: auto;
+    right: -10px;
+  }
 }
 
 .b_textbox-wrap {
   bottom: 0;
-  display: none;
   height: 1080px;
   left: 0;
   margin: auto;
+  opacity: 0;
   overflow: hidden;
   position: absolute;
   right: 0;
   top: 0;
   transform-origin: left center;
+  transition: opacity .3s linear;
   width: 1920px;
+
+  &--visible {
+    opacity: 1;
+  }
 }
 
 .b_textbox {
-  background: linear-gradient(0deg, rgba(#000,.1) 60%, rgba(#000,0) 40%, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,.4);
-  background-position: center, center, center;
-  background-size: 34px auto, cover, auto;
+  @include stripe;
+
   border-top: 2px solid rgba(#000,.4);
   bottom: 0;
   color: #fff;
@@ -67,7 +100,7 @@ canvas {
   text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   word-wrap: break-word;
 
-  &:not([running]) {
+  &:not([running]):not([no-next]) {
     &:before {
       animation: blink 1s ease-out infinite;
       border: 20px solid transparent;
@@ -121,9 +154,8 @@ d-text {
 }
 
 .b_speaker {
-  background-image: linear-gradient(0deg, rgba(#000,.1) 60%, rgba(#000,0) 40%, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.4), rgba(#000,0));
-  background-position: center, center;
-  background-size: 20px auto, cover;
+  @include stripe;
+
   bottom: 292px;
   box-shadow: inset 0 0 0px 2px rgba(0,0,0,0.2);
   color: #fff;
@@ -132,10 +164,72 @@ d-text {
   font-weight: bold;
   height: 34px;
   left: 12px;
+  line-height: 34px;
   outline: 2px solid #fff;
   padding: 10px 20px;
   position: absolute;
   text-align: center;
   text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   word-wrap: break-word;
+}
+
+.b_choose-wrap {
+  align-items: center;
+  bottom: 250px;
+  display: flex;
+  height: 1080px;
+  justify-content: center;
+  left: 0;
+  margin: auto;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-origin: left center;
+  transition: opacity .3s linear;
+  width: 1920px;
+
+  &--visible {
+    opacity: 1;
+  }
+}
+
+.b_choose {
+  @include stripe;
+
+  border: 2px solid rgba(#000,.4);
+  line-height: 1.35;
+  outline: 2px solid #fff;
+  padding: 8px;
+  width: 70%;
+  word-wrap: break-word;
+
+  &__item {
+    border: 2px solid transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 38px;
+    font-weight: bold;
+    padding: 10px 30px;
+    pointer-events: all;
+    text-align: left;
+    text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+
+    &--active {
+      background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
+      border: 2px solid #fff;
+    }
+
+    &--blink {
+      animation: blink_chosen .2s linear infinite;
+    }
+  }
+}
+
+@keyframes blink_chosen {
+  50% {
+    background: linear-gradient(0deg, rgba(#000,.3), rgba(#000,0)), rgba(#2a8bff,.2);
+    border: 2px solid rgba(#fff,.5);
+  }
 }

@@ -1,4 +1,5 @@
-import Timer from './Timer'; 
+import Timer from './Timer';
+import StringHelper from '../helpers/String';
 
 class DText extends HTMLElement {
   connectedCallback() {
@@ -17,14 +18,11 @@ class Text {
     this._text = '';
     this._textFormatActive = false;
     this._writeSpeed = [1];
-
     this._fastForwarded = true;
-
     this._dom = {};
     this._dom.textBoxWrap = document.querySelector('.js_textbox_wrap');
     this._dom.textBox = document.querySelector('.js_textbox');
     this._dom.speaker = document.querySelector('.js_speaker');
-
     this._timer = new Timer();
     this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
   }
@@ -40,11 +38,11 @@ class Text {
   }
 
   showTextBox() {
-    this._dom.textBoxWrap.style.display = 'block';
+    this._dom.textBoxWrap.classList.add('b_textbox-wrap--visible');
   }
 
   hideTextBox() {
-    this._dom.textBoxWrap.style.display = 'none';
+    this._dom.textBoxWrap.classList.remove('b_textbox-wrap--visible');
     this._writeReset();
   }
 
@@ -67,6 +65,12 @@ class Text {
     let textContainer = document.createElement('div');
     textContainer.classList.add('b_textbox-helper');
     textContainer.innerHTML = this._text;
+
+    if (options && options.noNext) {
+      this._dom.textBox.setAttribute('no-next', 'true');
+    } else {
+      this._dom.textBox.removeAttribute('no-next');
+    }
 
     document.body.appendChild(textContainer);
     this._insertVariables();
@@ -125,7 +129,7 @@ class Text {
             i = this._text.length;
           }
 
-          this._text = D.StringHelper.splice(this._text, i + 1, 0, '<br>');
+          this._text = StringHelper.splice(this._text, i + 1, 0, '<br>');
           i += 4;
         }
       }
@@ -171,7 +175,7 @@ class Text {
 
   _writeEvent() {
     if (this._cursorPosition > this._textLength) {
-      this._writeReset();
+      D.TextStore.setData('writeRunning', false);
       this._timer.destroy('write');
 
       return;
@@ -234,7 +238,7 @@ class Text {
   _handleVar(name, i) {
     if (name) {
       const variable = D.Variable.get(name);
-      this._text = D.StringHelper.splice(this._text, i + 1, 0, variable);
+      this._text = StringHelper.splice(this._text, i + 1, 0, variable);
     }
   }
 }

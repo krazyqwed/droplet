@@ -28,8 +28,19 @@ class Actor {
     this._sprite = new PIXI.Sprite();
     this._clone = new PIXI.Sprite();
     this._timer = new Timer();
+    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 30);
+    this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
+    this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
+    this._timer.addEvent('pose', this._poseEvent.bind(this), 1, true, 30);
     this._fastForwarded = true;
     this._animationRunning = false;
+
+    D.SceneStore.subscribe('skipAsync', (value) => {
+      this._timer.over('show');
+      this._timer.over('hide');
+      this._timer.over('move');
+      this._timer.over('pose');
+    });
 
     this._init();
   }
@@ -41,24 +52,14 @@ class Actor {
     this._sprite.anchor.y = 0.5;
     this._sprite.position.x = 0;
     this._sprite.position.y = 0;
+    this._sprite.position.z = 1;
     this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
     D.Stage.addChild(this._sprite);
 
     this._clone.anchor.x = 0.5;
     this._clone.anchor.y = 0.5;
+    this._clone.position.z = 1;
     D.Stage.addChild(this._clone);
-
-    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('pose', this._poseEvent.bind(this), 1, true, 30);
-
-    D.SceneStore.subscribe('skipAsync', (value) => {
-      this._timer.over('show');
-      this._timer.over('hide');
-      this._timer.over('move');
-      this._timer.over('pose');
-    });
 
     this._update();
   }
@@ -198,7 +199,7 @@ class Actor {
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
 
-    character.alpha = percent;
+    character.alpha = percent + 0.001;
     character.position.x = newPosition.x;
     character.position.y = newPosition.y;
 
@@ -218,12 +219,12 @@ class Actor {
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
 
-    character.alpha = 1 - percent;
+    character.alpha = 1 - percent + 0.001;
     character.position.x = newPosition.x;
     character.position.y = newPosition.y;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
-      character.alpha = 0;
+      character.alpha = 0.001;
       character.position.x = position.dest_x;
       character.position.y = position.dest_y;
       character.visible = false;
@@ -256,13 +257,13 @@ class Actor {
     let clone = this._clone;
     let percent = event.runCount / event.runLimit;
 
-    character.alpha = 1 - percent;
+    character.alpha = 1 - percent + 0.001;
     clone.alpha = percent;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
       character.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
       character.alpha = 1;
-      clone.alpha = 0;
+      clone.alpha = 0 + 0.001;
 
       this._animationRunning = false;
       this._timer.destroy('pose');

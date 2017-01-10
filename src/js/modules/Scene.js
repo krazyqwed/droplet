@@ -3,6 +3,33 @@ let sampleScene = {
   default_background: 'school_2',
   keyframes: [
     {
+      id: 14,
+      type: 'choose',
+      items: [
+        {
+          text: 'Set the variable to <d-text d-color="#0f0">1</d-text>',
+          variable: [{
+            name: 'test',
+            value: '1'
+          }]
+        },
+        {
+          text: 'Set the variable to <d-text d-color="#f00">-1</d-text>',
+          variable: [{
+            name: 'test',
+            value: '-1'
+          }]
+        },
+        {
+          text: 'Do nothing...'
+        }
+      ],
+      options: {
+        dialog: 'Select an answer...'
+      }
+    },
+    {
+      id: 1,
       type: 'dialog',
       condition: 'test == 0',
       dialog: [
@@ -11,6 +38,7 @@ let sampleScene = {
       ]
     },
     {
+      id: 5,
       type: 'character',
       action: 'show',
       options: {
@@ -22,6 +50,7 @@ let sampleScene = {
       async: true
     },
     {
+      id: 2,
       type: 'dialog',
       variable: [{
         name: 'test_group.inner_group.inner',
@@ -32,6 +61,7 @@ let sampleScene = {
       ]
     },
     {
+      id: 4,
       type: 'character',
       action: 'pose',
       options: {
@@ -41,6 +71,7 @@ let sampleScene = {
       async: true
     },
     {
+      id: 3,
       type: 'character',
       action: 'show',
       options: {
@@ -53,6 +84,7 @@ let sampleScene = {
       fastForward: true
     },
     {
+      id: 7,
       type: 'character',
       action: 'move',
       options: {
@@ -63,6 +95,7 @@ let sampleScene = {
       async: true
     },
     {
+      id: 8,
       type: 'dialog',
       dialog: [
         'What\'s with that pose?'
@@ -72,6 +105,7 @@ let sampleScene = {
       }
     },
     {
+      id: 6,
       type: 'dialog',
       dialog: [
         'Tee-hee'
@@ -81,6 +115,7 @@ let sampleScene = {
       }
     },
     {
+      id: 10,
       type: 'dialog',
       dialog: [
         'Test string for <d-text d-color="#f00">formatting.</d-text>',
@@ -92,6 +127,7 @@ let sampleScene = {
       }
     },
     {
+      id: 9,
       type: 'character',
       action: 'move',
       options: {
@@ -101,6 +137,7 @@ let sampleScene = {
       fastForward: true
     },
     {
+      id: 12,
       type: 'character',
       action: 'move',
       options: {
@@ -111,6 +148,7 @@ let sampleScene = {
       fastForward: true
     },
     {
+      id: 13,
       type: 'character',
       action: 'hide',
       options: {
@@ -121,6 +159,7 @@ let sampleScene = {
       fastForward: true
     },
     {
+      id: 11,
       type: 'dialog',
       dialog: [
         'Thanks for watching!'
@@ -136,6 +175,7 @@ class Scene {
 
     this._textFinished = false;
     this._characterFinished = false;
+    this._interactionFinished = false;
   }
 
   init() {
@@ -150,6 +190,13 @@ class Scene {
     D.CharacterStore.subscribe('animationRunning', (data) => {
       if (data === false) {
         this._characterFinished = true;
+      }
+    });
+
+    D.InteractionStore.subscribe('interactionRunning', (data) => {
+      if (data === false) {
+        this._interactionFinished = true;
+        this._fastForward();
       }
     });
 
@@ -218,6 +265,7 @@ class Scene {
     switch (sampleScene.keyframes[keyframe].type) {
       case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
       case 'character': this._handleTypeCharacter(keyframe); break;
+      case 'choose': this._handleTypeChoose(keyframe); break;
     }
   }
 
@@ -227,23 +275,27 @@ class Scene {
   }
 
   _loadNextFrame() {
-    if (this._subframeCount - 1 > this._subframe) {
-      this._loadSubframe();
-    } else {
-      this._keyframe++;
-      this._subframe = 0;
+    if (this._interactionFinished) {
+      if (this._subframeCount - 1 > this._subframe) {
+        this._loadSubframe();
+      } else {
+        this._keyframe++;
+        this._subframe = 0;
 
-      this._loadKeyframe(this._keyframe, this._subframe);
+        this._loadKeyframe(this._keyframe, this._subframe);
+      }
     }
   }
 
   _setFinishedSubscriptions(type) {
     this._textFinished = true;
     this._characterFinished = true;
+    this._interactionFinished = true;
 
     switch (type) {
       case 'dialog': this._textFinished = false; break;
       case 'character': this._characterFinished = false; break;
+      case 'choose': this._interactionFinished = false; this._textFinished = false; break;
     }
   }
 
@@ -270,6 +322,13 @@ class Scene {
     this._subframeCount = 1;
 
     D.Character.setAction(keyframe.action, keyframe.options, keyframe.async);
+  }
+
+  _handleTypeChoose(keyframe) {
+    keyframe = sampleScene.keyframes[keyframe];
+    this._subframeCount = 1;
+
+    D.Choose.showChoose(keyframe.items, keyframe.options);
   }
 
   _update() {
