@@ -12,4 +12,22 @@ html
         .b_textbox.js_textbox
     script(src="vendor/pixi.min.js")
     script(src="vendor/fpsmeter.min.js")
-    script(src="app.js?v=5")
+    script.
+      function loadApp() {
+        var script = document.createElement('script');
+        script.src = isChrome ? 'app.js' : 'app-fallback.js';
+        document.body.appendChild(script);
+      }
+
+      var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+
+      if (!isChrome) {
+        var scriptElements = document.createElement('script');
+        scriptElements.onload = function() {
+          loadApp(isChrome);
+        };
+        scriptElements.src = 'vendor/customelements.min.js';
+        document.body.appendChild(scriptElements);
+      } else {
+        loadApp(isChrome);
+      }

@@ -71,7 +71,7 @@ class Main {
     wrapper.querySelector('.js_gui_element').style.transform = 'scale(' + scale + ')';
     wrapper.style.position = 'static';
 
-    const margin = window.getComputedStyle(wrapper).getPropertyValue('margin-left');
+    const margin = wrapper.offsetLeft + 'px';
 
     wrapper.querySelector('.js_gui_element').style.marginLeft = margin;
     canvas.style.marginLeft = margin;
