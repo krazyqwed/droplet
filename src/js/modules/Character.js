@@ -47,7 +47,7 @@ class Actor {
 
   _init() {
     this._sprite.visible = false;
-    this._sprite.alpha = 0;
+    this._sprite.alpha = 0.001;
     this._sprite.anchor.x = 0.5;
     this._sprite.anchor.y = 0.5;
     this._sprite.position.x = 0;
@@ -115,6 +115,8 @@ class Actor {
   _showCharacter(options) {
     this._pose = options.pose;
     this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+    this._sprite.alpha = 0.001;
+    this._sprite.position.z = 3;
 
     this._sprite.visible = true;
     this._clone.visible = true;
@@ -125,7 +127,7 @@ class Actor {
 
     this._sprite.position.z = 2;
 
-    this._clone.alpha = 0;
+    this._clone.alpha = 0.001;
     this._clone.position.z = 3;
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
