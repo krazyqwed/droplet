@@ -6,7 +6,7 @@ let sampleStory = {
       id: 1,
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_1',
-      bgm: 'bgm_1',
+      bgm: false,
       keyframes: [
         {
           id: 1,
@@ -16,9 +16,18 @@ let sampleStory = {
           ]
         },
         {
+          id: 1,
+          type: 'input',
+          store: '__globals__.playerName',
+          options: {
+            dialog: 'Enter your name...'
+          }
+        },
+        {
           id: 2,
           type: 'dialog',
           dialog: [
+            'Alright, <d-text d-var="__globals__.playerName" d-color="#4f2"></d-text>!',
             'Let\'s load the next scene!'
           ],
           goTo: {
@@ -31,7 +40,7 @@ let sampleStory = {
       id: 2,
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_2',
-      bgm: 'bgm_2',
+      bgm: false,
       keyframes: [
         {
           id: 14,

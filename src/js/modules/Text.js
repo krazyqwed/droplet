@@ -156,7 +156,7 @@ class Text {
         this._dom.speaker.innerHTML = characterData.nickname;
         this._dom.speaker.style.backgroundColor = characterData.color;
       } else {
-        this._dom.speaker.innerHTML = 'Player';
+        this._dom.speaker.innerHTML = D.Variable.get('__globals__.playerName');
         this._dom.speaker.style.backgroundColor = '#56b30c';
       }
     } else {

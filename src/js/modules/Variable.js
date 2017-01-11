@@ -1,4 +1,7 @@
 let sampleVariable = {
+  __globals__: {
+    playerName: 'John Smith'
+  },
   test: 0,
   test_group: {
     inner: 'test inner',
@@ -26,7 +29,7 @@ class Variable {
     return obj[name[len - 1]];
   }
 
-  set(name, value, _obj) {
+  set(name, value, type, _obj) {
     if (!_obj) {
       _obj = this._variables;
     }
@@ -36,7 +39,7 @@ class Variable {
     }
 
     if (name.length > 1) {
-      this.set(name, value, _obj[name.shift()]);
+      this.set(name, value, type, _obj[name.shift()]);
     } else {
       let operator = '';
       let firstChar = value.charAt(0);
@@ -55,7 +58,7 @@ class Variable {
         case '-': _obj[name[0]] -= Number(value); break;
         case '*': _obj[name[0]] *= Number(value); break;
         case '/': _obj[name[0]] /= Number(value); break;
-        default: _obj[name[0]] = Number(value);
+        default: _obj[name[0]] = type === 'string'? value : Number(value);
       }
     }
   }

@@ -4,6 +4,7 @@ import Scene from './modules/Scene';
 import Text from './modules/Text';
 import Character from './modules/Character';
 import Choose from './modules/Choose';
+import Input from './modules/Input';
 import PixiStore from './stores/PixiStore';
 import SceneStore from './stores/SceneStore';
 import TextStore from './stores/TextStore';
@@ -29,6 +30,7 @@ class Main {
       Text: Text,
       Character: Character,
       Choose: Choose,
+      Input: Input,
 
       FPSMeter: new FPSMeter()
     };

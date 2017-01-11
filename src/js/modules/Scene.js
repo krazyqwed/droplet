@@ -104,13 +104,22 @@ class Scene {
     window.addEventListener('DOMMouseScroll', scrollEvent.bind(this), false);
 
     window.addEventListener('mousedown', (event) => {
-      event.preventDefault();
-      this._fastForward();
+      if (!event.target.classList.contains('js_input')) {
+        event.preventDefault();
+        this._fastForward();
+      }
     }, false);
 
     window.addEventListener('keydown', (event) => {
-      switch (event.which) {
-        case 32: event.preventDefault(); this._fastForward(); break;
+      if (!event.target.classList.contains('js_input')) {
+        if (event.which === 32) {
+          event.preventDefault();
+          this._fastForward();
+        }
+      } else {
+        if (event.which === 13) {
+          D.Input.confirmInput();
+        }
       }
     }, false);
   }
@@ -128,7 +137,7 @@ class Scene {
     this._background.alpha = 0.001;
     this._background.position.z = 0;
 
-    if (this._scene.bgm && this._scene.bgm !== true) {
+    if (this._scene.bgm && this._scene.bgm !== true && this._scene.bgm !== false) {
       if (this._bgm) {
         this._bgm.on('fade', () => {
           this._bgm.unload();
@@ -141,11 +150,13 @@ class Scene {
         this._createMusic(this._scene.bgm);
       }
     } else if (this._scene.bgm === false) {
-      this._bgm.on('fade', () => {
-        this._bgm.unload();
-        this._bgm = false;
-      });
-      this._bgm.fade(1, 0, 500);
+      if (this._bgm) {
+        this._bgm.on('fade', () => {
+          this._bgm.unload();
+          this._bgm = false;
+        });
+        this._bgm.fade(1, 0, 500);
+      }
     }
 
     this._dom.fader.classList.add('b_fader--visible');
@@ -195,7 +206,7 @@ class Scene {
       return;
     }
 
-    this._setFinishedSubscriptions(this._scene.keyframes[keyframe].type);
+    this._setFinishedSubscriptions(this._scene.keyframes[keyframe]);
 
     this._handleVariables();
 
@@ -203,6 +214,7 @@ class Scene {
       case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
       case 'character': this._handleTypeCharacter(keyframe); break;
       case 'choose': this._handleTypeChoose(keyframe); break;
+      case 'input': this._handleTypeInput(keyframe); break;
     }
   }
 
@@ -230,15 +242,16 @@ class Scene {
     }
   }
 
-  _setFinishedSubscriptions(type) {
+  _setFinishedSubscriptions(keyframe) {
     this._textFinished = true;
     this._characterFinished = true;
     this._interactionFinished = true;
 
-    switch (type) {
+    switch (keyframe.type) {
       case 'dialog': this._textFinished = false; break;
       case 'character': this._characterFinished = false; break;
-      case 'choose': this._interactionFinished = false; this._textFinished = false; break;
+      case 'choose': this._interactionFinished = false; this._textFinished = !(keyframe.options && keyframe.options.dialog); break;
+      case 'input': this._interactionFinished = false; this._textFinished = !(keyframe.options && keyframe.options.dialog); break;
     }
   }
 
@@ -284,6 +297,13 @@ class Scene {
     D.Choose.showChoose(keyframe.items, keyframe.options);
   }
 
+  _handleTypeInput(keyframe) {
+    keyframe = this._scene.keyframes[keyframe];
+    this._subframeCount = 1;
+
+    D.Input.showInput(keyframe.store, keyframe.options);
+  }
+
   _update() {
     requestAnimationFrame(() => {
       if (this._scene && this._sceneLoaded && this._scene.keyframes[this._keyframe]) {
@@ -311,6 +331,7 @@ class Scene {
     } else if (event.runCount === 60) {
       D.Text.hideTextbox(false);
       D.Choose.hideChoose(false);
+      D.Input.hideInput(false);
       D.Character.hideCharacters();
       this._dom.fader.classList.remove('b_fader--visible');
     }
