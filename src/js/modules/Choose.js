@@ -27,7 +27,7 @@ class Choose {
 
   hideChoose() {
     this._hideChoose();
-    setTimeout(() => { this._dom.choose.innerHTML = ''; }, 60);
+    this._dom.choose.innerHTML = '';
   }
 
   _buildItems(items) {

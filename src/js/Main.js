@@ -15,6 +15,7 @@ class Main {
     window.D = {
       Renderer: null,
       Stage: null,
+      Loader: null,
 
       PixiStore: new PixiStore(),
       SceneStore: new SceneStore(),
@@ -86,18 +87,20 @@ class Main {
   }
 
   _load() {
-    var assetsToLoader = [
+    const assetsToLoader = [
       'static/school_1.jpg',
       'static/school_2.jpg',
       'static/school_3.jpg',
       'static/char_1.json',
-      'static/char_2.json'
+      'static/char_2.json',
+      'static/bgm_1.mp3',
+      'static/bgm_2.mp3'
     ];
 
-    let loader = new PIXI.loaders.Loader();
-    loader.add(assetsToLoader);
-    loader.on('progress', this._loadProgress.bind(this));
-    loader.load(this._loadFinished.bind(this));
+    D.Loader = new PIXI.loaders.Loader();
+    D.Loader.add(assetsToLoader);
+    D.Loader.on('progress', this._loadProgress.bind(this));
+    D.Loader.load(this._loadFinished.bind(this));
   }
 
   _loadProgress(event, resource) {

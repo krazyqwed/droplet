@@ -17,6 +17,8 @@ class Scene {
     this._backgroundClone.position.x = 0;
     this._backgroundClone.position.y = 0;
 
+    this._bgm = false;
+
     this._keyframe = 0;
     this._subframe = 0;
     this._loadedByAction = false;
@@ -125,6 +127,34 @@ class Scene {
     this._background.setTexture(background);
     this._background.alpha = 0.001;
     this._background.position.z = 0;
+
+    if (this._scene.bgm && this._scene.bgm !== true) {
+      if (this._bgm) {
+        this._bgm.on('fade', () => {
+          this._bgm.unload();
+
+          this._bgm = new Howl({
+            src: ['static/' + this._scene.bgm + '.mp3']
+          });
+          this._bgm.play();
+          this._bgm.fade(0, 1, 500);
+        });
+
+        this._bgm.fade(1, 0, 500);
+      } else {
+        this._bgm = new Howl({
+          src: ['static/' + this._scene.bgm + '.mp3']
+        });
+        this._bgm.play();
+        this._bgm.fade(0, 1, 500);
+      }
+    } else if (this._scene.bgm === false) {
+      this._bgm.on('fade', () => {
+        this._bgm.unload();
+        this._bgm = false;
+      });
+      this._bgm.fade(1, 0, 500);
+    }
 
     this._dom.fader.classList.add('b_fader--visible');
 
