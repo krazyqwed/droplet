@@ -15,18 +15,18 @@ class Choose {
     D.InteractionStore.setData('interactionRunning', true);
 
     if (options && options.dialog) {
-      D.Text.showTextBox();
+      D.Text.showTextbox();
       D.Text.loadText(options.dialog, {
         noNext: true
       });
     }
 
     this._buildItems(items);
-    this._showChooseBox();
+    this._showChoose();
   }
 
   hideChoose() {
-    this._hideChooseBox();
+    this._hideChoose();
     setTimeout(() => { this._dom.choose.innerHTML = ''; }, 60);
   }
 
@@ -78,12 +78,17 @@ class Choose {
     });
   }
 
-  _showChooseBox() {
-    this._dom.chooseWrap.classList.add('b_choose-wrap--visible');
+  _showChoose() {
+    this._dom.chooseWrap.classList.remove('b_gui-element--no-fade');
+    this._dom.chooseWrap.classList.add('b_gui-element--visible');
   }
 
-  _hideChooseBox() {
-    this._dom.chooseWrap.classList.remove('b_choose-wrap--visible');
+  _hideChoose(fade = true) {
+    if (fade) {
+      this._dom.chooseWrap.classList.remove('b_gui-element--visible');
+    } else {
+      this._dom.chooseWrap.classList.add('b_gui-element--no-fade');
+    }
   }
 
   _blinkEvent(event) {
@@ -103,7 +108,7 @@ class Choose {
 
       D.InteractionStore.setData('interactionRunning', false);
 
-      this._hideChooseBox();
+      this._hideChoose();
       this._timer.destroy('chose');
     }
   }

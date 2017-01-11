@@ -11,14 +11,14 @@ let sampleStory = {
           id: 1,
           type: 'dialog',
           dialog: [
-            'And the story begins!'
+            'And the story begins...'
           ]
         },
         {
           id: 2,
           type: 'dialog',
           dialog: [
-            'Let\'s load the next scene'
+            'Let\'s load the next scene!'
           ],
           goTo: {
             scene: 2

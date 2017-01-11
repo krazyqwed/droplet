@@ -25,8 +25,11 @@ class Scene {
     this._characterFinished = false;
     this._interactionFinished = false;
 
+    this._dom = {};
+    this._dom.fader = document.querySelector('.js_fader');
+
     this._timer = new Timer();
-    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 60);
+    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
     this._timer.addEvent('background', this._backgroundEvent.bind(this), 1, true, 30);
   }
 
@@ -111,6 +114,8 @@ class Scene {
   }
 
   _prepareScene() {
+    D.SceneStore.setData('fastForward', false);
+
     let background = PIXI.Texture.fromImage('static/' + this._scene.background + '.jpg');
 
     this._backgroundClone.setTexture(this._background.texture);
@@ -121,8 +126,7 @@ class Scene {
     this._background.alpha = 0.001;
     this._background.position.z = 0;
 
-    D.Text.hideTextBox();
-    D.Choose.hideChoose();
+    this._dom.fader.classList.add('b_fader--visible');
 
     this._timer.start('load');
   }
@@ -231,7 +235,7 @@ class Scene {
     keyframe = this._scene.keyframes[keyframe];
     this._subframeCount = keyframe.dialog.length;
 
-    D.Text.showTextBox();
+    D.Text.showTextbox();
     D.Text.loadText(keyframe.dialog[subframe], keyframe.options);
   }
 
@@ -251,7 +255,7 @@ class Scene {
 
   _update() {
     requestAnimationFrame(() => {
-      if (this._scene && this._scene.keyframes[this._keyframe]) {
+      if (this._scene && this._sceneLoaded && this._scene.keyframes[this._keyframe]) {
         if (this._textFinished && this._characterFinished) {
           D.SceneStore.setData('fastForward', true);
 
@@ -261,27 +265,27 @@ class Scene {
         } else if (this._scene.keyframes[this._keyframe].async) {
           this._fastForward();
         }
-
-        this._update();
       }
+
+      this._update();
     });
   }
 
   _loadEvent(event) {
-    if (event.runCount <= 20) {
-      let percent = event.runCount / 20;
-      this._backgroundClone.alpha = 1 - percent + 0.001;
-    } else if (event.runCount > 40) {
-      let percent = (event.runCount - 40) / 20;
-      this._background.alpha = percent + 0.001;
-    }
+    if (event.runCount === 30) {
+      D.Text.hideTextbox(false);
+      D.Choose.hideChoose(false);
+      D.Character.hideCharacters();
 
-    if (event.over) {
       this._background.alpha = 1;
       this._background.position.z = 1;
       this._backgroundClone.alpha = 0.001;
       this._backgroundClone.position.z = 0;
+    } else if (event.runCount === 60) {
+      this._dom.fader.classList.remove('b_fader--visible');
+    }
 
+    if (event.over) {
       this._sceneLoaded = true;
       this._loadKeyframe(this._keyframe, 0);
       this._timer.destroy('load');

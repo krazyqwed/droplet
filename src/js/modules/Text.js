@@ -37,12 +37,18 @@ class Text {
     this._setText(text, options);
   }
 
-  showTextBox() {
-    this._dom.textBoxWrap.classList.add('b_textbox-wrap--visible');
+  showTextbox() {
+    this._dom.textBoxWrap.classList.remove('b_gui-element--no-fade');
+    this._dom.textBoxWrap.classList.add('b_gui-element--visible');
   }
 
-  hideTextBox() {
-    this._dom.textBoxWrap.classList.remove('b_textbox-wrap--visible');
+  hideTextbox(fade = true) {
+    if (fade) {
+      this._dom.textBoxWrap.classList.remove('b_gui-element--visible');
+    } else {
+      this._dom.textBoxWrap.classList.add('b_gui-element--no-fade');
+    }
+
     this._writeReset();
   }
 
@@ -146,8 +152,11 @@ class Text {
 
       if (options.character !== 'player') {
         const character = D.Character.loadCharacterById(options.character);
-        this._dom.speaker.style.backgroundColor = character.getData().color;
+        const characterData = character.getData();
+        this._dom.speaker.innerHTML = characterData.nickname;
+        this._dom.speaker.style.backgroundColor = characterData.color;
       } else {
+        this._dom.speaker.innerHTML = 'Player';
         this._dom.speaker.style.backgroundColor = '#56b30c';
       }
     } else {
