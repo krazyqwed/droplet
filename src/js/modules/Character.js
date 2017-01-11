@@ -194,19 +194,18 @@ class Actor {
   }
 
   _showEvent(event) {
-    let character = this._sprite;
     let position = event.params.position;
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
 
-    character.alpha = percent + 0.001;
-    character.position.x = newPosition.x;
-    character.position.y = newPosition.y;
+    this._sprite.alpha = percent + 0.001;
+    this._sprite.position.x = newPosition.x;
+    this._sprite.position.y = newPosition.y;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
-      character.alpha = 1;
-      character.position.x = position.dest_x;
-      character.position.y = position.dest_y;
+      this._sprite.alpha = 1;
+      this._sprite.position.x = position.dest_x;
+      this._sprite.position.y = position.dest_y;
 
       this._animationRunning = false;
       this._timer.destroy('show');
@@ -214,20 +213,19 @@ class Actor {
   }
 
   _hideEvent(event) {
-    let character = this._sprite;
     let position = event.params.position;
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
 
-    character.alpha = 1 - percent + 0.001;
-    character.position.x = newPosition.x;
-    character.position.y = newPosition.y;
+    this._sprite.alpha = 1 - percent + 0.001;
+    this._sprite.position.x = newPosition.x;
+    this._sprite.position.y = newPosition.y;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
-      character.alpha = 0.001;
-      character.position.x = position.dest_x;
-      character.position.y = position.dest_y;
-      character.visible = false;
+      this._sprite.alpha = 0.001;
+      this._sprite.position.x = position.dest_x;
+      this._sprite.position.y = position.dest_y;
+      this._sprite.visible = false;
 
       this._animationRunning = false;
       this._timer.destroy('hide');
@@ -235,17 +233,16 @@ class Actor {
   }
 
   _moveEvent(event) {
-    let character = this._sprite;
     let position = event.params.position;
     let percent = event.runCount / event.runLimit;
     let newPosition = this._calculatePositionByPercent(position, percent);
 
-    character.position.x = newPosition.x;
-    character.position.y = newPosition.y;
+    this._sprite.position.x = newPosition.x;
+    this._sprite.position.y = newPosition.y;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
-      character.position.x = position.dest_x;
-      character.position.y = position.dest_y;
+      this._sprite.position.x = position.dest_x;
+      this._sprite.position.y = position.dest_y;
 
       this._animationRunning = false;
       this._timer.destroy('move');
@@ -253,17 +250,15 @@ class Actor {
   }
 
   _poseEvent(event) {
-    let character = this._sprite;
-    let clone = this._clone;
     let percent = event.runCount / event.runLimit;
 
-    character.alpha = 1 - percent + 0.001;
-    clone.alpha = percent;
+    this._sprite.alpha = 1 - percent + 0.001;
+    this._clone.alpha = percent;
 
     if (event.over || (this._fastForwarded && !event.params.async)) {
-      character.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
-      character.alpha = 1;
-      clone.alpha = 0 + 0.001;
+      this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+      this._sprite.alpha = 1;
+      this._clone.alpha = 0.001;
 
       this._animationRunning = false;
       this._timer.destroy('pose');

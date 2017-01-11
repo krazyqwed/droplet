@@ -1,208 +1,22 @@
-let sampleScene = {
-  id: 1,
-  description: 'Lorem ipsum dolor sit amet.',
-  default_background: 'school_2',
-  keyframes: [
-    {
-      id: 14,
-      type: 'choose',
-      items: [
-        {
-          text: 'Set the variable to <d-text d-color="#0f0">1</d-text>',
-          variable: [{
-            name: 'test',
-            value: '1'
-          }],
-          goTo: {
-            keyframe: 15
-          }
-        },
-        {
-          text: 'Set the variable to <d-text d-color="#f00">-1</d-text>',
-          variable: [{
-            name: 'test',
-            value: '-1'
-          }],
-          goTo: {
-            keyframe: 16
-          }
-        },
-        {
-          text: 'Do nothing...',
-          goTo: {
-            keyframe: 17
-          }
-        }
-      ],
-      options: {
-        dialog: 'Select an answer...'
-      }
-    },
-    {
-      id: 15,
-      type: 'dialog',
-      condition: 'test = 1',
-      dialog: [
-        'Oh, you\'ve just set a variable to <d-text d-var="test" d-color="#0f0"></d-text>'
-      ]
-    },
-    {
-      id: 16,
-      type: 'dialog',
-      condition: 'test = -1',
-      dialog: [
-        'Why you so negative? Your variable is <d-text d-var="test" d-color="#f00"></d-text> now<d-text d-speed="20">...</d-text>'
-      ]
-    },
-    {
-      id: 17,
-      type: 'dialog',
-      condition: 'test = 0',
-      dialog: [
-        'You are L-A-Z-Y!'
-      ]
-    },
-    {
-      id: 1,
-      type: 'dialog',
-      dialog: [
-        'Your variable is <d-text d-var="test" d-color="#f80"></d-text>',
-        'Your nested variable is <d-text d-var="test_group.inner_group.inner" d-color="#f80"></d-text>'
-      ]
-    },
-    {
-      id: 5,
-      type: 'character',
-      action: 'show',
-      options: {
-        id: 2,
-        pose: 1,
-        position: [40, 'bottom'],
-        from: [-5, 0]
-      },
-      async: true
-    },
-    {
-      id: 2,
-      type: 'dialog',
-      variable: [{
-        name: 'test_group.inner_group.inner',
-        value: '+10.5'
-      }],
-      dialog: [
-        'Great! You\'ve set a variable! [test_group.inner_group.inner => <d-text d-var="test_group.inner_group.inner" d-color="#f80"></d-text>]'
-      ]
-    },
-    {
-      id: 4,
-      type: 'character',
-      action: 'pose',
-      options: {
-        id: 2,
-        pose: 8
-      },
-      async: true
-    },
-    {
-      id: 3,
-      type: 'character',
-      action: 'show',
-      options: {
-        id: 1,
-        pose: 1,
-        duration: 120,
-        position: [60, 'bottom'],
-        from: [5, 0]
-      },
-      fastForward: true
-    },
-    {
-      id: 7,
-      type: 'character',
-      action: 'move',
-      options: {
-        id: 1,
-        relative: true,
-        position: [10, 0]
-      },
-      async: true
-    },
-    {
-      id: 8,
-      type: 'dialog',
-      dialog: [
-        'What\'s with that pose?'
-      ],
-      options: {
-        character: 1
-      }
-    },
-    {
-      id: 6,
-      type: 'dialog',
-      dialog: [
-        'Tee-hee'
-      ],
-      options: {
-        character: 2
-      }
-    },
-    {
-      id: 10,
-      type: 'dialog',
-      dialog: [
-        'Test string for <d-text d-color="#f00">formatting.</d-text>',
-        'Test string to demonstrate <d-text d-speed="10">[speed]</d-text> change inside string.',
-        'Test string to demonstrate entities &gt;.&lt;'
-      ],
-      options: {
-        character: 'player'
-      }
-    },
-    {
-      id: 9,
-      type: 'character',
-      action: 'move',
-      options: {
-        id: 2,
-        position: [30, 'bottom']
-      },
-      fastForward: true
-    },
-    {
-      id: 12,
-      type: 'character',
-      action: 'move',
-      options: {
-        id: 2,
-        relative: true,
-        position: [-5, 0]
-      },
-      fastForward: true
-    },
-    {
-      id: 13,
-      type: 'character',
-      action: 'hide',
-      options: {
-        id: 2,
-        relative: true,
-        position: [-10, 0]
-      },
-      fastForward: true
-    },
-    {
-      id: 11,
-      type: 'dialog',
-      dialog: [
-        'Thanks for watching!'
-      ]
-    }
-  ]
-};
+import Timer from './Timer';
 
 class Scene {
   constructor() {
+    this._scene = false;
+    this._sceneLoaded = false;
+
+    this._background = new PIXI.Sprite();
+    this._background.anchor.x = 0;
+    this._background.anchor.y = 0;
+    this._background.position.x = 0;
+    this._background.position.y = 0;
+
+    this._backgroundClone = new PIXI.Sprite();
+    this._backgroundClone.anchor.x = 0;
+    this._backgroundClone.anchor.y = 0;
+    this._backgroundClone.position.x = 0;
+    this._backgroundClone.position.y = 0;
+
     this._keyframe = 0;
     this._subframe = 0;
     this._loadedByAction = false;
@@ -210,6 +24,10 @@ class Scene {
     this._textFinished = false;
     this._characterFinished = false;
     this._interactionFinished = false;
+
+    this._timer = new Timer();
+    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 60);
+    this._timer.addEvent('background', this._backgroundEvent.bind(this), 1, true, 30);
   }
 
   init() {
@@ -234,15 +52,24 @@ class Scene {
       }
     });
 
-    this._prepareScene();
-    this._loadKeyframe(0, 0);
+    D.Stage.addChild(this._background);
+    D.Stage.addChild(this._backgroundClone);
+
     this._update();
+  }
+
+  loadScene(scene, keyframe) {
+    this._scene = scene;
+    this._sceneLoaded = false;
+    this._keyframe = keyframe;
+
+    this._prepareScene();
   }
 
   loadKeyframeById(keyframeId) {
     this._loadedByAction = true;
 
-    sampleScene.keyframes.some((keyframe, i) => {
+    this._scene.keyframes.some((keyframe, i) => {
       if (keyframeId === keyframe.id) {
         D.SceneStore.setData('fastForward', false);
 
@@ -259,12 +86,6 @@ class Scene {
   }
 
   _input() {
-    window.addEventListener('keydown', (event) => {
-      switch (event.which) {
-        case 32: event.preventDefault(); this._fastForward(); break;
-      }
-    }, false);
-
     function scrollEvent(event) {
       const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 
@@ -281,22 +102,46 @@ class Scene {
       event.preventDefault();
       this._fastForward();
     }, false);
+
+    window.addEventListener('keydown', (event) => {
+      switch (event.which) {
+        case 32: event.preventDefault(); this._fastForward(); break;
+      }
+    }, false);
   }
 
   _prepareScene() {
-    let landscapeTexture = PIXI.Texture.fromImage('static/school_1.jpg');
-    let background = new PIXI.Sprite(landscapeTexture);
-    background.anchor.x = 0;
-    background.anchor.y = 0;
-    background.position.x = 0;
-    background.position.y = 0;
+    let background = PIXI.Texture.fromImage('static/' + this._scene.background + '.jpg');
 
-    D.Stage.addChild(background);
+    this._backgroundClone.setTexture(this._background.texture);
+    this._backgroundClone.alpha = 1;
+    this._backgroundClone.position.z = 1;
+
+    this._background.setTexture(background);
+    this._background.alpha = 0.001;
+    this._background.position.z = 0;
+
+    D.Text.hideTextBox();
+    D.Choose.hideChoose();
+
+    this._timer.start('load');
   }
 
   _fastForward() {
-    if (sampleScene.keyframes[this._keyframe] && !this._loadedByAction) {
-      if (!sampleScene.keyframes[this._keyframe].async) {
+    if (!this._sceneLoaded) {
+      D.SceneStore.setData('fastForward', false);
+      return;
+    }
+
+    if (this._scene.keyframes[this._keyframe] && !this._loadedByAction) {
+      if (this._scene.keyframes[this._keyframe].goTo) {
+        if (this._scene.keyframes[this._keyframe].goTo.scene) {
+          D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+          return;
+        }
+      }
+
+      if (!this._scene.keyframes[this._keyframe].async) {
         D.SceneStore.setData('skipAsync', Math.random());
       }
 
@@ -311,15 +156,15 @@ class Scene {
   }
 
   _loadKeyframe(keyframe, subframe) {
-    if (!sampleScene.keyframes[keyframe] || this._handleConditions()) {
+    if (!this._scene.keyframes[keyframe] || this._handleConditions()) {
       return;
     }
 
-    this._setFinishedSubscriptions(sampleScene.keyframes[keyframe].type);
+    this._setFinishedSubscriptions(this._scene.keyframes[keyframe].type);
 
     this._handleVariables();
 
-    switch (sampleScene.keyframes[keyframe].type) {
+    switch (this._scene.keyframes[keyframe].type) {
       case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
       case 'character': this._handleTypeCharacter(keyframe); break;
       case 'choose': this._handleTypeChoose(keyframe); break;
@@ -363,7 +208,7 @@ class Scene {
   }
 
   _handleConditions() {
-    if (sampleScene.keyframes[this._keyframe].condition && !D.Variable.if(sampleScene.keyframes[this._keyframe].condition)) {
+    if (this._scene.keyframes[this._keyframe].condition && !D.Variable.if(this._scene.keyframes[this._keyframe].condition)) {
       this._loadNextFrame();
 
       return true;
@@ -373,8 +218,8 @@ class Scene {
   }
 
   _handleVariables() {
-    if (sampleScene.keyframes[this._keyframe].variable) {
-      const variables = sampleScene.keyframes[this._keyframe].variable;
+    if (this._scene.keyframes[this._keyframe].variable) {
+      const variables = this._scene.keyframes[this._keyframe].variable;
 
       variables.forEach((variable) => {
         D.Variable.set(variable.name, variable.value);
@@ -383,7 +228,7 @@ class Scene {
   }
 
   _handleTypeDialog(keyframe, subframe) {
-    keyframe = sampleScene.keyframes[keyframe];
+    keyframe = this._scene.keyframes[keyframe];
     this._subframeCount = keyframe.dialog.length;
 
     D.Text.showTextBox();
@@ -391,14 +236,14 @@ class Scene {
   }
 
   _handleTypeCharacter(keyframe) {
-    keyframe = sampleScene.keyframes[keyframe];
+    keyframe = this._scene.keyframes[keyframe];
     this._subframeCount = 1;
 
     D.Character.setAction(keyframe.action, keyframe.options, keyframe.async);
   }
 
   _handleTypeChoose(keyframe) {
-    keyframe = sampleScene.keyframes[keyframe];
+    keyframe = this._scene.keyframes[keyframe];
     this._subframeCount = 1;
 
     D.Choose.showChoose(keyframe.items, keyframe.options);
@@ -406,20 +251,57 @@ class Scene {
 
   _update() {
     requestAnimationFrame(() => {
-      if (sampleScene.keyframes[this._keyframe]) {
+      if (this._scene && this._scene.keyframes[this._keyframe]) {
         if (this._textFinished && this._characterFinished) {
           D.SceneStore.setData('fastForward', true);
 
-          if (sampleScene.keyframes[this._keyframe].fastForward) {
+          if (this._scene.keyframes[this._keyframe].fastForward) {
             this._fastForward();
           }
-        } else if (sampleScene.keyframes[this._keyframe].async) {
+        } else if (this._scene.keyframes[this._keyframe].async) {
           this._fastForward();
         }
 
         this._update();
       }
     });
+  }
+
+  _loadEvent(event) {
+    if (event.runCount <= 20) {
+      let percent = event.runCount / 20;
+      this._backgroundClone.alpha = 1 - percent + 0.001;
+    } else if (event.runCount > 40) {
+      let percent = (event.runCount - 40) / 20;
+      this._background.alpha = percent + 0.001;
+    }
+
+    if (event.over) {
+      this._background.alpha = 1;
+      this._background.position.z = 1;
+      this._backgroundClone.alpha = 0.001;
+      this._backgroundClone.position.z = 0;
+
+      this._sceneLoaded = true;
+      this._loadKeyframe(this._keyframe, 0);
+      this._timer.destroy('load');
+    }
+  }
+
+  _backgroundEvent(event) {
+    let percent = event.runCount / event.runLimit;
+
+    this._background.alpha = percent + 0.001;
+    this._backgroundClone.alpha = 1 - percent + 0.001;
+
+    if (event.over) {
+      this._background.alpha = 1;
+      this._background.position.z = 1;
+      this._backgroundClone.alpha = 0.001;
+      this._backgroundClone.position.z = 0;
+
+      this._timer.destroy('background');
+    }
   }
 }
 

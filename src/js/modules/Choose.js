@@ -25,6 +25,11 @@ class Choose {
     this._showChooseBox();
   }
 
+  hideChoose() {
+    this._hideChooseBox();
+    setTimeout(() => { this._dom.choose.innerHTML = ''; }, 60);
+  }
+
   _buildItems(items) {
     items.forEach((item) => {
       let itemElement = document.createElement('div');

@@ -1,4 +1,5 @@
 import Variable from './modules/Variable';
+import Story from './modules/Story';
 import Scene from './modules/Scene';
 import Text from './modules/Text';
 import Character from './modules/Character';
@@ -22,6 +23,7 @@ class Main {
       InteractionStore: new InteractionStore(),
 
       Variable: Variable,
+      Story: Story,
       Scene: Scene,
       Text: Text,
       Character: Character,
@@ -106,6 +108,8 @@ class Main {
     D.Text.init();
     D.Character.init();
     D.Scene.init();
+
+    D.Story.start();
 
     this._update();
   }
