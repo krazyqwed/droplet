@@ -146,8 +146,12 @@ canvas {
 
 d-text {
   @for $i from 1 through 5 {
-    .b_textbox:not([running]) &[d-blink="#{$i}"] {
+    &[d-blink="#{$i}"] {
       animation: blink $i * 0.2s ease-out infinite;
+    }
+
+    .b_textbox[running] &[d-blink="#{$i}"] {
+      animation: none;
     }
   }
 

@@ -103,7 +103,11 @@ class Choose {
       itemElement.classList.remove('b_choose__item--blink');
 
       if (item.goTo) {
-        D.Scene.loadKeyframeById(item.goTo.keyframe);
+        if (item.goTo.scene) {
+          D.Story.loadScene(item.goTo.scene);
+        } else {
+          D.Scene.loadKeyframeById(item.goTo.keyframe);
+        }
       }
 
       D.InteractionStore.setData('interactionRunning', false);

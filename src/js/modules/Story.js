@@ -56,6 +56,12 @@ let sampleStory = {
               }
             },
             {
+              text: '<d-text d-blink="4">Back to previous scene</d-text>',
+              goTo: {
+                scene: 1
+              }
+            },
+            {
               text: 'Do nothing...',
               goTo: {
                 keyframe: 17
