@@ -60,6 +60,12 @@ canvas {
     left: auto;
     right: -10px;
   }
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
 }
 
 .b_textbox-wrap {
@@ -156,17 +162,17 @@ d-text {
 .b_speaker {
   @include stripe;
 
-  bottom: 292px;
-  box-shadow: inset 0 0 0px 2px rgba(0,0,0,0.2);
+  bottom: 272px;
+  box-shadow: inset 0 0 0px 2px rgba(#000,.2);
   color: #fff;
   filter: drop-shadow(4px 4px 0 rgba(#000,.4));
   font-size: 32px;
   font-weight: bold;
-  height: 34px;
-  left: 12px;
-  line-height: 34px;
+  height: 54px;
+  left: 20px;
+  line-height: 54px;
   outline: 2px solid #fff;
-  padding: 10px 20px;
+  padding: 0 20px;
   position: absolute;
   text-align: center;
   text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
@@ -200,6 +206,7 @@ d-text {
   @include stripe;
 
   border: 2px solid rgba(#000,.4);
+  box-shadow: 8px 8px 0 0 rgba(#000,.4);
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 8px;
