@@ -159,7 +159,7 @@ class Scene {
       }
     }
 
-    this._dom.fader.classList.add('b_fader--visible');
+    this._dom.fader.classList.add('d_fader--visible');
 
     this._timer.start('load');
   }
@@ -333,7 +333,7 @@ class Scene {
       D.Choose.hideChoose(false);
       D.Input.hideInput(false);
       D.Character.hideCharacters();
-      this._dom.fader.classList.remove('b_fader--visible');
+      this._dom.fader.classList.remove('d_fader--visible');
     }
 
     if (event.over) {

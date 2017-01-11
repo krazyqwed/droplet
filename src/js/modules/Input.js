@@ -53,26 +53,26 @@ class Input {
   }
 
   _showInput() {
-    this._dom.inputWrap.classList.remove('b_gui-element--no-fade');
-    this._dom.inputWrap.classList.add('b_gui-element--visible');
+    this._dom.inputWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.inputWrap.classList.add('d_gui-element--visible');
     this._dom.input.focus();
   }
 
   _hideInput(fade = true) {
     if (fade) {
-      this._dom.inputWrap.classList.remove('b_gui-element--visible');
+      this._dom.inputWrap.classList.remove('d_gui-element--visible');
     } else {
-      this._dom.inputWrap.classList.add('b_gui-element--no-fade');
+      this._dom.inputWrap.classList.add('d_gui-element--no-fade');
     }
   }
 
   _inputEvent(event) {
     if (event.runCount === 1) {
-      this._dom.input.classList.add('b_input--success');
+      this._dom.input.classList.add('d_input--success');
     }
 
     if (event.over) {
-      this._dom.input.classList.remove('b_input--success');
+      this._dom.input.classList.remove('d_input--success');
 
       D.InteractionStore.setData('interactionRunning', false);
 

@@ -33,7 +33,7 @@ class Choose {
   _buildItems(items) {
     items.forEach((item) => {
       let itemElement = document.createElement('div');
-      itemElement.className = 'b_choose__item';
+      itemElement.className = 'd_choose__item';
       itemElement.innerHTML = item.text;
       itemElement.addEventListener('mouseenter', this._setActive.bind(this, itemElement));
       itemElement.addEventListener('mouseleave', this._unsetActive.bind(this, itemElement));
@@ -48,7 +48,7 @@ class Choose {
       return;
     }
 
-    item.classList.add('b_choose__item--active');
+    item.classList.add('d_choose__item--active');
   }
 
   _unsetActive(item) {
@@ -56,7 +56,7 @@ class Choose {
       return;
     }
 
-    item.classList.remove('b_choose__item--active');
+    item.classList.remove('d_choose__item--active');
   }
 
   _select(item, elem) {
@@ -79,15 +79,15 @@ class Choose {
   }
 
   _showChoose() {
-    this._dom.chooseWrap.classList.remove('b_gui-element--no-fade');
-    this._dom.chooseWrap.classList.add('b_gui-element--visible');
+    this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.chooseWrap.classList.add('d_gui-element--visible');
   }
 
   _hideChoose(fade = true) {
     if (fade) {
-      this._dom.chooseWrap.classList.remove('b_gui-element--visible');
+      this._dom.chooseWrap.classList.remove('d_gui-element--visible');
     } else {
-      this._dom.chooseWrap.classList.add('b_gui-element--no-fade');
+      this._dom.chooseWrap.classList.add('d_gui-element--no-fade');
     }
   }
 
@@ -96,11 +96,11 @@ class Choose {
     const itemElement = event.params.itemElement;
 
     if (event.runCount === 1) {
-      itemElement.classList.add('b_choose__item--blink');
+      itemElement.classList.add('d_choose__item--blink');
     }
 
     if (event.over) {
-      itemElement.classList.remove('b_choose__item--blink');
+      itemElement.classList.remove('d_choose__item--blink');
 
       if (item.goTo) {
         if (item.goTo.scene) {

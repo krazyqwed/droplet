@@ -37,7 +37,7 @@ canvas {
   vertical-align: top;
 }
 
-.b_main-wrapper {
+.d_main-wrapper {
   bottom: 0;
   left: 0;
   margin: auto;
@@ -68,7 +68,17 @@ canvas {
   }
 }
 
-.b_gui-element {
+.d_version {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  left: 20px;
+  position: absolute;
+  text-shadow: 2px 2px 0 #000, 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
+  top: 20px;
+}
+
+.d_gui-element {
   opacity: 0;
   transition: opacity .3s linear;
 
@@ -81,7 +91,7 @@ canvas {
   }
 }
 
-.b_textbox-wrap {
+.d_textbox-wrap {
   bottom: 0;
   height: 1080px;
   left: 0;
@@ -94,7 +104,7 @@ canvas {
   width: 1920px;
 }
 
-.b_textbox {
+.d_textbox {
   @include stripe;
 
   border-top: 2px solid rgba(#000,.4);
@@ -131,7 +141,7 @@ canvas {
   }
 }
 
-.b_textbox-helper {
+.d_textbox-helper {
   height: auto;
   visibility: hidden;
   font-size: 38px;
@@ -150,7 +160,7 @@ d-text {
       animation: blink $i * 0.2s ease-out infinite;
     }
 
-    .b_textbox[running] &[d-blink="#{$i}"] {
+    .d_textbox[running] &[d-blink="#{$i}"] {
       animation: none;
     }
   }
@@ -170,7 +180,7 @@ d-text {
   }
 }
 
-.b_speaker {
+.d_speaker {
   @include stripe;
 
   bottom: 272px;
@@ -190,7 +200,7 @@ d-text {
   word-wrap: break-word;
 }
 
-.b_choose-wrap {
+.d_choose-wrap {
   align-items: center;
   bottom: 0;
   display: flex;
@@ -207,7 +217,7 @@ d-text {
   width: 1920px;
 }
 
-.b_choose {
+.d_choose {
   @include stripe;
 
   border: 2px solid rgba(#000,.4);
@@ -248,7 +258,7 @@ d-text {
   }
 }
 
-.b_input-wrap {
+.d_input-wrap {
   align-items: center;
   bottom: 0;
   display: flex;
@@ -264,12 +274,12 @@ d-text {
   transform-origin: left center;
   width: 1920px;
 
-  .b_gui-element--visible .b_input {
+  .d_gui-element--visible .d_input {
     pointer-events: all;
   }
 }
 
-.b_input {
+.d_input {
   @include stripe;
 
   border: 2px solid rgba(#000,.4);
@@ -292,7 +302,7 @@ d-text {
   }
 }
 
-.b_fader {
+.d_fader {
   background: #000;
   bottom: 0;
   left: 0;

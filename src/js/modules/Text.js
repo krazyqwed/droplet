@@ -38,15 +38,15 @@ class Text {
   }
 
   showTextbox() {
-    this._dom.textBoxWrap.classList.remove('b_gui-element--no-fade');
-    this._dom.textBoxWrap.classList.add('b_gui-element--visible');
+    this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.textBoxWrap.classList.add('d_gui-element--visible');
   }
 
   hideTextbox(fade = true) {
     if (fade) {
-      this._dom.textBoxWrap.classList.remove('b_gui-element--visible');
+      this._dom.textBoxWrap.classList.remove('d_gui-element--visible');
     } else {
-      this._dom.textBoxWrap.classList.add('b_gui-element--no-fade');
+      this._dom.textBoxWrap.classList.add('d_gui-element--no-fade');
     }
 
     this._writeReset();
@@ -69,7 +69,7 @@ class Text {
     this._text = text;
 
     let textContainer = document.createElement('div');
-    textContainer.classList.add('b_textbox-helper');
+    textContainer.classList.add('d_textbox-helper');
     textContainer.innerHTML = this._text;
 
     if (options && options.noNext) {
