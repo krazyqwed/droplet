@@ -90,7 +90,7 @@ class Actor {
     let position;
 
     switch (action) {
-      case 'show': position = this._calculatePosition(options); this._showCharacter(); break;
+      case 'show': position = this._calculatePosition(options); this._showCharacter(options); break;
       case 'hide': position = this._calculatePositionFrom(options); break;
       case 'move': position = this._calculatePositionFrom(options); break;
       case 'pose': this._poseCharacter(options); break;
@@ -112,7 +112,10 @@ class Actor {
     this._clone.visible = false;
   }
 
-  _showCharacter() {
+  _showCharacter(options) {
+    this._pose = options.pose;
+    this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+
     this._sprite.visible = true;
     this._clone.visible = true;
   }
@@ -126,7 +129,7 @@ class Actor {
     this._clone.position.z = 3;
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
-    this._clone.setTexture(PIXI.Texture.fromFrame(this._image + '_' + options.pose));
+    this._clone.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
   }
 
   _calculatePosition(options) {
