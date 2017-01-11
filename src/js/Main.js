@@ -37,6 +37,9 @@ class Main {
 
     this._stageChildrenCount = 0;
 
+    this._dom = {};
+    this._dom.mainWarpper = document.querySelector('.js_main_wrapper');
+
     this._init();
   }
 
@@ -47,7 +50,8 @@ class Main {
       resolution: 1
     });
     D.Renderer.view.style.display = 'none';
-    document.body.insertBefore(D.Renderer.view, document.querySelector('.js_main_wrapper'));
+
+    document.body.insertBefore(D.Renderer.view, this._dom.mainWarpper);
 
     D.Stage = new PIXI.Container();
 
@@ -57,9 +61,8 @@ class Main {
 
   _resize() {
     const canvas = D.Renderer.view;
-    const wrapper = document.querySelector('.js_main_wrapper');
-    const wWidth = wrapper.offsetWidth;
-    const wHeight = wrapper.offsetHeight;
+    const wWidth = this._dom.mainWarpper.offsetWidth;
+    const wHeight = this._dom.mainWarpper.offsetHeight;
     let scale = 1;
     let scaleX = wWidth / 1920;
     let scaleY = wHeight / 1080;
@@ -67,28 +70,30 @@ class Main {
     if (scaleX > scaleY) {
       scale = wHeight / 1080;
 
-      wrapper.style.width = parseInt(1920 * scaleY) + 'px';
-      wrapper.style.height = wHeight + 'px';
+      this._dom.mainWarpper.style.width = parseInt(1920 * scaleY) + 'px';
+      this._dom.mainWarpper.style.height = wHeight + 'px';
     } else {
       scale = wWidth / 1920;
 
-      wrapper.style.width = wWidth + 'px';
-      wrapper.style.height = parseInt(1080 * scaleX) + 'px';
+      this._dom.mainWarpper.style.width = wWidth + 'px';
+      this._dom.mainWarpper.style.height = parseInt(1080 * scaleX) + 'px';
     }
 
-    const guiElements = wrapper.querySelectorAll('.js_gui_element');
+    const guiElements = this._dom.mainWarpper.querySelectorAll('.js_gui_element');
 
     [].forEach.call(guiElements, (elem) => {
       elem.style.transform = 'scale(' + scale + ')';
     });
-    wrapper.style.position = 'relative';
+    this._dom.mainWarpper.style.position = 'relative';
 
     canvas.style.transform = 'scale(' + scale + ')';
-    canvas.style.marginLeft = wrapper.offsetLeft + 'px';
+    canvas.style.marginLeft = this._dom.mainWarpper.offsetLeft + 'px';
     canvas.style.display = 'block';
   }
 
   _load() {
+    this._dom.mainWarpper.style.display = 'none';
+
     const assetsToLoader = [
       'static/school_1.jpg',
       'static/school_2.jpg',
@@ -110,6 +115,8 @@ class Main {
   }
 
   _loadFinished() {
+    this._dom.mainWarpper.style.removeProperty('display');
+
     D.Text.init();
     D.Character.init();
     D.Scene.init();

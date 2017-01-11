@@ -10,6 +10,7 @@ html {
 
 body {
   background: #000;
+  display: flex;
   font-family: 'Arial', sans-serif;
   height: 100%;
   margin: 0;
@@ -39,6 +40,7 @@ canvas {
 
 .d_main-wrapper {
   bottom: 0;
+  display: flex;
   left: 0;
   margin: auto;
   position: absolute;
@@ -72,10 +74,11 @@ canvas {
   color: #fff;
   font-size: 18px;
   font-weight: bold;
-  left: 20px;
   position: absolute;
+  right: 20px;
   text-shadow: 2px 2px 0 #000, 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
   top: 20px;
+  z-index: 2;
 }
 
 .d_gui-element {
