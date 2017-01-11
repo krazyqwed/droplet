@@ -52,13 +52,13 @@ class Actor {
     this._sprite.anchor.y = 0.5;
     this._sprite.position.x = 0;
     this._sprite.position.y = 0;
-    this._sprite.position.z = 1;
+    this._sprite.position.z = 3;
     this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
     D.Stage.addChild(this._sprite);
 
     this._clone.anchor.x = 0.5;
     this._clone.anchor.y = 0.5;
-    this._clone.position.z = 1;
+    this._clone.position.z = 3;
     D.Stage.addChild(this._clone);
 
     this._update();
@@ -120,10 +120,10 @@ class Actor {
   _poseCharacter(options) {
     this._pose = options.pose;
 
-    this._sprite.position.z = 0;
+    this._sprite.position.z = 2;
 
     this._clone.alpha = 0;
-    this._clone.position.z = 1;
+    this._clone.position.z = 3;
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
     this._clone.setTexture(PIXI.Texture.fromFrame(this._image + '_' + options.pose));
@@ -267,9 +267,9 @@ class Actor {
     if (event.over || (this._fastForwarded && !event.params.async)) {
       this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
       this._sprite.alpha = 1;
-      this._sprite.position.z = 1;
+      this._sprite.position.z = 3;
       this._clone.alpha = 0.001;
-      this._clone.position.z = 0;
+      this._clone.position.z = 2;
 
       this._animationRunning = false;
       this._timer.destroy('pose');

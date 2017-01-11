@@ -304,15 +304,14 @@ class Scene {
 
   _loadEvent(event) {
     if (event.runCount === 30) {
-      D.Text.hideTextbox(false);
-      D.Choose.hideChoose(false);
-      D.Character.hideCharacters();
-
       this._background.alpha = 1;
       this._background.position.z = 1;
       this._backgroundClone.alpha = 0.001;
       this._backgroundClone.position.z = 0;
     } else if (event.runCount === 60) {
+      D.Text.hideTextbox(false);
+      D.Choose.hideChoose(false);
+      D.Character.hideCharacters();
       this._dom.fader.classList.remove('b_fader--visible');
     }
 
