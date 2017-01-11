@@ -133,20 +133,12 @@ class Scene {
         this._bgm.on('fade', () => {
           this._bgm.unload();
 
-          this._bgm = new Howl({
-            src: ['static/' + this._scene.bgm + '.mp3']
-          });
-          this._bgm.play();
-          this._bgm.fade(0, 1, 500);
+          this._createMusic(this._scene.bgm);
         });
 
         this._bgm.fade(1, 0, 500);
       } else {
-        this._bgm = new Howl({
-          src: ['static/' + this._scene.bgm + '.mp3']
-        });
-        this._bgm.play();
-        this._bgm.fade(0, 1, 500);
+        this._createMusic(this._scene.bgm);
       }
     } else if (this._scene.bgm === false) {
       this._bgm.on('fade', () => {
@@ -159,6 +151,15 @@ class Scene {
     this._dom.fader.classList.add('b_fader--visible');
 
     this._timer.start('load');
+  }
+
+  _createMusic(bgm) {
+    this._bgm = new Howl({
+      src: ['static/' + bgm + '.mp3'],
+      loop: true
+    });
+    this._bgm.play();
+    this._bgm.fade(0, 1, 500);
   }
 
   _fastForward() {
