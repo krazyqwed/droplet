@@ -68,7 +68,8 @@ class Choose {
     }
 
     this._timer.start('chose', {
-      item: elem
+      item: item,
+      itemElement: elem
     });
   }
 
@@ -82,14 +83,21 @@ class Choose {
 
   _blinkEvent(event) {
     const item = event.params.item;
+    const itemElement = event.params.itemElement;
 
     if (event.runCount === 1) {
-      item.classList.add('b_choose__item--blink');
+      itemElement.classList.add('b_choose__item--blink');
     }
 
     if (event.over) {
-      item.classList.remove('b_choose__item--blink');
+      itemElement.classList.remove('b_choose__item--blink');
+
+      if (item.goTo) {
+        D.Scene.loadKeyframeById(item.goTo.keyframe);
+      }
+
       D.InteractionStore.setData('interactionRunning', false);
+
       this._hideChooseBox();
       this._timer.destroy('chose');
     }

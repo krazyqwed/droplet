@@ -1,4 +1,5 @@
 let sampleScene = {
+  id: 1,
   description: 'Lorem ipsum dolor sit amet.',
   default_background: 'school_2',
   keyframes: [
@@ -13,8 +14,7 @@ let sampleScene = {
             value: '1'
           }],
           goTo: {
-            keyframe: 15,
-            subframe: 0 //optional
+            keyframe: 15
           }
         },
         {
@@ -24,12 +24,14 @@ let sampleScene = {
             value: '-1'
           }],
           goTo: {
-            keyframe: 15,
-            subframe: 0 //optional
+            keyframe: 16
           }
         },
         {
-          text: 'Do nothing...'
+          text: 'Do nothing...',
+          goTo: {
+            keyframe: 17
+          }
         }
       ],
       options: {
@@ -53,7 +55,7 @@ let sampleScene = {
       ]
     },
     {
-      id: 16,
+      id: 17,
       type: 'dialog',
       condition: 'test = 0',
       dialog: [
@@ -203,6 +205,7 @@ class Scene {
   constructor() {
     this._keyframe = 0;
     this._subframe = 0;
+    this._loadedByAction = false;
 
     this._textFinished = false;
     this._characterFinished = false;
@@ -234,6 +237,25 @@ class Scene {
     this._prepareScene();
     this._loadKeyframe(0, 0);
     this._update();
+  }
+
+  loadKeyframeById(keyframeId) {
+    this._loadedByAction = true;
+
+    sampleScene.keyframes.some((keyframe, i) => {
+      if (keyframeId === keyframe.id) {
+        D.SceneStore.setData('fastForward', false);
+
+        this._keyframe = i;
+        this._subframe = 0;
+
+        this._loadKeyframe(this._keyframe, this._subframe);
+
+        return true;
+      }
+
+      return false;
+    });
   }
 
   _input() {
@@ -273,7 +295,7 @@ class Scene {
   }
 
   _fastForward() {
-    if (sampleScene.keyframes[this._keyframe]) {
+    if (sampleScene.keyframes[this._keyframe] && !this._loadedByAction) {
       if (!sampleScene.keyframes[this._keyframe].async) {
         D.SceneStore.setData('skipAsync', Math.random());
       }
@@ -284,6 +306,8 @@ class Scene {
         D.SceneStore.setData('fastForward', true);
       }
     }
+
+    this._loadedByAction = false;
   }
 
   _loadKeyframe(keyframe, subframe) {
@@ -305,6 +329,10 @@ class Scene {
   _loadSubframe() {
     this._subframe++;
     this._loadKeyframe(this._keyframe, this._subframe);
+  }
+
+  _loadSpecificFrame(keyframeId) {
+    const keyframe = this._loadKeyframeById(keyframeId);
   }
 
   _loadNextFrame() {
