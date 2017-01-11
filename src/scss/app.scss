@@ -175,7 +175,7 @@ d-text {
 
 .b_choose-wrap {
   align-items: center;
-  bottom: 250px;
+  bottom: 0;
   display: flex;
   height: 1080px;
   justify-content: center;
@@ -183,6 +183,7 @@ d-text {
   margin: auto;
   opacity: 0;
   overflow: hidden;
+  padding-bottom: 250px;
   position: absolute;
   right: 0;
   top: 0;
@@ -211,7 +212,7 @@ d-text {
     cursor: pointer;
     font-size: 38px;
     font-weight: bold;
-    padding: 10px 30px;
+    padding: 20px 30px;
     pointer-events: all;
     text-align: left;
     text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
@@ -219,6 +220,7 @@ d-text {
     &--active {
       background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
       border: 2px solid #fff;
+      transition: background .2s linear;
     }
 
     &--blink {

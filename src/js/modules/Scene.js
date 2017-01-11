@@ -11,14 +11,22 @@ let sampleScene = {
           variable: [{
             name: 'test',
             value: '1'
-          }]
+          }],
+          goTo: {
+            keyframe: 15,
+            subframe: 0 //optional
+          }
         },
         {
           text: 'Set the variable to <d-text d-color="#f00">-1</d-text>',
           variable: [{
             name: 'test',
             value: '-1'
-          }]
+          }],
+          goTo: {
+            keyframe: 15,
+            subframe: 0 //optional
+          }
         },
         {
           text: 'Do nothing...'
@@ -29,9 +37,32 @@ let sampleScene = {
       }
     },
     {
+      id: 15,
+      type: 'dialog',
+      condition: 'test = 1',
+      dialog: [
+        'Oh, you\'ve just set a variable to <d-text d-var="test" d-color="#0f0"></d-text>'
+      ]
+    },
+    {
+      id: 16,
+      type: 'dialog',
+      condition: 'test = -1',
+      dialog: [
+        'Why you so negative? Your variable is <d-text d-var="test" d-color="#f00"></d-text> now<d-text d-speed="20">...</d-text>'
+      ]
+    },
+    {
+      id: 16,
+      type: 'dialog',
+      condition: 'test = 0',
+      dialog: [
+        'You are L-A-Z-Y!'
+      ]
+    },
+    {
       id: 1,
       type: 'dialog',
-      condition: 'test == 0',
       dialog: [
         'Your variable is <d-text d-var="test" d-color="#f80"></d-text>',
         'Your nested variable is <d-text d-var="test_group.inner_group.inner" d-color="#f80"></d-text>'
@@ -212,14 +243,17 @@ class Scene {
       }
     }, false);
 
-    window.addEventListener('mousewheel', (event) => {
+    function scrollEvent(event) {
       const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 
       if (delta === -1) {
         event.preventDefault();
         this._fastForward();
       }
-    }, false);
+    }
+
+    window.addEventListener('mousewheel', scrollEvent.bind(this), false);
+    window.addEventListener('DOMMouseScroll', scrollEvent.bind(this), false);
 
     window.addEventListener('mousedown', (event) => {
       event.preventDefault();
@@ -245,7 +279,6 @@ class Scene {
       }
 
       if (D.SceneStore.getData('fastForward')) {
-        D.SceneStore.setData('fastForward', false);
         this._loadNextFrame();
       } else {
         D.SceneStore.setData('fastForward', true);
@@ -254,7 +287,7 @@ class Scene {
   }
 
   _loadKeyframe(keyframe, subframe) {
-    if (!sampleScene.keyframes[keyframe]) {
+    if (!sampleScene.keyframes[keyframe] || this._handleConditions()) {
       return;
     }
 
@@ -276,6 +309,8 @@ class Scene {
 
   _loadNextFrame() {
     if (this._interactionFinished) {
+      D.SceneStore.setData('fastForward', false);
+
       if (this._subframeCount - 1 > this._subframe) {
         this._loadSubframe();
       } else {
@@ -297,6 +332,16 @@ class Scene {
       case 'character': this._characterFinished = false; break;
       case 'choose': this._interactionFinished = false; this._textFinished = false; break;
     }
+  }
+
+  _handleConditions() {
+    if (sampleScene.keyframes[this._keyframe].condition && !D.Variable.if(sampleScene.keyframes[this._keyframe].condition)) {
+      this._loadNextFrame();
+
+      return true;
+    }
+
+    return false;
   }
 
   _handleVariables() {

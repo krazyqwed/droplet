@@ -107,6 +107,8 @@ class Text {
         i += match[0].length - 1;
       } else if (this._text.substring(i, i + 9) === '</d-text>') {
         i += 8;
+      } else if (this._text.substring(i, i + 1) === '\\') {
+        i += 1;
       } else if (this._text.substring(i, i + 1) === '&') {
         const match = this._text.substring(i - 1).match(/&[^\s]*;/i);
 
@@ -194,6 +196,8 @@ class Text {
       this._cursorPosition += 8;
     } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 3) === '<br>') {
       this._cursorPosition += 3;
+    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition) === '\\') {
+      this._cursorPosition += 1;
     } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition) === '&') {
       const match = this._text.substring(this._cursorPosition - 1).match(/&[^\s]*;/i);
 

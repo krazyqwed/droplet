@@ -1,5 +1,5 @@
 let sampleVariable = {
-  test: 'test',
+  test: 0,
   test_group: {
     inner: 'test inner',
     inner_group: {
@@ -58,6 +58,23 @@ class Variable {
         default: _obj[name[0]] = Number(value);
       }
     }
+  }
+
+  if(condition) {
+    const equation = condition.match(/(.*) ([!><=]+) (.*)/);
+    const variable = this.get(equation[1]);
+    let result = false;
+
+    switch (equation[2]) {
+      case '=': result = variable === Number(equation[3]); break;
+      case '!=': result = variable !== Number(equation[3]); break;
+      case '>': result = variable > Number(equation[3]); break;
+      case '<': result = variable < Number(equation[3]); break;
+      case '>=': result = variable >= Number(equation[3]); break;
+      case '<=': result = variable <= Number(equation[3]); break;
+    }
+
+    return result;
   }
 }
 
