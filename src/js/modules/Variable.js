@@ -29,7 +29,7 @@ class Variable {
     return obj[name[len - 1]];
   }
 
-  set(name, value, type, _obj) {
+  set(name, value, type = 'number', _obj) {
     if (!_obj) {
       _obj = this._variables;
     }
@@ -54,11 +54,11 @@ class Variable {
       }
 
       switch (operator) {
-        case '+': _obj[name[0]] += Number(value); break;
+        case '+': _obj[name[0]] += _obj[name[0]] = type === 'string' ? value.toString() : Number(value); break;
         case '-': _obj[name[0]] -= Number(value); break;
         case '*': _obj[name[0]] *= Number(value); break;
         case '/': _obj[name[0]] /= Number(value); break;
-        default: _obj[name[0]] = type === 'string'? value : Number(value);
+        default: _obj[name[0]] = type === 'string' ? value : Number(value);
       }
     }
   }
@@ -69,8 +69,8 @@ class Variable {
     let result = false;
 
     switch (equation[2]) {
-      case '=': result = variable === Number(equation[3]); break;
-      case '!=': result = variable !== Number(equation[3]); break;
+      case '=': result = variable == equation[3]; break;
+      case '!=': result = variable != equation[3]; break;
       case '>': result = variable > Number(equation[3]); break;
       case '<': result = variable < Number(equation[3]); break;
       case '>=': result = variable >= Number(equation[3]); break;

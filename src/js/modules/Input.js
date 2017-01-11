@@ -24,6 +24,12 @@ class Input {
       });
     }
 
+    const currentValue = D.Variable.get(this._store);
+
+    if (currentValue) {
+      this._dom.input.value = currentValue;
+    }
+
     this._showInput();
   }
 

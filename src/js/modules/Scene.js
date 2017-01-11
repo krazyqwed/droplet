@@ -270,7 +270,7 @@ class Scene {
       const variables = this._scene.keyframes[this._keyframe].variable;
 
       variables.forEach((variable) => {
-        D.Variable.set(variable.name, variable.value);
+        D.Variable.set(variable.name, variable.value, variable.type);
       });
     }
   }
