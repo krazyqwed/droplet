@@ -47,7 +47,10 @@ class Scene {
     D.CharacterStore.subscribe('animationRunning', (data) => {
       if (data === false) {
         this._characterFinished = true;
-        this._fastForward();
+
+        if (this._scene.keyframes[this._keyframe].fastForward) {
+          this._fastForward();
+        }
       }
     });
 
@@ -180,7 +183,7 @@ class Scene {
       return;
     }
 
-    if (this._textFinished && this._interactionFinished) {
+    if (this._textFinished && this._characterFinished && this._interactionFinished) {
       D.SceneStore.setData('fastForward', true);
     }
 
@@ -220,6 +223,10 @@ class Scene {
       case 'character': this._handleTypeCharacter(keyframe); break;
       case 'choose': this._handleTypeChoose(keyframe); break;
       case 'input': this._handleTypeInput(keyframe); break;
+    }
+
+    if (this._scene.keyframes[this._keyframe].async) {
+      this._loadNextFrame();
     }
   }
 
