@@ -23,7 +23,7 @@ let setRevision = function(revision) {
 
   execSync('git tag "' + revision + '"');
   execSync('git push --tags');
-  execSync('git push');
+  execSync('git push origin master');
 };
 
 getRevision(function(revision) {
