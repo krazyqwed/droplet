@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rimraf dist && mkdir dist && yarn run build:pug && yarn run build:sass && yarn run build:js && yarn run build:js-fallback && yarn run build:js-vendor && yarn run build:static",
     "start": "yarn run build && npm-run-all --parallel watch:**",
-    "build:pug": "pug ./src/pug/app.pug --out dist",
+    "build:pug": "pug -O version.json ./src/pug/app.pug --out dist",
     "build:sass": "node-sass ./src/scss/app.scss ./dist/app.css",
     "build:js": "cross-env NODE_ENV=production rollup -c",
     "build:js-fallback": "cross-env NODE_ENV=production rollup --config rollup-fallback.config.js",

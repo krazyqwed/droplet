@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const conventionalRecommendedBump = require('conventional-recommended-bump');
 const gitLatestSemverTag = require('git-latest-semver-tag');
 const semver = require('semver');
@@ -23,8 +24,15 @@ let setRevision = function(revision) {
 
   execSync('git tag "' + revision + '"');
   execSync('git push --tags');
+
+  setVersionJson(revision);
+
   execSync('git push origin master');
 };
+
+let setVersionJson = function(revision) {
+  fs.writeFileSync('./version.json', '{ "version": "' + revision + '" }');
+}
 
 getRevision(function(revision) {
   bumpRevision(revision, function(nextRevision) {
