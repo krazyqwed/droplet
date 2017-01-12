@@ -7,6 +7,7 @@ class Input {
     this._dom = {};
     this._dom.inputWrap = document.querySelector('.js_input-wrap');
     this._dom.input = document.querySelector('.js_input');
+    this._dom.inputButton = document.querySelector('.js_input_button');
     this._timer = new Timer();
     this._timer.addEvent('input', this._inputEvent.bind(this), 1, true, 24);
   }
@@ -48,6 +49,7 @@ class Input {
     D.Variable.set(this._store, this._dom.input.value, 'string');
 
     this._dom.input.blur();
+    this._dom.inputButton.blur();
 
     this._timer.start('input');
   }
@@ -68,11 +70,11 @@ class Input {
 
   _inputEvent(event) {
     if (event.runCount === 1) {
-      this._dom.input.classList.add('d_input--success');
+      this._dom.inputButton.classList.add('d_button--success');
     }
 
     if (event.over) {
-      this._dom.input.classList.remove('d_input--success');
+      this._dom.inputButton.classList.remove('d_button--success');
 
       D.InteractionStore.setData('interactionRunning', false);
 

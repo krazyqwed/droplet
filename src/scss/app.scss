@@ -24,6 +24,8 @@ body {
   *:after {
     pointer-events: none;
     touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(#fff,0);
   }
 }
 
@@ -36,6 +38,40 @@ canvas {
   top: 0;
   transform-origin: left center;
   vertical-align: top;
+}
+
+.d_button {
+  @include stripe;
+
+  box-shadow: inset 0 0 0px 2px rgba(#000,.2);
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  filter: drop-shadow(4px 4px 0 rgba(#000,.4));
+  font-size: 32px;
+  font-weight: bold;
+  height: 72px;
+  line-height: 72px;
+  outline: 2px solid #fff;
+  padding: 0 40px;
+  pointer-events: all;
+  text-align: center;
+  text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+
+  &:hover:not(.d_button--success) {
+    background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
+    transition: background .2s linear;
+  }
+
+  &--success {
+    animation: blink_button_success .2s linear infinite;
+  }
+}
+
+@keyframes blink_button_success {
+  50% {
+    background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#aaff2a,.4);
+  }
 }
 
 .d_main-wrapper {
@@ -200,7 +236,6 @@ d-text {
   position: absolute;
   text-align: center;
   text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
-  word-wrap: break-word;
 }
 
 .d_choose-wrap {
@@ -277,7 +312,17 @@ d-text {
   transform-origin: left center;
   width: 1920px;
 
-  .d_gui-element--visible .d_input {
+
+  .d_button {
+    margin-left: 16px;
+    pointer-events: none;
+  }
+
+  &.d_gui-element--visible .d_button {
+    pointer-events: all;
+  }
+
+  &.d_gui-element--visible .d_input {
     pointer-events: all;
   }
 }
@@ -290,6 +335,7 @@ d-text {
   color: #fff;
   font-size: 38px;
   font-weight: bold;
+  height: 72px;
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 8px;
@@ -298,10 +344,6 @@ d-text {
 
   &:focus {
     outline-offset: 0;
-  }
-
-  &--success {
-
   }
 }
 
