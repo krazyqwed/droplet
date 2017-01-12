@@ -102,6 +102,8 @@ class Choose {
     if (event.over) {
       itemElement.classList.remove('d_choose__item--blink');
 
+      D.InteractionStore.setData('interactionRunning', false);
+
       if (item.goTo) {
         if (item.goTo.scene) {
           D.Story.loadScene(item.goTo.scene);
@@ -109,8 +111,6 @@ class Choose {
           D.Scene.loadKeyframeById(item.goTo.keyframe);
         }
       }
-
-      D.InteractionStore.setData('interactionRunning', false);
 
       this._hideChoose();
       this._timer.destroy('chose');

@@ -56,9 +56,6 @@ class Text {
     requestAnimationFrame(() => {
       if (!this._fastForwarded && D.SceneStore.getData('fastForward')) {
         this._fastForwarded = true;
-
-        this._writeReset();
-        this._writeEnd();
       }
 
       this._update();
@@ -185,8 +182,9 @@ class Text {
   }
 
   _writeEvent() {
-    if (this._cursorPosition > this._textLength) {
-      D.TextStore.setData('writeRunning', false);
+    if (this._cursorPosition > this._textLength || this._fastForwarded) {
+      this._writeReset();
+      this._writeEnd();
       this._timer.destroy('write');
 
       return;

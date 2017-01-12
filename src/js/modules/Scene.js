@@ -47,6 +47,7 @@ class Scene {
     D.CharacterStore.subscribe('animationRunning', (data) => {
       if (data === false) {
         this._characterFinished = true;
+        this._fastForward();
       }
     });
 
@@ -59,8 +60,6 @@ class Scene {
 
     D.Stage.addChild(this._background);
     D.Stage.addChild(this._backgroundClone);
-
-    this._update();
   }
 
   loadScene(scene, keyframe) {
@@ -72,7 +71,7 @@ class Scene {
   }
 
   loadKeyframeById(keyframeId) {
-    this._loadedByAction = true;
+    this._loadedByAction = false;
 
     this._scene.keyframes.some((keyframe, i) => {
       if (keyframeId === keyframe.id) {
@@ -181,6 +180,10 @@ class Scene {
       return;
     }
 
+    if (this._textFinished && this._interactionFinished) {
+      D.SceneStore.setData('fastForward', true);
+    }
+
     if (this._scene.keyframes[this._keyframe] && !this._loadedByAction) {
       if (this._scene.keyframes[this._keyframe].goTo) {
         if (this._scene.keyframes[this._keyframe].goTo.scene) {
@@ -223,10 +226,6 @@ class Scene {
   _loadSubframe() {
     this._subframe++;
     this._loadKeyframe(this._keyframe, this._subframe);
-  }
-
-  _loadSpecificFrame(keyframeId) {
-    const keyframe = this._loadKeyframeById(keyframeId);
   }
 
   _loadNextFrame() {
@@ -304,24 +303,6 @@ class Scene {
     this._subframeCount = 1;
 
     D.Input.showInput(keyframe.store, keyframe.options);
-  }
-
-  _update() {
-    requestAnimationFrame(() => {
-      if (this._scene && this._sceneLoaded && this._scene.keyframes[this._keyframe]) {
-        if (this._textFinished && this._characterFinished) {
-          D.SceneStore.setData('fastForward', true);
-
-          if (this._scene.keyframes[this._keyframe].fastForward) {
-            this._fastForward();
-          }
-        } else if (this._scene.keyframes[this._keyframe].async) {
-          this._fastForward();
-        }
-      }
-
-      this._update();
-    });
   }
 
   _loadEvent(event) {
