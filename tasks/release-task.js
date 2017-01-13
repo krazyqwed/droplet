@@ -24,11 +24,19 @@ let setRevision = function(revision) {
 
   execSync('git tag "' + revision + '"');
   execSync('git push --tags');
+};
+
+let push = function() {
   execSync('git push origin master');
 };
 
-getRevision(function(revision) {
-  bumpRevision(revision, function(nextRevision) {
-    setRevision(nextRevision);
+if (!process.argv[2]) {
+  getRevision(function(revision) {
+    bumpRevision(revision, function(nextRevision) {
+      setRevision(nextRevision);
+      push();
+    });
   });
-});
+} else {
+  push();
+}

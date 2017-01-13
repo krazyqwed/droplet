@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "pull": "node ./tasks/pull-task.js",
+    "release": "node ./tasks/release-task.js",
+    "release:skip-tag": "node ./tasks/release-task.js -skip-tag",
     "build": "rimraf dist && mkdir dist && yarn run build:version && yarn run build:pug && yarn run build:sass && yarn run build:js && yarn run build:js-fallback && yarn run build:js-vendor && yarn run build:static",
     "start": "yarn run build && npm-run-all --parallel watch:**",
-    "build:version": "node version-task.js",
+    "build:version": "node ./tasks/version-task.js",
     "build:pug": "pug -O version.json ./src/pug/app.pug --out dist",
     "build:sass": "node-sass ./src/scss/app.scss ./dist/app.css",
     "build:js": "cross-env NODE_ENV=production rollup -c",
@@ -16,8 +19,7 @@
     "watch:sass": "chokidar \"./src/scss/\" -c \"yarn run build:sass\"",
     "watch:js": "chokidar \"./src/js/\" -c \"yarn run build:js\"",
     "watch:js-vendor": "chokidar \"./src/js/vendor/\" -c \"yarn run build:js-vendor\"",
-    "watch:static": "chokidar \"./src/static/\" -c \"yarn run build:static\"",
-    "release": "node release-task.js"
+    "watch:static": "chokidar \"./src/static/\" -c \"yarn run build:static\""
   },
   "license": "MIT",
   "dependencies": {
