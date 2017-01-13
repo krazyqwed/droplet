@@ -15,7 +15,6 @@ class Choose {
     D.InteractionStore.setData('interactionRunning', true);
 
     if (options && options.dialog) {
-      D.Text.showTextbox();
       D.Text.loadText(options.dialog, {
         noNext: true
       });
@@ -79,14 +78,16 @@ class Choose {
   }
 
   _showChoose() {
-    this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
-    this._dom.chooseWrap.classList.add('d_gui-element--visible');
+    requestAnimationFrame(() => {
+      this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
+      this._dom.chooseWrap.classList.add('d_gui-element--visible');
+    });
   }
 
   _hideChoose(fade = true) {
-    if (fade) {
-      this._dom.chooseWrap.classList.remove('d_gui-element--visible');
-    } else {
+    this._dom.chooseWrap.classList.remove('d_gui-element--visible');
+
+    if (!fade) {
       this._dom.chooseWrap.classList.add('d_gui-element--no-fade');
     }
   }

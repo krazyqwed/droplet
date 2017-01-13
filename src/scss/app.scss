@@ -75,6 +75,7 @@ canvas {
 }
 
 .d_main-wrapper {
+  backface-visibility: hidden;
   bottom: 0;
   display: flex;
   left: 0;
@@ -131,8 +132,11 @@ canvas {
   }
 }
 
-.d_textbox-wrap {
+.d_textbox-wrap,
+.d_narrator-wrap {
+  align-items: flex-end;
   bottom: 0;
+  display: flex;
   height: 1080px;
   left: 0;
   margin: auto;
@@ -142,37 +146,50 @@ canvas {
   top: 0;
   transform-origin: left center;
   width: 1920px;
+}
 
-  &--narrator {
-    display: flex;
-    align-items: center;
+.d_narrator-wrap {
+  align-items: center;
+  padding-bottom: 250px;
+
+  &--top {
+    align-items: flex-start;
   }
 }
 
-.d_textbox {
-  @at-root .d_textbox-wrap:not(.d_textbox-wrap--narrator) & {
-    @include stripe;
-  }
-
+.d_textbox,
+.d_narrator {
   border-top: 2px solid rgba(#000,.4);
-  bottom: 0;
   color: #fff;
   font-size: 38px;
   font-weight: bold;
   height: 250px;
-  left: 0;
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 10px 30px 60px;
-  position: absolute;
-  right: 0;
   text-align: left;
   text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+  width: 100%;
   word-wrap: break-word;
 
-  &:not([running]):not([no-next]) {
+  &:not([running]):not([no-next]) .d_textbox__next {
+    animation: blink 1s ease-out infinite;
+
     &:before {
-      animation: blink 1s ease-out infinite;
+      border: 20px solid transparent;
+      border-bottom-width: 0;
+      border-top: 20px solid #000;
+      bottom: 16px;
+      content: '';
+      filter: drop-shadow(4px 4px 0 rgba(#000,.6));
+      left: 0;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      width: 0;
+    }
+
+    &:after {
       border: 16px solid transparent;
       border-bottom-width: 0;
       border-top: 16px solid #fff;
@@ -184,45 +201,40 @@ canvas {
       right: 0;
       width: 0;
     }
-
-    &:after {
-      animation: blink 1s ease-out infinite;
-      border: 20px solid transparent;
-      border-bottom-width: 0;
-      border-top: 20px solid #000;
-      bottom: 16px;
-      content: '';
-      filter: drop-shadow(4px 4px 0 #000);
-      left: 0;
-      margin: auto;
-      position: absolute;
-      right: 0;
-      width: 0;
-    }
-  }
-
-  @at-root .d_textbox-wrap--narrator & {
-    border-top: 0;
-    bottom: auto;
-    height: auto;
-    margin: auto;
-    outline: 0;
-    padding: 10px 200px 60px;
-    top: auto;
   }
 }
 
-.d_textbox-helper {
+.d_textbox {
+  @include stripe;
+}
+
+.d_narrator {
+  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), rgba(#000,.4);
+  background-position: center, center;
+  background-size: auto 4px, auto;
+  border-top: 0;
   height: auto;
+  outline: 0;
+  padding: 30px 200px;
+}
+
+
+.d_textbox-helper,
+.d_narrator-helper {
+  box-sizing: border-box;
   visibility: hidden;
   font-size: 38px;
   font-weight: bold;
-  height: 250px;
+  height: auto;
   padding: 10px 30px;
   position: absolute;
   text-align: left;
   word-wrap: break-word;
   width: 1920px;
+}
+
+.d_narrator-helper {
+  padding: 10px 200px 60px;
 }
 
 d-text {

@@ -19,7 +19,6 @@ class Input {
     this._store = store;
 
     if (options && options.dialog) {
-      D.Text.showTextbox();
       D.Text.loadText(options.dialog, {
         noNext: true
       });
@@ -55,15 +54,17 @@ class Input {
   }
 
   _showInput() {
-    this._dom.inputWrap.classList.remove('d_gui-element--no-fade');
-    this._dom.inputWrap.classList.add('d_gui-element--visible');
-    this._dom.input.focus();
+    requestAnimationFrame(() => {
+      this._dom.inputWrap.classList.remove('d_gui-element--no-fade');
+      this._dom.inputWrap.classList.add('d_gui-element--visible');
+      this._dom.input.focus();
+    });
   }
 
   _hideInput(fade = true) {
-    if (fade) {
-      this._dom.inputWrap.classList.remove('d_gui-element--visible');
-    } else {
+    this._dom.inputWrap.classList.remove('d_gui-element--visible');
+
+    if (!fade) {
       this._dom.inputWrap.classList.add('d_gui-element--no-fade');
     }
   }

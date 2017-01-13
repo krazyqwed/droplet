@@ -1,13 +1,14 @@
 import Variable from './modules/Variable';
 import Story from './modules/Story';
 import Scene from './modules/Scene';
-import Text from './modules/Text';
+import { Text, Narrator } from './modules/Text';
 import Character from './modules/Character';
 import Choose from './modules/Choose';
 import Input from './modules/Input';
 import PixiStore from './stores/PixiStore';
 import SceneStore from './stores/SceneStore';
 import TextStore from './stores/TextStore';
+import NarratorStore from './stores/NarratorStore';
 import CharacterStore from './stores/CharacterStore';
 import InteractionStore from './stores/InteractionStore';
 
@@ -21,6 +22,7 @@ class Main {
       PixiStore: new PixiStore(),
       SceneStore: new SceneStore(),
       TextStore: new TextStore(),
+      NarratorStore: new NarratorStore(),
       CharacterStore: new CharacterStore(),
       InteractionStore: new InteractionStore(),
 
@@ -28,6 +30,7 @@ class Main {
       Story: Story,
       Scene: Scene,
       Text: Text,
+      Narrator: Narrator,
       Character: Character,
       Choose: Choose,
       Input: Input,
@@ -118,6 +121,7 @@ class Main {
     this._dom.mainWarpper.style.removeProperty('display');
 
     D.Text.init();
+    D.Narrator.init();
     D.Character.init();
     D.Scene.init();
 

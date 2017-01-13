@@ -11,45 +11,65 @@ class DText extends HTMLElement {
 
 customElements.define('d-text', DText);
 
-class Text {
+class TextClass {
   constructor() {
+    this._elementType = 'textbox';
+    this._store = false;
     this._cursorPosition = 0;
     this._textLength = 0;
     this._text = '';
     this._textFormatActive = false;
     this._writeSpeed = [1];
+    this._writeOptions = {};
     this._fastForwarded = true;
     this._dom = {};
-    this._dom.textBoxWrap = document.querySelector('.js_textbox_wrap');
-    this._dom.textBox = document.querySelector('.js_textbox');
     this._dom.speaker = document.querySelector('.js_speaker');
     this._timer = new Timer();
     this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
   }
 
   init() {
+    this._store = D.TextStore;
+
+    this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
+    this._dom.textBox = document.querySelector('.js_' + this._elementType);
+    this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
+
     this._update();
   }
 
-  loadText(text, options) {
+  loadText(text, options, async) {
+    this._writeOptions = {
+      async: async
+    };
+
     this._fastForwarded = false;
+    this._showTextbox(options);
     this._writeReset();
     this._setText(text, options);
   }
 
-  showTextbox() {
-    this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
-    this._dom.textBoxWrap.classList.add('d_gui-element--visible');
-  }
-
   hideTextbox(fade = true) {
-    if (fade) {
-      this._dom.textBoxWrap.classList.remove('d_gui-element--visible');
-    } else {
+    this._dom.textBoxWrap.classList.remove('d_gui-element--visible');
+
+    if (!fade) {
       this._dom.textBoxWrap.classList.add('d_gui-element--no-fade');
     }
 
     this._writeReset();
+  }
+
+  _showTextbox(options) {
+    if (options && options.position === 'top') {
+      this._dom.textBoxWrap.classList.add('d_' + this._elementType + '-wrap--top');
+    } else {
+      this._dom.textBoxWrap.classList.remove('d_' + this._elementType + '-wrap--top');
+    }
+
+    requestAnimationFrame(() => {
+      this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
+      this._dom.textBoxWrap.classList.add('d_gui-element--visible');
+    });
   }
 
   _update() {
@@ -66,13 +86,14 @@ class Text {
     this._text = text;
 
     let textContainer = document.createElement('div');
-    textContainer.classList.add('d_textbox-helper');
+    textContainer.classList.add('d_' + this._elementType + '-helper');
+
     textContainer.innerHTML = this._text;
 
     if (options && options.noNext) {
-      this._dom.textBox.setAttribute('no-next', 'true');
+      this._dom.textBoxInner.setAttribute('no-next', 'true');
     } else {
-      this._dom.textBox.removeAttribute('no-next');
+      this._dom.textBoxInner.removeAttribute('no-next');
     }
 
     document.body.appendChild(textContainer);
@@ -122,7 +143,7 @@ class Text {
 
       container.innerHTML = this._text.substring(0, i);
 
-      if (height < container.offsetHeight) {
+      if (height * 1.5 < container.offsetHeight) {
         height = container.offsetHeight;
 
         if (this._text[i - 1] !== ' ' && container.textContent.indexOf(' ') !== -1) {
@@ -131,7 +152,7 @@ class Text {
           } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '>');
 
           if (i === 0) {
-            i = this._text.length;
+            break;
           }
 
           this._text = StringHelper.splice(this._text, i + 1, 0, '<br>');
@@ -162,30 +183,25 @@ class Text {
   }
 
   _writeStart() {
-    D.TextStore.setData('writeRunning', true);
+    this._store.setData('writeRunning', true);
     this._dom.textBox.setAttribute('running', 'true');
     this._timer.start('write');
   }
 
   _writeReset() {
     this._cursorPosition = 0;
-    D.TextStore.setData('writeRunning', false);
+    this._store.setData('writeRunning', false);
     this._writeSpeed = [1];
-    this._dom.textBox.innerHTML = '';
+    this._dom.textBoxInner.innerHTML = '';
     this._timer.destroy('write');
   }
 
-  _writeEnd() {
-    D.TextStore.setData('writeRunning', false);
-    this._dom.textBox.innerHTML = this._text;
-    this._dom.textBox.removeAttribute('running');
-  }
-
-  _writeEvent() {
-    if (this._cursorPosition > this._textLength || this._fastForwarded) {
+  _writeEvent(event) {
+    if (this._cursorPosition > this._textLength || (this._fastForwarded && !this._writeOptions.async) || event.over) {
       this._writeReset();
-      this._writeEnd();
-      this._timer.destroy('write');
+
+      this._dom.textBoxInner.innerHTML = this._text;
+      this._dom.textBox.removeAttribute('running');
 
       return;
     }
@@ -213,7 +229,7 @@ class Text {
       }
     }
 
-    this._dom.textBox.innerHTML = this._text.substring(0, this._cursorPosition);
+    this._dom.textBoxInner.innerHTML = this._text.substring(0, this._cursorPosition);
 
     this._cursorPosition++;
   }
@@ -254,4 +270,37 @@ class Text {
   }
 }
 
-export default new Text();
+class NarratorClass extends TextClass {
+  constructor() {
+    super();
+
+    this._elementType = 'narrator';
+  }
+
+  init() {
+    this._store = D.NarratorStore;
+
+    this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
+    this._dom.textBox = document.querySelector('.js_' + this._elementType);
+    this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
+
+    D.SceneStore.subscribe('skipAsync', (value) => {
+      if (this._writeOptions.async) {
+        this._writeOptions.async = false;
+        this._timer.over('write');
+
+        D.SceneStore.setData('fastForward', false);
+      }
+    });
+
+    this._update();
+  }
+}
+
+let text = new TextClass();
+let narrator = new NarratorClass();
+
+export {
+  text as Text,
+  narrator as Narrator
+};

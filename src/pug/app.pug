@@ -11,13 +11,19 @@ html
     .d_main-wrapper.js_main_wrapper
       .d_choose-wrap.js_choose-wrap.d_gui-element.js_gui_element
         .d_choose.js_choose
-      .d_textbox-wrap.d_textbox-wrap--narrator.js_textbox_wrap.d_gui-element.js_gui_element
+      .d_textbox-wrap.js_textbox_wrap.d_gui-element.js_gui_element
         .d_speaker.js_speaker
         .d_textbox.js_textbox
+          .d_textbox__inner.js_textbox_inner
+          .d_textbox__next
+      .d_narrator-wrap.js_narrator_wrap.d_gui-element.js_gui_element
+        .d_narrator.js_narrator
+          .d_narrator__inner.js_narrator_inner
+          .d_narrator__next
       .d_input-wrap.js_input-wrap.d_gui-element.js_gui_element
         input.d_input.js_input(type="text")
         div.d_button.js_input_button OK
-      .d_fader.d_fader--visible.js_fader
+    .d_fader.d_fader--visible.js_fader
     script(src="vendor/pixi.min.js")
     script(src="vendor/howler.core.min.js")
     script(src="vendor/fpsmeter.min.js")

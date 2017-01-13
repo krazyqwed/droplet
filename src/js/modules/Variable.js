@@ -1,6 +1,6 @@
 let sampleVariable = {
   __globals__: {
-    playerName: 'John Smith'
+    playerName: '高橋 佐藤'
   },
   test: 0,
   test_group: {

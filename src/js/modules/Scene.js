@@ -24,6 +24,7 @@ class Scene {
     this._loadedByAction = false;
 
     this._textFinished = false;
+    this._narratorFinished = false;
     this._characterFinished = false;
     this._interactionFinished = false;
 
@@ -41,6 +42,16 @@ class Scene {
     D.TextStore.subscribe('writeRunning', (data) => {
       if (data === false) {
         this._textFinished = true;
+      } else {
+        this._textFinished = false;
+      }
+    });
+
+    D.NarratorStore.subscribe('writeRunning', (data) => {
+      if (data === false) {
+        this._narratorFinished = true;
+      } else {
+        this._narratorFinished = false;
       }
     });
 
@@ -183,16 +194,9 @@ class Scene {
       return;
     }
 
-    if (this._textFinished && this._characterFinished && this._interactionFinished) {
-      D.SceneStore.setData('fastForward', true);
-    }
-
     if (this._scene.keyframes[this._keyframe] && !this._loadedByAction) {
-      if (this._scene.keyframes[this._keyframe].goTo) {
-        if (this._scene.keyframes[this._keyframe].goTo.scene) {
-          D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-          return;
-        }
+      if (this._textFinished && this._narratorFinished && this._characterFinished && this._interactionFinished) {
+        D.SceneStore.setData('fastForward', true);
       }
 
       if (!this._scene.keyframes[this._keyframe].async) {
@@ -200,6 +204,13 @@ class Scene {
       }
 
       if (D.SceneStore.getData('fastForward')) {
+        if (this._scene.keyframes[this._keyframe].goTo) {
+          if (this._scene.keyframes[this._keyframe].goTo.scene) {
+            D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+            return;
+          }
+        }
+
         this._loadNextFrame();
       } else {
         D.SceneStore.setData('fastForward', true);
@@ -220,6 +231,7 @@ class Scene {
 
     switch (this._scene.keyframes[keyframe].type) {
       case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
+      case 'narrator': this._handleTypeNarrator(keyframe, subframe); break;
       case 'character': this._handleTypeCharacter(keyframe); break;
       case 'choose': this._handleTypeChoose(keyframe); break;
       case 'input': this._handleTypeInput(keyframe); break;
@@ -252,11 +264,13 @@ class Scene {
 
   _setFinishedSubscriptions(keyframe) {
     this._textFinished = true;
+    this._narratorFinished = true;
     this._characterFinished = true;
     this._interactionFinished = true;
 
     switch (keyframe.type) {
       case 'dialog': this._textFinished = false; break;
+      case 'narrator': this._narratorFinished = false; break;
       case 'character': this._characterFinished = false; break;
       case 'choose': this._interactionFinished = false; this._textFinished = !(keyframe.options && keyframe.options.dialog); break;
       case 'input': this._interactionFinished = false; this._textFinished = !(keyframe.options && keyframe.options.dialog); break;
@@ -285,10 +299,29 @@ class Scene {
 
   _handleTypeDialog(keyframe, subframe) {
     keyframe = this._scene.keyframes[keyframe];
+
+    if (keyframe.options && keyframe.options.action === 'close') {
+      D.Text.hideTextbox();
+      this._loadNextFrame();
+      return;
+    }
+
     this._subframeCount = keyframe.dialog.length;
 
-    D.Text.showTextbox();
-    D.Text.loadText(keyframe.dialog[subframe], keyframe.options);
+    D.Text.loadText(keyframe.dialog[subframe], keyframe.options, keyframe.async);
+  }
+
+  _handleTypeNarrator(keyframe, subframe) {
+    keyframe = this._scene.keyframes[keyframe];
+
+    if (keyframe.options && keyframe.options.action === 'close') {
+      D.Narrator.hideTextbox();
+      this._loadNextFrame();
+      return;
+    }
+
+    this._subframeCount = keyframe.dialog.length;
+    D.Narrator.loadText(keyframe.dialog[subframe], keyframe.options, keyframe.async);
   }
 
   _handleTypeCharacter(keyframe) {
@@ -320,6 +353,7 @@ class Scene {
       this._backgroundClone.position.z = 0;
     } else if (event.runCount === 60) {
       D.Text.hideTextbox(false);
+      D.Narrator.hideTextbox(false);
       D.Choose.hideChoose(false);
       D.Input.hideInput(false);
       D.Character.hideCharacters();

@@ -10,13 +10,6 @@ let sampleStory = {
       keyframes: [
         {
           id: 1,
-          type: 'dialog',
-          dialog: [
-            'And the story begins...'
-          ]
-        },
-        {
-          id: 1,
           type: 'input',
           store: '__globals__.playerName',
           options: {
@@ -25,6 +18,33 @@ let sampleStory = {
         },
         {
           id: 2,
+          type: 'dialog',
+          options: {
+            action: 'close'
+          }
+        },
+        {
+          id: 3,
+          type: 'narrator',
+          dialog: [
+            '<d-text d-var="__globals__.playerName"></d-text> has the perfect life working as a detective in the city and drinking with his patient boyfriend, John Zeus.',
+            'However, when he finds a solid book in his cellar, he begins to realise that things are not quite as they seem in the <d-text d-var="__globals__.playerName"></d-text> family.',
+            'A Halloween party leaves <d-text d-var="__globals__.playerName"></d-text> with some startling questions about his past, and he sets off to creepy Sidney to find some answers.'
+          ]
+        },
+        {
+          id: 4,
+          type: 'narrator',
+          dialog: [
+            '<d-text d-italic>At first the people of <d-text d-color="#f90">Sidney</d-text> are admirable and clever. He is intrigued by the curiously virtuous housekeeper, Cameron Parkes.</d-text>'
+          ],
+          options: {
+            position: 'top'
+          },
+          async: true
+        },
+        {
+          id: 5,
           type: 'dialog',
           dialog: [
             'Alright, <d-text d-var="__globals__.playerName" d-color="#4f2"></d-text>!',
