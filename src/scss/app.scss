@@ -79,6 +79,7 @@ canvas {
   display: flex;
   left: 0;
   margin: auto;
+  overflow: hidden;
   position: absolute;
   right: 0;
   top: 0;
@@ -141,10 +142,17 @@ canvas {
   top: 0;
   transform-origin: left center;
   width: 1920px;
+
+  &--narrator {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .d_textbox {
-  @include stripe;
+  @at-root .d_textbox-wrap:not(.d_textbox-wrap--narrator) & {
+    @include stripe;
+  }
 
   border-top: 2px solid rgba(#000,.4);
   bottom: 0;
@@ -155,20 +163,34 @@ canvas {
   left: 0;
   line-height: 1.35;
   outline: 2px solid #fff;
-  padding: 10px 30px;
+  padding: 10px 30px 60px;
   position: absolute;
   right: 0;
   text-align: left;
-  text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+  text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   word-wrap: break-word;
 
   &:not([running]):not([no-next]) {
     &:before {
       animation: blink 1s ease-out infinite;
+      border: 16px solid transparent;
+      border-bottom-width: 0;
+      border-top: 16px solid #fff;
+      bottom: 18px;
+      content: '';
+      left: 0;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      width: 0;
+    }
+
+    &:after {
+      animation: blink 1s ease-out infinite;
       border: 20px solid transparent;
       border-bottom-width: 0;
-      border-top: 20px solid white;
-      bottom: 20px;
+      border-top: 20px solid #000;
+      bottom: 16px;
       content: '';
       filter: drop-shadow(4px 4px 0 #000);
       left: 0;
@@ -177,6 +199,16 @@ canvas {
       right: 0;
       width: 0;
     }
+  }
+
+  @at-root .d_textbox-wrap--narrator & {
+    border-top: 0;
+    bottom: auto;
+    height: auto;
+    margin: auto;
+    outline: 0;
+    padding: 10px 200px 60px;
+    top: auto;
   }
 }
 
@@ -275,7 +307,7 @@ d-text {
     padding: 20px 30px;
     pointer-events: all;
     text-align: left;
-    text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
 
     &--active {
       background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
@@ -339,7 +371,7 @@ d-text {
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 8px;
-  text-shadow: 4px 4px 0 #000, 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+  text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   width: 50%;
 
   &:focus {
