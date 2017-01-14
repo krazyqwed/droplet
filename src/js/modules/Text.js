@@ -289,7 +289,9 @@ class NarratorClass extends TextClass {
         this._writeOptions.async = false;
         this._timer.over('write');
 
-        D.SceneStore.setData('fastForward', false);
+        if (this._store.getData('writeRunning')) {
+          D.SceneStore.setData('fastForward', false);
+        }
       }
     });
 
