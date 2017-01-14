@@ -347,12 +347,13 @@ class NarratorClass extends TextClass {
 
     D.SceneStore.subscribe('skipAsync', (value) => {
       if (this._writeOptions.async) {
-        this._writeOptions.async = false;
-        this._timer.over('write');
-
         if (this._store.getData('writeRunning')) {
           D.SceneStore.setData('fastForward', false);
         }
+
+        this._timer.over('write');
+
+        this._writeOptions.async = false;
       }
     });
 
