@@ -11,9 +11,9 @@ let sampleStory = {
         {
           id: 1,
           type: 'input',
-          store: '__globals__.playerName',
+          store: '__globals__.player.nickname',
           options: {
-            dialog: 'Enter your name...'
+            dialog: 'Enter your nickname...'
           }
         },
         {
@@ -27,16 +27,16 @@ let sampleStory = {
           id: 3,
           type: 'narrator',
           dialog: [
-            '<d-text d-var="__globals__.playerName"></d-text> has the perfect life working as a detective in the city and drinking with his patient boyfriend, John Zeus.',
-            'However, when he finds a solid book in his cellar, he begins to realise that things are not quite as they seem in the <d-text d-var="__globals__.playerName"></d-text> family.',
-            'A Halloween party leaves <d-text d-var="__globals__.playerName"></d-text> with some startling questions about his past, and he sets off to creepy Sidney to find some answers.'
+            '<d-actor d-id="player" d-prop="fullName" d-color></d-actor> has the perfect life working as a detective in the city and drinking with his patient girlfriend, <d-actor d-id="2" d-prop="fullName" d-color></d-actor>.',
+            'However, when he finds a solid book in his cellar, he begins to realise that things are not quite as they seem in the <d-actor d-id="player" d-prop="nickname" d-color></d-actor> family.',
+            'A Halloween party leaves <d-actor d-id="player" d-prop="nickname" d-color></d-actor> with some startling questions about his past, and he sets off to creepy <d-actor d-id="2" d-prop="nickname" d-color></d-actor> to find some answers.'
           ]
         },
         {
           id: 4,
           type: 'narrator',
           dialog: [
-            '<d-text d-italic>At first the people of <d-text d-color="#f90">Sidney</d-text> are admirable and clever. He is intrigued by the curiously virtuous housekeeper, Cameron Parkes.</d-text>'
+            '<d-text d-italic>At first the people of <d-actor d-id="1" d-prop="nickname" d-color></d-actor> are admirable and clever. He is intrigued by the curiously virtuous housekeeper, Cameron Parkes.</d-text>'
           ],
           options: {
             position: 'top'
@@ -47,7 +47,7 @@ let sampleStory = {
           id: 5,
           type: 'dialog',
           dialog: [
-            'Alright, <d-text d-var="__globals__.playerName" d-color="#4f2"></d-text>!',
+            'Alright, <d-actor d-id="player" d-prop="nickname" d-color></d-actor>!',
             'Let\'s load the next scene!'
           ],
           goTo: {

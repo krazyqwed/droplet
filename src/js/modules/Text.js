@@ -9,7 +9,26 @@ class DText extends HTMLElement {
   }
 }
 
+class DActor extends HTMLElement {
+  connectedCallback() {
+    if (this.getAttribute('d-color') !== undefined) {
+      let color;
+      const attr = this.getAttribute('d-id');
+
+      if (attr === 'player') {
+        color = D.Variable.get('__globals__.player.color');
+      } else {
+        const actor = D.Character.loadCharacterById(parseInt(attr));
+        color = actor.getData()['color'];
+      }
+
+      this.style.color = color;
+    }
+  }
+}
+
 customElements.define('d-text', DText);
+customElements.define('d-actor', DActor);
 
 class TextClass {
   constructor() {
@@ -98,6 +117,7 @@ class TextClass {
 
     document.body.appendChild(textContainer);
     this._insertVariables();
+    this._insertActorProps();
     this._text = this._insertWraps(textContainer);
     textContainer.parentNode.removeChild(textContainer);
 
@@ -121,6 +141,28 @@ class TextClass {
     }
   }
 
+  _insertActorProps() {
+    for (let i = 0; i <= this._text.length; i++) {
+      if (this._text.substring(i, i + 8) === '<d-actor') {
+        const match = this._text.substring(i).match(/<\s*\/?\s*d-actor\s*.*?>/i);
+        const attributes = this._getAttributes(match[0]);
+        
+        i += match[0].length - 1;
+
+        if (attributes['d-id'] && attributes['d-prop']) {
+          if (attributes['d-id'] === 'player') {
+            const prop = D.Variable.get('__globals__.player.' + attributes['d-prop']);
+            this._text = StringHelper.splice(this._text, i + 1, 0, prop);
+          } else {
+            const character = D.Character.loadCharacterById(parseInt(attributes['d-id']));
+            const prop = character.getData()[attributes['d-prop']];
+            this._text = StringHelper.splice(this._text, i + 1, 0, prop);
+          }
+        }
+      }
+    }
+  }
+
   _insertWraps(container) {
     container.innerHTML = '.';
     let height = container.offsetHeight;
@@ -131,6 +173,11 @@ class TextClass {
         i += match[0].length - 1;
       } else if (this._text.substring(i, i + 9) === '</d-text>') {
         i += 8;
+      } else if (this._text.substring(i, i + 8) === '<d-actor') {
+        const match = this._text.substring(i).match(/<\s*\/?\s*d-actor\s*.*?>/i);
+        i += match[0].length - 1;
+      } else if (this._text.substring(i, i + 10) === '</d-actor>') {
+        i += 9;
       } else if (this._text.substring(i, i + 1) === '\\') {
         i += 1;
       } else if (this._text.substring(i, i + 1) === '&') {
@@ -174,8 +221,8 @@ class TextClass {
         this._dom.speaker.innerHTML = characterData.nickname;
         this._dom.speaker.style.backgroundColor = characterData.color;
       } else {
-        this._dom.speaker.innerHTML = D.Variable.get('__globals__.playerName');
-        this._dom.speaker.style.backgroundColor = '#56b30c';
+        this._dom.speaker.innerHTML = D.Variable.get('__globals__.player.nickname');
+        this._dom.speaker.style.backgroundColor = D.Variable.get('__globals__.player.bgColor');
       }
     } else {
       this._dom.speaker.style.display = 'none';
@@ -217,6 +264,13 @@ class TextClass {
       this._handleSpeedRemove();
 
       this._cursorPosition += 8;
+    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 7) === '<d-actor') {
+      const match = this._text.substring(this._cursorPosition - 1).match(/<\s*\/?\s*d-actor\s*.*?>/i);
+      const attributes = this._getAttributes(match[0]);
+
+      this._cursorPosition += match[0].length - 1;
+    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 9) === '</d-actor>') {
+      this._cursorPosition += 9;
     } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 3) === '<br>') {
       this._cursorPosition += 3;
     } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition) === '\\') {
@@ -263,6 +317,13 @@ class TextClass {
   }
 
   _handleVar(name, i) {
+    if (name) {
+      const variable = D.Variable.get(name);
+      this._text = StringHelper.splice(this._text, i + 1, 0, variable);
+    }
+  }
+
+  _handleActor(name, i) {
     if (name) {
       const variable = D.Variable.get(name);
       this._text = StringHelper.splice(this._text, i + 1, 0, variable);

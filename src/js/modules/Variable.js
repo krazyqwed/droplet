@@ -1,6 +1,11 @@
 let sampleVariable = {
   __globals__: {
-    playerName: '高橋 佐藤'
+    player: {
+      fullName: 'John Doe',
+      nickname: 'John',
+      color: '#f0f',
+      bgColor: '#56b30c'
+    }
   },
   test: 0,
   test_group: {

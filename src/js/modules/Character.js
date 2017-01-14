@@ -3,16 +3,18 @@ import Timer from './Timer';
 let sampleCharacters = [
   {
     id: 1,
-    full_name: 'Katsumata Kahori',
+    fullName: 'Katsumata Kahori',
     nickname: 'Kahori',
-    color: '#454b78',
+    color: '#a8adcd',
+    bgColor: '#454b78',
     image: 'char_1'
   },
   {
     id: 2,
-    full_name: 'Tsukamoto Fumiko',
+    fullName: 'Tsukamoto Fumiko',
     nickname: 'Fumiko',
-    color: '#ca7d78',
+    color: '#fc5045',
+    bgColor: '#ca7d78',
     image: 'char_2'
   }
 ];
@@ -20,10 +22,11 @@ let sampleCharacters = [
 class Actor {
   constructor(data) {
     this._id = data.id;
-    this._full_name = data.full_name;
+    this._fullName = data.fullName;
     this._nickname = data.nickname;
     this._pose = data.pose ? data.pose : 1;
     this._color = data.color;
+    this._bgColor = data.bgColor;
     this._image = data.image;
     this._sprite = new PIXI.Sprite();
     this._clone = new PIXI.Sprite();
@@ -71,9 +74,10 @@ class Actor {
   getData() {
     return {
       id: this._id,
-      full_name: this._full_name,
+      fullName: this._fullName,
       nickname: this._nickname,
       color: this._color,
+      bgColor: this._bgColor,
       pose: this._pose,
       image: this._image
     };
