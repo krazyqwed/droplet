@@ -167,13 +167,19 @@ canvas {
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 10px 30px 60px;
+  position: relative;
   text-align: left;
   text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
   width: 100%;
   word-wrap: break-word;
 
-  &:not([running]):not([no-next]) .d_textbox__next {
+  &:not([running]):not([no-next]) .d_textbox__next,
+  &:not([running]):not([no-next]) .d_narrator__next {
     animation: blink 1s ease-out infinite;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
 
     &:before {
       border: 20px solid transparent;
@@ -215,7 +221,15 @@ canvas {
   border-top: 0;
   height: auto;
   outline: 0;
-  padding: 30px 200px;
+  padding: 30px 200px 60px;
+
+  &[no-next] {
+    padding: 30px 200px;
+  }
+
+  &[no-background] {
+    background: none;
+  }
 }
 
 
@@ -234,7 +248,7 @@ canvas {
 }
 
 .d_narrator-helper {
-  padding: 10px 200px 60px;
+  padding: 30px 200px;
 }
 
 d-text {

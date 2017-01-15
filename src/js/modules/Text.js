@@ -110,9 +110,15 @@ class TextClass {
     textContainer.innerHTML = this._text;
 
     if (options && options.noNext) {
-      this._dom.textBoxInner.setAttribute('no-next', 'true');
+      this._dom.textBox.setAttribute('no-next', 'true');
     } else {
-      this._dom.textBoxInner.removeAttribute('no-next');
+      this._dom.textBox.removeAttribute('no-next');
+    }
+
+    if (options && options.noBackground) {
+      this._dom.textBox.setAttribute('no-background', 'true');
+    } else {
+      this._dom.textBox.removeAttribute('no-background');
     }
 
     document.body.appendChild(textContainer);

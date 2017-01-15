@@ -30,16 +30,28 @@ let sampleStory = {
             '<d-actor d-id="player" d-prop="fullName" d-color></d-actor> has the perfect life working as a detective in the city and drinking with his patient girlfriend, <d-actor d-id="2" d-prop="fullName" d-color></d-actor>.',
             'However, when he finds a solid book in his cellar, he begins to realise that things are not quite as they seem in the <d-actor d-id="player" d-prop="nickname" d-color></d-actor> family.',
             'A Halloween party leaves <d-actor d-id="player" d-prop="nickname" d-color></d-actor> with some startling questions about his past, and he sets off to creepy <d-actor d-id="2" d-prop="nickname" d-color></d-actor> to find some answers.'
-          ]
+          ],
+          options: {
+            noBackground: true
+          }
+        },
+        {
+          id: 2,
+          type: 'narrator',
+          options: {
+            action: 'close'
+          },
+          async: true
         },
         {
           id: 4,
           type: 'narrator',
           dialog: [
-            '<d-text d-italic>At first the people of <d-actor d-id="1" d-prop="nickname" d-color></d-actor> are admirable and clever. He is intrigued by the curiously virtuous housekeeper, Cameron Parkes.</d-text>'
+            '<d-text d-italic>At first the people of <d-actor d-id="1" d-prop="nickname" d-color></d-actor> are admirable and clever.</d-text>'
           ],
           options: {
-            position: 'top'
+            position: 'top',
+            noNext: true
           },
           async: true
         },
