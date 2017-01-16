@@ -16,6 +16,7 @@ body {
   margin: 0;
   overflow: hidden;
   text-align: center;
+  touch-action: none;
   user-select: none;
   width: 100%;
 
@@ -23,7 +24,6 @@ body {
   *:before,
   *:after {
     pointer-events: none;
-    touch-action: none;
     user-select: none;
     -webkit-tap-highlight-color: rgba(#fff,0);
   }
@@ -54,7 +54,6 @@ canvas {
   line-height: 72px;
   outline: 2px solid #fff;
   padding: 0 40px;
-  pointer-events: all;
   text-align: center;
   text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
 
@@ -129,6 +128,10 @@ canvas {
 
   &--visible {
     opacity: 1;
+
+    &.d_gui-interactive * {
+      pointer-events: all;
+    }
   }
 }
 
@@ -331,7 +334,6 @@ d-text {
     font-size: 38px;
     font-weight: bold;
     padding: 20px 30px;
-    pointer-events: all;
     text-align: left;
     text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
 
@@ -373,15 +375,6 @@ d-text {
 
   .d_button {
     margin-left: 16px;
-    pointer-events: none;
-  }
-
-  &.d_gui-element--visible .d_button {
-    pointer-events: all;
-  }
-
-  &.d_gui-element--visible .d_input {
-    pointer-events: all;
   }
 }
 

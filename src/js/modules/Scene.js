@@ -167,7 +167,7 @@ class Scene {
 
   _loadEvent(event) {
     if (event.runCount === 60) {
-      [].forEach.call(document.querySelectorAll('d_gui-element--visible'), (element) => {
+      [].forEach.call(document.querySelectorAll('.d_gui-element--visible'), (element) => {
         element.classList.add('d_gui-element--no-fade');
         element.classList.remove('d_gui-element--visible');
       });
