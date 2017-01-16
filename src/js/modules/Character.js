@@ -260,7 +260,7 @@ class Actor {
     const percent = event.runCount / event.runLimit;
 
     this._sprite.alpha = 1 - percent + 0.001;
-    this._clone.alpha = percent;
+    this._clone.alpha = percent * 2 + 0.001;
 
     if (event.over || D.SceneStore.getData('fastForward')) {
       this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));

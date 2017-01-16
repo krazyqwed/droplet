@@ -7,12 +7,14 @@ class Background {
     this._background.anchor.y = 0;
     this._background.position.x = 0;
     this._background.position.y = 0;
+    this._background.position.z = 1;
 
     this._backgroundClone = new PIXI.Sprite();
     this._backgroundClone.anchor.x = 0;
     this._backgroundClone.anchor.y = 0;
     this._backgroundClone.position.x = 0;
     this._backgroundClone.position.y = 0;
+    this._backgroundClone.position.z = 0;
 
     this._sceneFader = new PIXI.Graphics();
     this._sceneFader.beginFill(0x000000);
