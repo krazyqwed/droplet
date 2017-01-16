@@ -14,11 +14,11 @@ class Sound {
     }
 
     switch(this._action.event) {
-      case 'bgm': this._bgm(); break;
+      case 'bgm': this._setBgm(); break;
     }
   }
 
-  _bgm() {
+  _setBgm() {
     if (this._action.bgm && this._action.bgm !== true && this._action.bgm !== false) {
       if (this._bgm) {
         this._bgm.on('fade', () => {
