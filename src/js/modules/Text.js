@@ -32,40 +32,47 @@ customElements.define('d-actor', DActor);
 
 class TextClass {
   constructor() {
+    this._action = false;
     this._elementType = 'textbox';
-    this._store = false;
+    this._actionFired = false;
+    this._subframe = 0;
     this._cursorPosition = 0;
-    this._textLength = 0;
+    this._textList = false;
     this._text = '';
+    this._textLength = 0;
     this._textFormatActive = false;
     this._writeSpeed = [1];
-    this._writeOptions = {};
-    this._fastForwarded = true;
     this._dom = {};
+    this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
+    this._dom.textBox = document.querySelector('.js_' + this._elementType);
+    this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
     this._dom.speaker = document.querySelector('.js_speaker');
     this._timer = new Timer();
     this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
   }
 
   init() {
-    this._store = D.TextStore;
+    D.SceneStore.subscribe('actionFired', () => {
+      this._actionFired = true;
 
-    this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
-    this._dom.textBox = document.querySelector('.js_' + this._elementType);
-    this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
-
-    this._update();
+      if (!this._writeRunning && this._subframe < this._textList.length) {
+        this._actionFired = false;
+        this._setText(false);
+      }
+    });
   }
 
-  loadText(text, options, async) {
-    this._writeOptions = {
-      async: async
-    };
+  handleAction(action) {
+    this._action = action;
 
-    this._fastForwarded = false;
-    this._showTextbox(options);
-    this._writeReset();
-    this._setText(text, options);
+    if (!this._action.event) {
+      this._action.event = 'show';
+    }
+
+    switch (this._action.event) {
+      case 'show': this._showTextbox(); break;
+      case 'hide': this.hideTextbox(); break;
+    }
   }
 
   hideTextbox(fade = true) {
@@ -74,12 +81,18 @@ class TextClass {
     if (!fade) {
       this._dom.textBoxWrap.classList.add('d_gui-element--no-fade');
     }
-
-    this._writeReset();
   }
 
-  _showTextbox(options) {
-    if (options && options.position === 'top') {
+  _showTextbox() {
+    D.SceneStore.setData((this._elementType === 'textbox' ? 'text' : 'narrator') + 'Running', true);
+
+    this._actionFired = false;
+    this._subframe = 0;
+    this._textList = false;
+    this._writeSpeed = [1];
+    this._dom.textBoxInner.innerHTML = '';
+
+    if (this._action.position === 'top') {
       this._dom.textBoxWrap.classList.add('d_' + this._elementType + '-wrap--top');
     } else {
       this._dom.textBoxWrap.classList.remove('d_' + this._elementType + '-wrap--top');
@@ -89,37 +102,42 @@ class TextClass {
       this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
       this._dom.textBoxWrap.classList.add('d_gui-element--visible');
     });
-  }
 
-  _update() {
-    requestAnimationFrame(() => {
-      if (!this._fastForwarded && D.SceneStore.getData('fastForward')) {
-        this._fastForwarded = true;
-      }
-
-      this._update();
-    });
-  }
-
-  _setText(text, options) {
-    this._text = text;
-
-    let textContainer = document.createElement('div');
-    textContainer.classList.add('d_' + this._elementType + '-helper');
-
-    textContainer.innerHTML = this._text;
-
-    if (options && options.noNext) {
+    if (this._action.noNext) {
       this._dom.textBox.setAttribute('no-next', 'true');
     } else {
       this._dom.textBox.removeAttribute('no-next');
     }
 
-    if (options && options.noBackground) {
+    if (this._action.noBackground) {
       this._dom.textBox.setAttribute('no-background', 'true');
     } else {
       this._dom.textBox.removeAttribute('no-background');
     }
+
+    if (Array.isArray(this._action.dialog)) {
+      this._textList = this._action.dialog;
+    }
+
+    this._showSpeaker();
+    this._setText();
+  }
+
+  _setText() {
+    this._dom.textBox.setAttribute('running', 'true');
+    this._writeRunning = true;
+    this._cursorPosition = 0;
+
+    if (this._textList.length) {
+      this._text = this._textList[this._subframe];
+      this._subframe++;
+    } else {
+      this._text = this._action.dialog;
+    }
+
+    let textContainer = document.createElement('div');
+    textContainer.classList.add('d_' + this._elementType + '-helper');
+    textContainer.innerHTML = this._text;
 
     document.body.appendChild(textContainer);
     this._insertVariables();
@@ -129,9 +147,7 @@ class TextClass {
 
     this._textLength = this._text.length;
 
-    this._showSpeaker(options);
-
-    this._writeStart();
+    this._timer.start('write');
   }
 
   _insertVariables() {
@@ -217,12 +233,12 @@ class TextClass {
     return this._text;
   }
 
-  _showSpeaker(options) {
-    if (options && options.character) {
+  _showSpeaker() {
+    if (this._action.character) {
       this._dom.speaker.style.display = 'block';
 
-      if (options.character !== 'player') {
-        const character = D.Character.loadCharacterById(options.character);
+      if (this._action.character !== 'player') {
+        const character = D.Character.loadCharacterById(this._action.character);
         const characterData = character.getData();
         this._dom.speaker.innerHTML = characterData.nickname;
         this._dom.speaker.style.backgroundColor = characterData.color;
@@ -235,30 +251,7 @@ class TextClass {
     }
   }
 
-  _writeStart() {
-    this._store.setData('writeRunning', true);
-    this._dom.textBox.setAttribute('running', 'true');
-    this._timer.start('write');
-  }
-
-  _writeReset() {
-    this._cursorPosition = 0;
-    this._store.setData('writeRunning', false);
-    this._writeSpeed = [1];
-    this._dom.textBoxInner.innerHTML = '';
-    this._timer.destroy('write');
-  }
-
   _writeEvent(event) {
-    if (this._cursorPosition > this._textLength || (this._fastForwarded && !this._writeOptions.async) || event.over) {
-      this._writeReset();
-
-      this._dom.textBoxInner.innerHTML = this._text;
-      this._dom.textBox.removeAttribute('running');
-
-      return;
-    }
-
     if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 6) === '<d-text') {
       const match = this._text.substring(this._cursorPosition - 1).match(/<\s*\/?\s*d-text\s*.*?>/i);
       const attributes = this._getAttributes(match[0]);
@@ -292,6 +285,18 @@ class TextClass {
     this._dom.textBoxInner.innerHTML = this._text.substring(0, this._cursorPosition);
 
     this._cursorPosition++;
+
+    if (this._cursorPosition > this._textLength || this._actionFired || event.over) {
+      this._actionFired = false;
+      this._writeRunning = false;
+      this._dom.textBoxInner.innerHTML = this._text;
+      this._dom.textBox.removeAttribute('running');
+      this._timer.destroy('write');
+
+      if (this._textList === false || this._subframe >= this._textList.length) {
+        D.SceneStore.setData((this._elementType === 'textbox' ? 'text' : 'narrator') + 'Running', false);
+      }
+    }
   }
 
   _getAttributes(elem) {
@@ -342,28 +347,9 @@ class NarratorClass extends TextClass {
     super();
 
     this._elementType = 'narrator';
-  }
-
-  init() {
-    this._store = D.NarratorStore;
-
     this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
     this._dom.textBox = document.querySelector('.js_' + this._elementType);
     this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
-
-    D.SceneStore.subscribe('skipAsync', (value) => {
-      if (this._writeOptions.async) {
-        if (this._store.getData('writeRunning')) {
-          D.SceneStore.setData('fastForward', false);
-        }
-
-        this._timer.over('write');
-
-        this._writeOptions.async = false;
-      }
-    });
-
-    this._update();
   }
 }
 

@@ -21,6 +21,7 @@ let sampleCharacters = [
 
 class Actor {
   constructor(data) {
+    this._action = false;
     this._id = data.id;
     this._fullName = data.fullName;
     this._nickname = data.nickname;
@@ -35,15 +36,7 @@ class Actor {
     this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
     this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
     this._timer.addEvent('pose', this._poseEvent.bind(this), 1, true, 30);
-    this._fastForwarded = true;
     this._animationRunning = false;
-
-    D.SceneStore.subscribe('skipAsync', (value) => {
-      this._timer.over('show');
-      this._timer.over('hide');
-      this._timer.over('move');
-      this._timer.over('pose');
-    });
 
     this._init();
   }
@@ -63,8 +56,6 @@ class Actor {
     this._clone.anchor.y = 0.5;
     this._clone.position.z = 3;
     D.Stage.addChild(this._clone);
-
-    this._update();
   }
 
   getId() {
@@ -87,28 +78,28 @@ class Actor {
     return this._animationRunning;
   }
 
-  setAction(action, options, async) {
-    this._fastForwarded = false;
+  setAction(action) {
+    D.SceneStore.setData('characterRunning', true);
+    this._action = action;
     this._animationRunning = true;
 
     let position;
 
-    switch (action) {
-      case 'show': position = this._calculatePosition(options); this._showCharacter(options); break;
-      case 'hide': position = this._calculatePositionFrom(options); break;
-      case 'move': position = this._calculatePositionFrom(options); break;
-      case 'pose': this._poseCharacter(options); break;
+    if (!this._action.event) {
+      this._action.event = 'show';
     }
 
-    this._timer.setRunLimit(action, options.duration ? options.duration : 30);
-    this._timer.start(action, {
-      position: position ? position : false,
-      async: async
+    switch (action.event) {
+      case 'show': position = this._calculatePosition(); this._showCharacter(); break;
+      case 'hide': position = this._calculatePositionFrom(); break;
+      case 'move': position = this._calculatePositionFrom(); break;
+      case 'pose': this._poseCharacter(); break;
+    }
+
+    this._timer.setRunLimit(this._action.event, this._action.duration ? this._action.duration : 30);
+    this._timer.start(this._action.event, {
+      position: position ? position : false
     });
-
-    if (async) {
-      this._animationRunning = false;
-    }
   }
 
   hideCharacter() {
@@ -116,8 +107,8 @@ class Actor {
     this._clone.visible = false;
   }
 
-  _showCharacter(options) {
-    this._pose = options.pose;
+  _showCharacter() {
+    this._pose = this._action.pose;
     this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
     this._sprite.alpha = 0.001;
     this._sprite.position.z = 3;
@@ -126,8 +117,8 @@ class Actor {
     this._clone.visible = true;
   }
 
-  _poseCharacter(options) {
-    this._pose = options.pose;
+  _poseCharacter() {
+    this._pose = this._action.pose;
 
     this._sprite.position.z = 2;
 
@@ -138,28 +129,28 @@ class Actor {
     this._clone.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
   }
 
-  _calculatePosition(options) {
+  _calculatePosition() {
     let position = {
-      dest_x: options.position[0],
-      dest_y: options.position[1],
-      src_x: options.position[0],
-      src_y: options.position[1]
+      dest_x: this._action.position[0],
+      dest_y: this._action.position[1],
+      src_x: this._action.position[0],
+      src_y: this._action.position[1]
     };
 
-    if (options.position[0] === 'center') {
-      options.position[0] = 50;
+    if (this._action.position[0] === 'center') {
+      this._action.position[0] = 50;
     }
 
-    if (options.position[1] === 'bottom') {
-      options.position[1] = 100;
+    if (this._action.position[1] === 'bottom') {
+      this._action.position[1] = 100;
     }
 
-    position.dest_x = parseInt(1920 * options.position[0] / 100);
-    position.dest_y = parseInt(1080 * options.position[1] / 100 - this._sprite.height / 2);
+    position.dest_x = parseInt(1920 * this._action.position[0] / 100);
+    position.dest_y = parseInt(1080 * this._action.position[1] / 100 - this._sprite.height / 2);
 
-    if (options.from) {
-      position.src_x = options.position[0] + options.from[0];
-      position.src_y = options.position[1] + options.from[1];
+    if (this._action.from) {
+      position.src_x = this._action.position[0] + this._action.from[0];
+      position.src_y = this._action.position[1] + this._action.from[1];
 
       position.src_x = parseInt(1920 * position.src_x / 100);
       position.src_y = parseInt(1080 * position.src_y / 100 - this._sprite.height / 2);
@@ -171,44 +162,34 @@ class Actor {
     return position;
   }
 
-  _calculatePositionFrom(options) {
+  _calculatePositionFrom() {
     let position = {
-      dest_x: options.position[0],
-      dest_y: options.position[1],
+      dest_x: this._action.position[0],
+      dest_y: this._action.position[1],
       src_x: this._sprite.position.new_x,
       src_y: this._sprite.position.new_y
     };
 
-    if (options.position[0] === 'center') {
-      options.position[0] = 50;
+    if (this._action.position[0] === 'center') {
+      this._action.position[0] = 50;
     }
 
-    if (options.position[1] === 'bottom') {
-      options.position[1] = 100;
+    if (this._action.position[1] === 'bottom') {
+      this._action.position[1] = 100;
     }
 
-    if (options.relative) {
-      position.dest_x = parseInt(position.src_x + 1920 * options.position[0] / 100);
-      position.dest_y = parseInt(position.src_y + 1080 * options.position[1] / 100);
+    if (this._action.relative) {
+      position.dest_x = parseInt(position.src_x + 1920 * this._action.position[0] / 100);
+      position.dest_y = parseInt(position.src_y + 1080 * this._action.position[1] / 100);
     } else {
-      position.dest_x = parseInt(1920 * options.position[0] / 100);
-      position.dest_y = parseInt(1080 * options.position[1] / 100 - this._sprite.height / 2);
+      position.dest_x = parseInt(1920 * this._action.position[0] / 100);
+      position.dest_y = parseInt(1080 * this._action.position[1] / 100 - this._sprite.height / 2);
     }
 
     this._sprite.position.new_x = position.dest_x;
     this._sprite.position.new_y = position.dest_y;
 
     return position;
-  }
-
-  _update() {
-    requestAnimationFrame(() => {
-      if (!this._fastForwarded && D.SceneStore.getData('fastForward')) {
-        this._fastForwarded = true;
-      }
-
-      this._update();
-    });
   }
 
   _showEvent(event) {
@@ -220,7 +201,7 @@ class Actor {
     this._sprite.position.x = newPosition.x;
     this._sprite.position.y = newPosition.y;
 
-    if (event.over || (this._fastForwarded && !event.params.async)) {
+    if (event.over || D.SceneStore.getData('fastForward')) {
       this._sprite.alpha = 1;
       this._sprite.position.x = position.dest_x;
       this._sprite.position.y = position.dest_y;
@@ -239,7 +220,7 @@ class Actor {
     this._sprite.position.x = newPosition.x;
     this._sprite.position.y = newPosition.y;
 
-    if (event.over || (this._fastForwarded && !event.params.async)) {
+    if (event.over || D.SceneStore.getData('fastForward')) {
       this._sprite.alpha = 0.001;
       this._sprite.position.x = position.dest_x;
       this._sprite.position.y = position.dest_y;
@@ -257,10 +238,14 @@ class Actor {
 
     this._sprite.position.x = newPosition.x;
     this._sprite.position.y = newPosition.y;
+    this._clone.position.x = newPosition.x;
+    this._clone.position.y = newPosition.y;
 
-    if (event.over || (this._fastForwarded && !event.params.async)) {
+    if (event.over || D.SceneStore.getData('fastForward')) {
       this._sprite.position.x = position.dest_x;
       this._sprite.position.y = position.dest_y;
+      this._clone.position.x = position.dest_x;
+      this._clone.position.y = position.dest_y;
 
       this._animationRunning = false;
       this._timer.destroy('move');
@@ -273,7 +258,7 @@ class Actor {
     this._sprite.alpha = 1 - percent + 0.001;
     this._clone.alpha = percent;
 
-    if (event.over || (this._fastForwarded && !event.params.async)) {
+    if (event.over || D.SceneStore.getData('fastForward')) {
       this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
       this._sprite.alpha = 1;
       this._sprite.position.z = 3;
@@ -306,9 +291,9 @@ class Character {
     this._update();
   }
 
-  setAction(action, options, async) {
-    const character = this.loadCharacterById(options.id);
-    character.setAction(action, options, async);
+  handleAction(action) {
+    const character = this.loadCharacterById(action.id);
+    character.setAction(action);
   }
 
   loadCharacterById(id) {
@@ -346,9 +331,9 @@ class Character {
   _update() {
     requestAnimationFrame(() => {
       if (this._isAnimationRunning()) {
-        D.CharacterStore.setData('animationRunning', true);
+        D.SceneStore.setData('characterRunning', true);
       } else {
-        D.CharacterStore.setData('animationRunning', false);
+        D.SceneStore.setData('characterRunning', false);
       }
 
       this._update();

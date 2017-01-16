@@ -31,6 +31,7 @@ class Timer {
         this._events[i].over = false;
         this._events[i].runCount = 0;
         this._events[i].running = true;
+        this._events[i].ticker = 0;
 
         if (params) {
           this._events[i].params = params;
@@ -66,7 +67,6 @@ class Timer {
         this._events[i].running = false;
         this._events[i].runCount = 0;
         this._events[i].ticker = 0;
-        this._events[i].tickRate = 1;
       }
     }
   }

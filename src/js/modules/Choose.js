@@ -2,6 +2,7 @@ import Timer from './Timer';
 
 class Choose {
   constructor() {
+    this._action = false;
     this._selected = false;
     this._dom = {};
     this._dom.chooseWrap = document.querySelector('.js_choose-wrap');
@@ -10,17 +11,12 @@ class Choose {
     this._timer.addEvent('chose', this._blinkEvent.bind(this), 1, true, 24);
   }
 
-  showChoose(items, options) {
+  handleAction(action) {
+    this._action = action;
     this._selected = false;
-    D.InteractionStore.setData('interactionRunning', true);
+    D.SceneStore.setData('interactionRunning', true);
 
-    if (options && options.dialog) {
-      D.Text.loadText(options.dialog, {
-        noNext: true
-      });
-    }
-
-    this._buildItems(items);
+    this._buildItems();
     this._showChoose();
   }
 
@@ -29,8 +25,8 @@ class Choose {
     this._dom.choose.innerHTML = '';
   }
 
-  _buildItems(items) {
-    items.forEach((item) => {
+  _buildItems() {
+    this._action.items.forEach((item) => {
       let itemElement = document.createElement('div');
       itemElement.className = 'd_choose__item';
       itemElement.innerHTML = item.text;
@@ -103,7 +99,7 @@ class Choose {
     if (event.over) {
       itemElement.classList.remove('d_choose__item--blink');
 
-      D.InteractionStore.setData('interactionRunning', false);
+      D.SceneStore.setData('interactionRunning', false);
 
       if (item.goTo) {
         if (item.goTo.scene) {

@@ -2,29 +2,28 @@ import Timer from './Timer';
 
 class Input {
   constructor() {
+    this._action = false;
     this._inputted = false;
-    this._store = false;
     this._dom = {};
     this._dom.inputWrap = document.querySelector('.js_input-wrap');
     this._dom.input = document.querySelector('.js_input');
     this._dom.inputButton = document.querySelector('.js_input_button');
     this._timer = new Timer();
     this._timer.addEvent('input', this._inputEvent.bind(this), 1, true, 24);
+
+    window.addEventListener('mousedown', (event) => {
+      if (event.target.classList.contains('js_input_button')) {
+        this._confirmInput();
+      }
+    });
   }
 
-  showInput(store, options) {
+  handleAction(action) {
+    this._action = action;
     this._inputted = false;
-    D.InteractionStore.setData('interactionRunning', true);
+    D.SceneStore.setData('interactionRunning', true);
 
-    this._store = store;
-
-    if (options && options.dialog) {
-      D.Text.loadText(options.dialog, {
-        noNext: true
-      });
-    }
-
-    const currentValue = D.Variable.get(this._store);
+    const currentValue = D.Variable.get(this._action.store);
 
     if (currentValue) {
       this._dom.input.value = currentValue;
@@ -38,14 +37,14 @@ class Input {
     this._dom.input.value = '';
   }
 
-  confirmInput(store) {
+  _confirmInput() {
     if (this._inputted) {
       return;
     }
 
     this._inputted = true;
 
-    D.Variable.set(this._store, this._dom.input.value, 'string');
+    D.Variable.set(this._action.store, this._dom.input.value, 'string');
 
     this._dom.input.blur();
     this._dom.inputButton.blur();
@@ -77,7 +76,9 @@ class Input {
     if (event.over) {
       this._dom.inputButton.classList.remove('d_button--success');
 
-      D.InteractionStore.setData('interactionRunning', false);
+      D.SceneStore.setData('interactionRunning', false);
+
+      D.Scene.loadNextFrame();
 
       this._hideInput();
       this._timer.destroy('input');

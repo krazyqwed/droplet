@@ -20,7 +20,6 @@ class Scene {
     this._bgm = false;
 
     this._keyframe = 0;
-    this._subframe = 0;
     this._loadedByAction = false;
 
     this._textFinished = false;
@@ -33,44 +32,10 @@ class Scene {
 
     this._timer = new Timer();
     this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
-    this._timer.addEvent('background', this._backgroundEvent.bind(this), 1, true, 30);
   }
 
   init() {
     this._input();
-
-    D.TextStore.subscribe('writeRunning', (data) => {
-      if (data === false) {
-        this._textFinished = true;
-      } else {
-        this._textFinished = false;
-      }
-    });
-
-    D.NarratorStore.subscribe('writeRunning', (data) => {
-      if (data === false) {
-        this._narratorFinished = true;
-      } else {
-        this._narratorFinished = false;
-      }
-    });
-
-    D.CharacterStore.subscribe('animationRunning', (data) => {
-      if (data === false) {
-        this._characterFinished = true;
-
-        if (this._scene.keyframes[this._keyframe].fastForward) {
-          this._fastForward();
-        }
-      }
-    });
-
-    D.InteractionStore.subscribe('interactionRunning', (data) => {
-      if (data === false) {
-        this._interactionFinished = true;
-        this._fastForward();
-      }
-    });
 
     D.Stage.addChild(this._background);
     D.Stage.addChild(this._backgroundClone);
@@ -92,9 +57,7 @@ class Scene {
         D.SceneStore.setData('fastForward', false);
 
         this._keyframe = i;
-        this._subframe = 0;
-
-        this._loadKeyframe(this._keyframe, this._subframe);
+        this._loadKeyframe(this._scene.keyframes[this._keyframe]);
 
         return true;
       }
@@ -103,12 +66,19 @@ class Scene {
     });
   }
 
+  loadNextFrame() {
+    D.SceneStore.setData('fastForward', false);
+
+    this._loadKeyframe(this._scene.keyframes[++this._keyframe]);
+  }
+
   _input() {
     function scrollEvent(event) {
       const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 
       if (delta === -1) {
         event.preventDefault();
+        D.SceneStore.setData('actionFired', Math.random());
         this._fastForward();
       }
     }
@@ -119,21 +89,17 @@ class Scene {
     window.addEventListener('mousedown', (event) => {
       if (!event.target.classList.contains('js_input') && !event.target.classList.contains('js_input_button')) {
         event.preventDefault();
+        D.SceneStore.setData('actionFired', Math.random());
         this._fastForward();
-      } else if (event.target.classList.contains('js_input_button')) {
-        D.Input.confirmInput();
       }
     }, false);
 
     window.addEventListener('keydown', (event) => {
       if (!event.target.classList.contains('js_input')) {
-        if (event.which === 32) {
+        if (event.which === 32 || event.which === 13) {
           event.preventDefault();
+          D.SceneStore.setData('actionFired', Math.random());
           this._fastForward();
-        }
-      } else {
-        if (event.which === 13) {
-          D.Input.confirmInput();
         }
       }
     }, false);
@@ -190,159 +156,66 @@ class Scene {
 
   _fastForward() {
     if (!this._sceneLoaded) {
-      D.SceneStore.setData('fastForward', false);
       return;
     }
 
-    if (this._scene.keyframes[this._keyframe] && !this._loadedByAction) {
-      if (this._textFinished && this._narratorFinished && this._characterFinished && this._interactionFinished) {
-        D.SceneStore.setData('fastForward', true);
-      }
+    D.SceneStore.setData('fastForward', true);
 
-      if (!this._scene.keyframes[this._keyframe].async) {
-        D.SceneStore.setData('skipAsync', Math.random());
-      }
-
-      if (D.SceneStore.getData('fastForward')) {
-        if (this._scene.keyframes[this._keyframe].goTo) {
-          if (this._scene.keyframes[this._keyframe].goTo.scene) {
-            D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-            return;
-          }
+    if (this._canJumpToNext()) {
+      if (this._scene.keyframes[this._keyframe].goTo) {
+        if (this._scene.keyframes[this._keyframe].goTo.scene) {
+          D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+          return;
         }
-
-        this._loadNextFrame();
-      } else {
-        D.SceneStore.setData('fastForward', true);
       }
-    }
 
-    this._loadedByAction = false;
+      this.loadNextFrame();
+    }
   }
 
-  _loadKeyframe(keyframe, subframe) {
-    if (!this._scene.keyframes[keyframe] || this._handleConditions()) {
+  _canJumpToNext() {
+    const text = !D.SceneStore.getData('textRunning');
+    const narrator = !D.SceneStore.getData('narratorRunning');
+    const character = !D.SceneStore.getData('characterRunning');
+    const interaction = !D.SceneStore.getData('interactionRunning');
+
+    return text && narrator && character && interaction;
+  }
+
+  _loadKeyframe(keyframe) {
+    if (this._handleConditions()) {
       return;
     }
 
-    this._setFinishedSubscriptions(this._scene.keyframes[keyframe]);
+    this._resetRunnings();
 
-    this._handleVariables();
-
-    switch (this._scene.keyframes[keyframe].type) {
-      case 'dialog': this._handleTypeDialog(keyframe, subframe); break;
-      case 'narrator': this._handleTypeNarrator(keyframe, subframe); break;
-      case 'character': this._handleTypeCharacter(keyframe); break;
-      case 'choose': this._handleTypeChoose(keyframe); break;
-      case 'input': this._handleTypeInput(keyframe); break;
-    }
-
-    if (this._scene.keyframes[this._keyframe].async) {
-      this._loadNextFrame();
-    }
-  }
-
-  _loadSubframe() {
-    this._subframe++;
-    this._loadKeyframe(this._keyframe, this._subframe);
-  }
-
-  _loadNextFrame() {
-    if (this._interactionFinished) {
-      D.SceneStore.setData('fastForward', false);
-
-      if (this._subframeCount - 1 > this._subframe) {
-        this._loadSubframe();
-      } else {
-        this._keyframe++;
-        this._subframe = 0;
-
-        this._loadKeyframe(this._keyframe, this._subframe);
+    keyframe.actions.forEach((action) => {
+      switch (action.type) {
+        case 'variable': D.Variable.handleAction(action); break;
+        case 'dialog': D.Text.handleAction(action); break;
+        case 'narrator': D.Narrator.handleAction(action); break;
+        case 'character': D.Character.handleAction(action); break;
+        case 'choose': D.Choose.handleAction(action); break;
+        case 'input': D.Input.handleAction(action); break;
       }
-    }
+    });
   }
 
-  _setFinishedSubscriptions(keyframe) {
-    this._textFinished = true;
-    this._narratorFinished = true;
-    this._characterFinished = true;
-    this._interactionFinished = true;
-
-    switch (keyframe.type) {
-      case 'dialog': this._textFinished = false; break;
-      case 'narrator': this._narratorFinished = false; break;
-      case 'character': this._characterFinished = false; break;
-      case 'choose': this._interactionFinished = false; this._textFinished = !(keyframe.options && keyframe.options.dialog); break;
-      case 'input': this._interactionFinished = false; this._textFinished = !(keyframe.options && keyframe.options.dialog); break;
-    }
+  _resetRunnings() {
+    D.SceneStore.setData('textRunning', false);
+    D.SceneStore.setData('narratorRunning', false);
+    D.SceneStore.setData('characterRunning', false);
+    D.SceneStore.setData('interactionRunning', false);
   }
 
   _handleConditions() {
     if (this._scene.keyframes[this._keyframe].condition && !D.Variable.if(this._scene.keyframes[this._keyframe].condition)) {
-      this._loadNextFrame();
+      this.loadNextFrame();
 
       return true;
     }
 
     return false;
-  }
-
-  _handleVariables() {
-    if (this._scene.keyframes[this._keyframe].variable) {
-      const variables = this._scene.keyframes[this._keyframe].variable;
-
-      variables.forEach((variable) => {
-        D.Variable.set(variable.name, variable.value, variable.type);
-      });
-    }
-  }
-
-  _handleTypeDialog(keyframe, subframe) {
-    keyframe = this._scene.keyframes[keyframe];
-
-    if (keyframe.options && keyframe.options.action === 'close') {
-      D.Text.hideTextbox();
-      this._loadNextFrame();
-      return;
-    }
-
-    this._subframeCount = keyframe.dialog.length;
-
-    D.Text.loadText(keyframe.dialog[subframe], keyframe.options, keyframe.async);
-  }
-
-  _handleTypeNarrator(keyframe, subframe) {
-    keyframe = this._scene.keyframes[keyframe];
-
-    if (keyframe.options && keyframe.options.action === 'close') {
-      D.Narrator.hideTextbox();
-      this._loadNextFrame();
-      return;
-    }
-
-    this._subframeCount = keyframe.dialog.length;
-    D.Narrator.loadText(keyframe.dialog[subframe], keyframe.options, keyframe.async);
-  }
-
-  _handleTypeCharacter(keyframe) {
-    keyframe = this._scene.keyframes[keyframe];
-    this._subframeCount = 1;
-
-    D.Character.setAction(keyframe.action, keyframe.options, keyframe.async);
-  }
-
-  _handleTypeChoose(keyframe) {
-    keyframe = this._scene.keyframes[keyframe];
-    this._subframeCount = 1;
-
-    D.Choose.showChoose(keyframe.items, keyframe.options);
-  }
-
-  _handleTypeInput(keyframe) {
-    keyframe = this._scene.keyframes[keyframe];
-    this._subframeCount = 1;
-
-    D.Input.showInput(keyframe.store, keyframe.options);
   }
 
   _loadEvent(event) {
@@ -362,24 +235,8 @@ class Scene {
 
     if (event.over) {
       this._sceneLoaded = true;
-      this._loadKeyframe(this._keyframe, 0);
+      this._loadKeyframe(this._scene.keyframes[this._keyframe]);
       this._timer.destroy('load');
-    }
-  }
-
-  _backgroundEvent(event) {
-    let percent = event.runCount / event.runLimit;
-
-    this._background.alpha = percent + 0.001;
-    this._backgroundClone.alpha = 1 - percent + 0.001;
-
-    if (event.over) {
-      this._background.alpha = 1;
-      this._background.position.z = 1;
-      this._backgroundClone.alpha = 0.001;
-      this._backgroundClone.position.z = 0;
-
-      this._timer.destroy('background');
     }
   }
 }

@@ -21,6 +21,12 @@ class Variable {
     this._variables = sampleVariable;
   }
 
+  handleAction(action) {
+    action.variables.forEach((variable) => {
+      this.set(variable.name, variable.value, variable.type);
+    });
+  }
+
   get(name) {
     name = name.split('.');
 

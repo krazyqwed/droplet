@@ -1,16 +1,13 @@
 import Variable from './modules/Variable';
+import Background from './modules/Background';
 import Story from './modules/Story';
 import Scene from './modules/Scene';
 import { Text, Narrator } from './modules/Text';
 import Character from './modules/Character';
 import Choose from './modules/Choose';
 import Input from './modules/Input';
-import PixiStore from './stores/PixiStore';
+import Sound from './modules/Sound';
 import SceneStore from './stores/SceneStore';
-import TextStore from './stores/TextStore';
-import NarratorStore from './stores/NarratorStore';
-import CharacterStore from './stores/CharacterStore';
-import InteractionStore from './stores/InteractionStore';
 
 class Main {
   constructor() {
@@ -19,14 +16,10 @@ class Main {
       Stage: null,
       Loader: null,
 
-      PixiStore: new PixiStore(),
       SceneStore: new SceneStore(),
-      TextStore: new TextStore(),
-      NarratorStore: new NarratorStore(),
-      CharacterStore: new CharacterStore(),
-      InteractionStore: new InteractionStore(),
 
       Variable: Variable,
+      Background: Background,
       Story: Story,
       Scene: Scene,
       Text: Text,
@@ -34,6 +27,7 @@ class Main {
       Character: Character,
       Choose: Choose,
       Input: Input,
+      Sound: Sound,
 
       FPSMeter: new FPSMeter()
     };
