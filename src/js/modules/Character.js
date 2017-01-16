@@ -163,6 +163,10 @@ class Actor {
   }
 
   _calculatePositionFrom() {
+    if (!this._action.position) {
+      this._action.position = [0, 0];
+    }
+
     let position = {
       dest_x: this._action.position[0],
       dest_y: this._action.position[1],
@@ -178,12 +182,12 @@ class Actor {
       this._action.position[1] = 100;
     }
 
-    if (this._action.relative) {
-      position.dest_x = parseInt(position.src_x + 1920 * this._action.position[0] / 100);
-      position.dest_y = parseInt(position.src_y + 1080 * this._action.position[1] / 100);
-    } else {
+    if (this._action.absolute) {
       position.dest_x = parseInt(1920 * this._action.position[0] / 100);
       position.dest_y = parseInt(1080 * this._action.position[1] / 100 - this._sprite.height / 2);
+    } else {
+      position.dest_x = parseInt(position.src_x + 1920 * this._action.position[0] / 100);
+      position.dest_y = parseInt(position.src_y + 1080 * this._action.position[1] / 100);
     }
 
     this._sprite.position.new_x = position.dest_x;
@@ -193,9 +197,9 @@ class Actor {
   }
 
   _showEvent(event) {
-    let position = event.params.position;
-    let percent = event.runCount / event.runLimit;
-    let newPosition = this._calculatePositionByPercent(position, percent);
+    const position = event.params.position;
+    const percent = event.runCount / event.runLimit;
+    const newPosition = this._calculatePositionByPercent(position, percent);
 
     this._sprite.alpha = percent + 0.001;
     this._sprite.position.x = newPosition.x;
@@ -212,9 +216,9 @@ class Actor {
   }
 
   _hideEvent(event) {
-    let position = event.params.position;
-    let percent = event.runCount / event.runLimit;
-    let newPosition = this._calculatePositionByPercent(position, percent);
+    const position = event.params.position;
+    const percent = event.runCount / event.runLimit;
+    const newPosition = this._calculatePositionByPercent(position, percent);
 
     this._sprite.alpha = 1 - percent + 0.001;
     this._sprite.position.x = newPosition.x;
@@ -232,9 +236,9 @@ class Actor {
   }
 
   _moveEvent(event) {
-    let position = event.params.position;
-    let percent = event.runCount / event.runLimit;
-    let newPosition = this._calculatePositionByPercent(position, percent);
+    const position = event.params.position;
+    const percent = event.runCount / event.runLimit;
+    const newPosition = this._calculatePositionByPercent(position, percent);
 
     this._sprite.position.x = newPosition.x;
     this._sprite.position.y = newPosition.y;
@@ -253,7 +257,7 @@ class Actor {
   }
 
   _poseEvent(event) {
-    let percent = event.runCount / event.runLimit;
+    const percent = event.runCount / event.runLimit;
 
     this._sprite.alpha = 1 - percent + 0.001;
     this._clone.alpha = percent;
@@ -271,8 +275,8 @@ class Actor {
   }
 
   _calculatePositionByPercent(position, percent) {
-    let x = position.dest_x + (1 - percent) * (position.src_x - position.dest_x);
-    let y = position.dest_y + (1 - percent) * (position.src_y - position.dest_y);
+    const x = position.dest_x + (1 - percent) * (position.src_x - position.dest_x);
+    const y = position.dest_y + (1 - percent) * (position.src_y - position.dest_y);
 
     return {
       x: x,

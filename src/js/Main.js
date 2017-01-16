@@ -127,20 +127,22 @@ class Main {
 
   _updateLayersOrder() {
     D.Stage.children.sort(function(a, b) {
-      a.position.z = a.position.z || 0;
-      b.position.z = b.position.z || 0;
+      if (a.position.z < b.position.z) {
+        return -1;
+      }
 
-      return a.position.z - b.position.z;
+      if (a.position.z > b.position.z) {
+        return 1;
+      }
+
+      return 0;
     });
   }
 
   _update() {
     D.FPSMeter.tickStart();
 
-    if (this._stageChildrenCount !== D.Stage.children.length) {
-      this._updateLayersOrder();
-      this._stageChildrenCount = D.Stage.children.length;
-    }
+    this._updateLayersOrder();
 
     requestAnimationFrame(() => {
       this._render();

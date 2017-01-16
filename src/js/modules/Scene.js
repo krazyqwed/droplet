@@ -138,6 +138,7 @@ class Scene {
 
     keyframe.actions.forEach((action) => {
       switch (action.type) {
+        case 'background': D.Background.handleAction(action); break;
         case 'variable': D.Variable.handleAction(action); break;
         case 'dialog': D.Text.handleAction(action); break;
         case 'narrator': D.Narrator.handleAction(action); break;

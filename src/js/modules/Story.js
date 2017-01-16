@@ -82,7 +82,6 @@ let sampleStory = {
               type: 'character',
               event: 'move',
               id: 1,
-              relative: true,
               position: [-10, 0],
               duration: 10
             },
@@ -206,7 +205,6 @@ let sampleStory = {
               type: 'character',
               event: 'move',
               id: 1,
-              relative: true,
               position: [20, 0]
             }
           ]
@@ -218,7 +216,6 @@ let sampleStory = {
               type: 'character',
               event: 'move',
               id: 1,
-              relative: true,
               position: [-20, 0]
             }
           ]
@@ -226,6 +223,10 @@ let sampleStory = {
         {
           id: 13,
           actions: [
+            {
+              type: 'background',
+              event: 'hideScene'
+            },
             {
               type: 'narrator',
               dialog: [
