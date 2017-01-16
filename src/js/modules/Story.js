@@ -6,7 +6,7 @@ let sampleStory = {
       id: 1,
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_1',
-      bgm: false,
+      bgm: 'bgm_1',
       keyframes: [
         {
           id: 1,
@@ -53,11 +53,17 @@ let sampleStory = {
           id: 3,
           actions: [
             {
+              type: 'sound',
+              event: 'sound',
+              sound: 'whosh'
+            },
+            {
               type: 'character',
               id: 2,
               pose: 1,
               position: [60, 'bottom'],
-              from: [5, 0]
+              from: [5, 0],
+              duration: 10
             },
             {
               type: 'dialog',
@@ -247,7 +253,7 @@ let sampleStory = {
       id: 2,
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_2',
-      bgm: false,
+      bgm: 'bgm_2',
       keyframes: [
         {
           id: 1,
