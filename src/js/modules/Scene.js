@@ -5,18 +5,6 @@ class Scene {
     this._scene = false;
     this._sceneLoaded = false;
 
-    this._background = new PIXI.Sprite();
-    this._background.anchor.x = 0;
-    this._background.anchor.y = 0;
-    this._background.position.x = 0;
-    this._background.position.y = 0;
-
-    this._backgroundClone = new PIXI.Sprite();
-    this._backgroundClone.anchor.x = 0;
-    this._backgroundClone.anchor.y = 0;
-    this._backgroundClone.position.x = 0;
-    this._backgroundClone.position.y = 0;
-
     this._bgm = false;
 
     this._keyframe = 0;
@@ -27,18 +15,12 @@ class Scene {
     this._characterFinished = false;
     this._interactionFinished = false;
 
-    this._dom = {};
-    this._dom.fader = document.querySelector('.js_fader');
-
     this._timer = new Timer();
     this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
   }
 
   init() {
     this._input();
-
-    D.Stage.addChild(this._background);
-    D.Stage.addChild(this._backgroundClone);
   }
 
   loadScene(scene, keyframe) {
@@ -108,15 +90,10 @@ class Scene {
   _prepareScene() {
     D.SceneStore.setData('fastForward', false);
 
-    let background = PIXI.Texture.fromImage('static/' + this._scene.background + '.jpg');
-
-    this._backgroundClone.setTexture(this._background.texture);
-    this._backgroundClone.alpha = 1;
-    this._backgroundClone.position.z = 1;
-
-    this._background.setTexture(background);
-    this._background.alpha = 0.001;
-    this._background.position.z = 0;
+    D.Background.handleAction({
+      event: 'load',
+      background: this._scene.background
+    });
 
     if (this._scene.bgm && this._scene.bgm !== true && this._scene.bgm !== false) {
       if (this._bgm) {
@@ -139,8 +116,6 @@ class Scene {
         this._bgm.fade(1, 0, 500);
       }
     }
-
-    this._dom.fader.classList.add('d_fader--visible');
 
     this._timer.start('load');
   }
@@ -219,18 +194,15 @@ class Scene {
   }
 
   _loadEvent(event) {
-    if (event.runCount === 30) {
-      this._background.alpha = 1;
-      this._background.position.z = 1;
-      this._backgroundClone.alpha = 0.001;
-      this._backgroundClone.position.z = 0;
-    } else if (event.runCount === 60) {
-      D.Text.hideTextbox(false);
-      D.Narrator.hideTextbox(false);
-      D.Choose.hideChoose(false);
-      D.Input.hideInput(false);
+    if (event.runCount === 60) {
+      [].forEach.call(document.querySelectorAll('d_gui-element--visible'), (element) => {
+        element.classList.add('d_gui-element--no-fade');
+        element.classList.remove('d_gui-element--visible');
+      });
+
       D.Character.hideCharacters();
-      this._dom.fader.classList.remove('d_fader--visible');
+      D.Choose.clearChoose();
+      D.Input.clearInput();
     }
 
     if (event.over) {

@@ -20,7 +20,7 @@ class Choose {
     this._showChoose();
   }
 
-  hideChoose() {
+  clearChoose() {
     this._hideChoose();
     this._dom.choose.innerHTML = '';
   }
@@ -80,12 +80,8 @@ class Choose {
     });
   }
 
-  _hideChoose(fade = true) {
+  _hideChoose() {
     this._dom.chooseWrap.classList.remove('d_gui-element--visible');
-
-    if (!fade) {
-      this._dom.chooseWrap.classList.add('d_gui-element--no-fade');
-    }
   }
 
   _blinkEvent(event) {

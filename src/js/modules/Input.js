@@ -32,7 +32,7 @@ class Input {
     this._showInput();
   }
 
-  hideInput() {
+  clearInput() {
     this._hideInput();
     this._dom.input.value = '';
   }
@@ -60,12 +60,8 @@ class Input {
     });
   }
 
-  _hideInput(fade = true) {
+  _hideInput() {
     this._dom.inputWrap.classList.remove('d_gui-element--visible');
-
-    if (!fade) {
-      this._dom.inputWrap.classList.add('d_gui-element--no-fade');
-    }
   }
 
   _inputEvent(event) {

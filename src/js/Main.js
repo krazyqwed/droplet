@@ -114,6 +114,7 @@ class Main {
   _loadFinished() {
     this._dom.mainWarpper.style.removeProperty('display');
 
+    D.Background.init();
     D.Text.init();
     D.Narrator.init();
     D.Character.init();

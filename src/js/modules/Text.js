@@ -75,12 +75,8 @@ class TextClass {
     }
   }
 
-  hideTextbox(fade = true) {
+  hideTextbox() {
     this._dom.textBoxWrap.classList.remove('d_gui-element--visible');
-
-    if (!fade) {
-      this._dom.textBoxWrap.classList.add('d_gui-element--no-fade');
-    }
   }
 
   _showTextbox() {
