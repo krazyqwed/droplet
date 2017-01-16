@@ -5,8 +5,6 @@ class Scene {
     this._scene = false;
     this._sceneLoaded = false;
 
-    this._bgm = false;
-
     this._keyframe = 0;
     this._loadedByAction = false;
 
@@ -95,38 +93,12 @@ class Scene {
       background: this._scene.background
     });
 
-    if (this._scene.bgm && this._scene.bgm !== true && this._scene.bgm !== false) {
-      if (this._bgm) {
-        this._bgm.on('fade', () => {
-          this._bgm.unload();
-
-          this._createMusic(this._scene.bgm);
-        });
-
-        this._bgm.fade(1, 0, 500);
-      } else {
-        this._createMusic(this._scene.bgm);
-      }
-    } else if (this._scene.bgm === false) {
-      if (this._bgm) {
-        this._bgm.on('fade', () => {
-          this._bgm.unload();
-          this._bgm = false;
-        });
-        this._bgm.fade(1, 0, 500);
-      }
-    }
+    D.Sound.handleAction({
+      event: 'bgm',
+      sound: this._scene.bgm
+    });
 
     this._timer.start('load');
-  }
-
-  _createMusic(bgm) {
-    this._bgm = new Howl({
-      src: ['static/' + bgm + '.mp3'],
-      loop: true
-    });
-    this._bgm.play();
-    this._bgm.fade(0, 1, 500);
   }
 
   _fastForward() {
