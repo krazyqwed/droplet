@@ -129,7 +129,7 @@ canvas {
   &--visible {
     opacity: 1;
 
-    &.d_gui-interactive * {
+    &.d_gui-interactive:not(.d_gui-element--disable) * {
       pointer-events: all;
     }
   }

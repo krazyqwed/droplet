@@ -9,6 +9,7 @@ class Input {
     this._dom.input = document.querySelector('.js_input');
     this._dom.inputButton = document.querySelector('.js_input_button');
     this._timer = new Timer();
+    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);
     this._timer.addEvent('input', this._inputEvent.bind(this), 1, true, 24);
 
     window.addEventListener('mousedown', (event) => {
@@ -53,15 +54,26 @@ class Input {
   }
 
   _showInput() {
+    this._dom.inputWrap.classList.add('d_gui-element--disable');
+
     requestAnimationFrame(() => {
       this._dom.inputWrap.classList.remove('d_gui-element--no-fade');
       this._dom.inputWrap.classList.add('d_gui-element--visible');
       this._dom.input.focus();
     });
+
+    this._timer.start('show');
   }
 
   _hideInput() {
     this._dom.inputWrap.classList.remove('d_gui-element--visible');
+  }
+
+  _showEvent(event) {
+    if (event.over) {
+      this._dom.inputWrap.classList.remove('d_gui-element--disable');
+      this._timer.destroy('show');
+    }
   }
 
   _inputEvent(event) {
