@@ -17,8 +17,10 @@ class Background {
     this._backgroundClone.position.z = 0;
 
     this._sceneFader = new PIXI.Graphics();
-    this._sceneFader.beginFill(0x000000);
+    this._sceneFader.beginFill(0xFFFFFF);
     this._sceneFader.drawRect(0, 0, 1920, 1080);
+    this._sceneFader = new PIXI.Sprite(this._sceneFader.generateTexture());
+    this._sceneFader.tint = 0x000000;
     this._sceneFader.alpha = 0.001;
     this._sceneFader.position.z = 0;
 
@@ -26,8 +28,8 @@ class Background {
     this._dom.fader = document.querySelector('.js_fader');
 
     this._timer = new Timer();
-    this._timer.addEvent('showScene', this._showSceneEvent.bind(this), 1, true, 60);
-    this._timer.addEvent('hideScene', this._hideSceneEvent.bind(this), 1, true, 60);
+    this._timer.addEvent('showScene', this._showSceneEvent.bind(this), 1, true);
+    this._timer.addEvent('hideScene', this._hideSceneEvent.bind(this), 1, true);
     this._timer.addEvent('change', this._changeEvent.bind(this), 1, true, 60);
     this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
   }
@@ -55,11 +57,14 @@ class Background {
 
   _showScene() {
     this._sceneFader.position.z = 0;
+    this._timer.setRunLimit('showScene', this._action.duration ? this._action.duration : 60);
     this._timer.start('showScene');
   }
 
   _hideScene() {
+    this._sceneFader.tint = this._action.tint ? parseInt('0x' + this._action.tint) : 0x000000;
     this._sceneFader.position.z = 100;
+    this._timer.setRunLimit('hideScene', this._action.duration ? this._action.duration : 60);
     this._timer.start('hideScene');
   }
 

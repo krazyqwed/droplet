@@ -226,7 +226,9 @@ let sampleStory = {
           actions: [
             {
               type: 'background',
-              event: 'hideScene'
+              event: 'hideScene',
+              tint: 'FFFFFF',
+              duration: 20
             },
             {
               type: 'narrator',
