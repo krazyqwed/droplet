@@ -84,18 +84,13 @@ let sampleStory = {
         {
           id: 5,
           actions: [
-            {
-              type: 'character',
-              event: 'move',
-              id: 1,
-              position: [-10, 0],
-              duration: 10
-            },
+
             {
               type: 'character',
               event: 'pose',
               id: 1,
-              pose: 1
+              pose: 7,
+              duration: 30
             },
             {
               type: 'dialog',
