@@ -74,7 +74,6 @@ canvas {
 }
 
 .d_main-wrapper {
-  backface-visibility: hidden;
   bottom: 0;
   display: flex;
   left: 0;
@@ -257,7 +256,7 @@ canvas {
 d-text {
   @for $i from 1 through 5 {
     &[d-blink="#{$i}"] {
-      animation: blink $i * 0.2s ease-out infinite;
+      animation: blink $i * .2s ease-out infinite;
     }
 
     .d_textbox[running] &[d-blink="#{$i}"] {
@@ -272,6 +271,15 @@ d-text {
   &[d-underline] {
     text-decoration: underline;
   }
+
+  &[d-fade] {
+    animation: fadein .2s;
+  }
+}
+
+@keyframes fadein {
+  from { opacity: .2; }
+  to { opacity: .8; }
 }
 
 @keyframes blink {

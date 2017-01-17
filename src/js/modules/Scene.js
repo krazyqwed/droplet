@@ -10,7 +10,6 @@ class Scene {
 
     this._textFinished = false;
     this._narratorFinished = false;
-    this._characterFinished = false;
     this._interactionFinished = false;
 
     this._timer = new Timer();
@@ -48,6 +47,7 @@ class Scene {
 
   loadNextFrame() {
     D.SceneStore.setData('fastForward', false);
+    D.Character.forceEndAnimations();
 
     this._loadKeyframe(this._scene.keyframes[++this._keyframe]);
   }
@@ -123,10 +123,9 @@ class Scene {
   _canJumpToNext() {
     const text = !D.SceneStore.getData('textRunning');
     const narrator = !D.SceneStore.getData('narratorRunning');
-    const character = !D.SceneStore.getData('characterRunning');
     const interaction = !D.SceneStore.getData('interactionRunning');
 
-    return text && narrator && character && interaction;
+    return text && narrator && interaction;
   }
 
   _loadKeyframe(keyframe) {
@@ -153,7 +152,6 @@ class Scene {
   _resetRunnings() {
     D.SceneStore.setData('textRunning', false);
     D.SceneStore.setData('narratorRunning', false);
-    D.SceneStore.setData('characterRunning', false);
     D.SceneStore.setData('interactionRunning', false);
   }
 

@@ -41,14 +41,14 @@ class TextClass {
     this._text = '';
     this._textLength = 0;
     this._textFormatActive = false;
-    this._writeSpeed = [1];
+    this._writeSpeed = [2];
     this._dom = {};
     this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
     this._dom.textBox = document.querySelector('.js_' + this._elementType);
     this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
     this._dom.speaker = document.querySelector('.js_speaker');
     this._timer = new Timer();
-    this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true);
+    this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true, 0, this._writeEventEvery.bind(this));
   }
 
   init() {
@@ -85,7 +85,7 @@ class TextClass {
     this._actionFired = false;
     this._subframe = 0;
     this._textList = false;
-    this._writeSpeed = [1];
+    this._writeSpeed = [2];
     this._dom.textBoxInner.innerHTML = '';
 
     if (this._action.position === 'top') {
@@ -248,6 +248,8 @@ class TextClass {
   }
 
   _writeEvent(event) {
+    const cursorBefore = this._cursorPosition;
+
     if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 6) === '<d-text') {
       const match = this._text.substring(this._cursorPosition - 1).match(/<\s*\/?\s*d-text\s*.*?>/i);
       const attributes = this._getAttributes(match[0]);
@@ -278,10 +280,17 @@ class TextClass {
       }
     }
 
-    this._dom.textBoxInner.innerHTML = this._text.substring(0, this._cursorPosition);
+    let tempText = this._text.substring(0, this._cursorPosition);
+    const fadeText = '<d-text d-fade>' + tempText.slice(cursorBefore - this._cursorPosition - 1) + '</d-text>';
+    tempText = tempText.slice(0, -1);
+    tempText += fadeText;
+
+    this._dom.textBoxInner.innerHTML = tempText;
 
     this._cursorPosition++;
+  }
 
+  _writeEventEvery(event) {
     if (this._cursorPosition > this._textLength || this._actionFired || event.over) {
       this._actionFired = false;
       this._writeRunning = false;

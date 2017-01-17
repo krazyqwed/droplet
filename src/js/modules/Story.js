@@ -206,7 +206,7 @@ let sampleStory = {
               type: 'character',
               event: 'move',
               id: 1,
-              position: [20, 0]
+              position: [-10, 0]
             }
           ]
         },
@@ -217,7 +217,7 @@ let sampleStory = {
               type: 'character',
               event: 'move',
               id: 1,
-              position: [-20, 0]
+              position: [-10, 0]
             }
           ]
         },

@@ -6,11 +6,12 @@ class Timer {
     this._tick();
   }
 
-  addEvent(name, callback, tickRate, repeat, runLimit) {
+  addEvent(name, callback, tickRate, repeat, runLimit, callbackEvery) {
     let event = {
       name: name,
       running: false,
       callback: callback,
+      callbackEvery: callbackEvery ? callbackEvery : false,
       params: false,
       tickRate: tickRate ? tickRate : 1,
       repeat: repeat ? repeat : false,
@@ -99,9 +100,14 @@ class Timer {
 
             if (!this._events[i].repeat || (this._events[i].repeat && this._events[i].runCount === this._events[i].runLimit)) {
               this._events[i].over = true;
+              this._events[i].running = false;
             }
 
             this._events[i].callback(this._events[i]);
+          }
+
+          if (this._events[i].callbackEvery) {
+            this._events[i].callbackEvery(this._events[i]);
           }
 
           if (this._events[i] && this._events[i].ticker == this._events[i].tickRate) {

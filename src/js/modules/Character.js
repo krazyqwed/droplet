@@ -107,6 +107,13 @@ class Actor {
     this._clone.visible = false;
   }
 
+  forceEndAnimations() {
+    this._timer.over('show');
+    this._timer.over('hide');
+    this._timer.over('move');
+    this._timer.over('pose');
+  }
+
   _showCharacter() {
     this._pose = this._action.pose;
     this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
@@ -205,7 +212,7 @@ class Actor {
     this._sprite.position.x = newPosition.x;
     this._sprite.position.y = newPosition.y;
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (event.over) {
       this._sprite.alpha = 1;
       this._sprite.position.x = position.dest_x;
       this._sprite.position.y = position.dest_y;
@@ -224,7 +231,7 @@ class Actor {
     this._sprite.position.x = newPosition.x;
     this._sprite.position.y = newPosition.y;
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (event.over) {
       this._sprite.alpha = 0.001;
       this._sprite.position.x = position.dest_x;
       this._sprite.position.y = position.dest_y;
@@ -245,7 +252,7 @@ class Actor {
     this._clone.position.x = newPosition.x;
     this._clone.position.y = newPosition.y;
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (event.over) {
       this._sprite.position.x = position.dest_x;
       this._sprite.position.y = position.dest_y;
       this._clone.position.x = position.dest_x;
@@ -263,7 +270,7 @@ class Actor {
     const clampAlpha = Math.min(Math.max(this._sprite.alpha, 0), 0.97);
     this._clone.alpha = (0.97 - clampAlpha) / (1 - clampAlpha);
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (event.over) {
       this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
       this._sprite.alpha = 1;
       this._sprite.position.z = 3;
@@ -293,7 +300,6 @@ class Character {
 
   init() {
     this._prepareCharacters();
-    this._update();
   }
 
   handleAction(action) {
@@ -315,33 +321,15 @@ class Character {
     });
   }
 
-  _isAnimationRunning() {
-    let animationRunning = false;
-
+  forceEndAnimations() {
     this._characters.forEach((character, i) => {
-      if (character.isAnimationRunning()) {
-        animationRunning = true;
-      }
+      this._characters[i].forceEndAnimations();
     });
-
-    return animationRunning;
   }
 
   _prepareCharacters() {
     this._characters.forEach((character, i) => {
       this._characters[i] = new Actor(character);
-    });
-  }
-
-  _update() {
-    requestAnimationFrame(() => {
-      if (this._isAnimationRunning()) {
-        D.SceneStore.setData('characterRunning', true);
-      } else {
-        D.SceneStore.setData('characterRunning', false);
-      }
-
-      this._update();
     });
   }
 }
