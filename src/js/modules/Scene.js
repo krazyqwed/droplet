@@ -40,8 +40,6 @@ class Scene {
 
         return true;
       }
-
-      return false;
     });
   }
 

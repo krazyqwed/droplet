@@ -2,7 +2,7 @@ doctype html
 html
   head
     link(rel="manifest" href="static/manifest.json")
-    link(rel="stylesheet" href="app.css?v=5")
+    link(rel="stylesheet" href=("app.css?v=" + version))
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title Droplet Engine
@@ -31,6 +31,7 @@ html
       function loadApp() {
         var script = document.createElement('script');
         script.src = isChrome ? 'app.js' : 'app-fallback.js';
+        script.src += '?v=#{version}';
         document.body.appendChild(script);
       }
 

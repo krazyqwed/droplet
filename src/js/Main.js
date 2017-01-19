@@ -99,7 +99,8 @@ class Main {
       'static/char_2.json',
       'static/bgm_1.mp3',
       'static/bgm_2.mp3',
-      'static/whosh.mp3'
+      'static/whosh.mp3',
+      'static/birds.mp3'
     ];
 
     D.Loader = new PIXI.loaders.Loader();

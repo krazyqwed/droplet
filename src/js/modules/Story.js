@@ -12,6 +12,13 @@ let sampleStory = {
           id: 1,
           actions: [
             {
+              type: 'sound',
+              sound: 'birds',
+              loop: true,
+              persist: true,
+              volume: 0.3
+            },
+            {
               type: 'dialog',
               dialog: [
                 'Ok, that\'s the first dialog!',
@@ -27,8 +34,25 @@ let sampleStory = {
           ]
         },
         {
+          id: 4324,
+          actions: [
+            {
+              type: 'dialog',
+              dialog: [
+                'Ok, that\'s the first dialog!',
+                'And that\'s the second...'
+              ]
+            }
+          ]
+        },
+        {
           id: 2,
           actions: [
+            {
+              type: 'sound',
+              event: 'stopSound',
+              sound: 'birds'
+            },
             {
               type: 'character',
               id: 1,
@@ -54,7 +78,6 @@ let sampleStory = {
           actions: [
             {
               type: 'sound',
-              event: 'sound',
               sound: 'whosh'
             },
             {
@@ -84,7 +107,6 @@ let sampleStory = {
         {
           id: 5,
           actions: [
-
             {
               type: 'character',
               event: 'pose',
