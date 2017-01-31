@@ -5,7 +5,7 @@ class Choose {
     this._action = false;
     this._selected = false;
     this._dom = {};
-    this._dom.chooseWrap = document.querySelector('.js_choose-wrap');
+    this._dom.chooseWrap = document.querySelector('.js_choose_wrap');
     this._dom.choose = document.querySelector('.js_choose');
     this._timer = new Timer();
     this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);

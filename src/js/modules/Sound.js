@@ -34,7 +34,6 @@ class Audio {
   }
 
   _stop() {
-    console.log(this._sound);
     this._sound.on('fade', () => {
       this._sound.unload();
     });

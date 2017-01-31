@@ -1,3 +1,4 @@
+import MainMenu from './modules/MainMenu';
 import Variable from './modules/Variable';
 import Background from './modules/Background';
 import Story from './modules/Story';
@@ -17,6 +18,8 @@ class Main {
       Loader: null,
 
       SceneStore: new SceneStore(),
+
+      MainMenu: MainMenu,
 
       Variable: Variable,
       Background: Background,
@@ -117,12 +120,16 @@ class Main {
     this._dom.mainWarpper.style.removeProperty('display');
 
     D.Background.init();
+    D.MainMenu.show();
+
+    /*
     D.Text.init();
     D.Narrator.init();
     D.Character.init();
     D.Scene.init();
 
     D.Story.start();
+    */
 
     this._update();
   }
