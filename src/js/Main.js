@@ -52,6 +52,7 @@ class Main {
     D.Renderer.view.style.display = 'none';
 
     document.body.insertBefore(D.Renderer.view, this._dom.mainWarpper);
+    window.addEventListener('resize', this._resize.bind(this));
 
     D.Stage = new PIXI.Container();
 

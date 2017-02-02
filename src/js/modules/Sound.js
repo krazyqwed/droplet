@@ -98,7 +98,6 @@ class Sound {
   }
 
   _createMusic() {
-    console.log(this._action.volume, (this._action.volume || this._action.volume === 0));
     this._bgm = new Howl({
       src: ['static/' + this._action.sound + '.mp3'],
       loop: true
