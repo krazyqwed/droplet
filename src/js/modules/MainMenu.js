@@ -4,24 +4,25 @@ import CommonHelper from '../helpers/Common';
 class SubMenu {
   constructor() {
     this._dom = {};
-    this._dom.load = document.querySelector('.js_submenu_load');
-    this._dom.settings = document.querySelector('.js_submenu_settings');
+    this._dom.submenu = {};
+    this._dom.submenu.load = document.querySelector('.js_submenu_load');
+    this._dom.submenu.settings = document.querySelector('.js_submenu_settings');
   }
 
   show(name) {
-    [].forEach.call(document.querySelectorAll('.js_submenu:not(.js_submenu_' + name + ')'), (submenu) => {
-      submenu.classList.remove('d_gui-element--visible');
-
-      CommonHelper.requestTimeout(() => {
-        submenu.classList.remove('d_submenu--visible');
-      }, 300);
+    [].forEach.call(Object.keys(this._dom.submenu), (submenu) => {
+      if (name !== submenu) {
+        this._hide(submenu);
+      }
     });
 
-    this._dom[name].classList.add('d_submenu--visible');
+    this._dom.submenu[name].classList.add('d_gui-element--visible');
+    this._dom.submenu[name].classList.remove('d_gui-element--disable');
+  }
 
-    window.requestAnimationFrame(() => {
-      this._dom[name].classList.add('d_gui-element--visible');
-    });
+  _hide(name) {
+    this._dom.submenu[name].classList.remove('d_gui-element--visible');
+    this._dom.submenu[name].classList.add('d_gui-element--disable');
   }
 }
 
@@ -65,7 +66,14 @@ class MainMenu {
   }
 
   _newGameCallback() {
-    console.log('new');
+    this._hideMenu();
+
+    D.Text.init();
+    D.Narrator.init();
+    D.Character.init();
+    D.Scene.init();
+
+    D.Story.start();
   }
 
   _loadGameCallback() {
@@ -119,7 +127,6 @@ class MainMenu {
   }
 
   _hideMenu() {
-    this._dom.choose.innerHTML = '';
     this._dom.menuWrap.classList.remove('d_gui-element--visible');
   }
 

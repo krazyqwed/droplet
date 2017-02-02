@@ -6,7 +6,10 @@ let sampleStory = {
       id: 1,
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_1',
-      bgm: 'bgm_1',
+      bgm: {
+        name: 'bgm_1',
+        volume: 0.5
+      },
       keyframes: [
         {
           id: 1,
@@ -272,7 +275,10 @@ let sampleStory = {
       id: 2,
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_2',
-      bgm: 'bgm_2',
+      bgm: {
+        name: 'bgm_2',
+        volume: 1
+      },
       keyframes: [
         {
           id: 1,

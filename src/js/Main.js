@@ -122,15 +122,6 @@ class Main {
     D.Background.init();
     D.MainMenu.show();
 
-    /*
-    D.Text.init();
-    D.Narrator.init();
-    D.Character.init();
-    D.Scene.init();
-
-    D.Story.start();
-    */
-
     this._update();
   }
 

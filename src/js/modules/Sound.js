@@ -27,7 +27,7 @@ class Audio {
       autoplay: true,
       loop: this._action.loop ? this._action.loop : false
     });
-    this._sound.fade(0, this._action.volume, 250);
+    this._sound.fade(0, (this._action.volume || this._action.volume === 0) ? this._action.volume : 1, 250);
 
     this._timer.setRunLimit(Math.ceil(this._sound._duration * 60));
     this._timer.start('sound');
@@ -84,7 +84,7 @@ class Sound {
           this._createMusic();
         });
 
-        this._bgm.fade(1, 0, 500);
+        this._bgm.fade(this._bgm._volume, 0, 500);
       } else {
         this._createMusic();
       }
@@ -93,17 +93,18 @@ class Sound {
         this._bgm.unload();
         this._bgm = false;
       });
-      this._bgm.fade(1, 0, 500);
+      this._bgm.fade(this._bgm._volume, 0, 500);
     }
   }
 
   _createMusic() {
+    console.log(this._action.volume, (this._action.volume || this._action.volume === 0));
     this._bgm = new Howl({
       src: ['static/' + this._action.sound + '.mp3'],
       loop: true
     });
     this._bgm.play();
-    this._bgm.fade(0, 1, 500);
+    this._bgm.fade(0, (this._action.volume || this._action.volume === 0) ? this._action.volume : 1, 500);
   }
 
   _playSound() {

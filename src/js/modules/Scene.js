@@ -93,7 +93,8 @@ class Scene {
 
     D.Sound.handleAction({
       event: 'bgm',
-      sound: this._scene.bgm
+      sound: this._scene.bgm.name,
+      volume: this._scene.bgm.volume
     });
 
     this._timer.start('load');
