@@ -131,15 +131,15 @@ class TextClass {
       this._text = this._action.dialog;
     }
 
-    let textContainer = document.createElement('div');
-    textContainer.classList.add('d_' + this._elementType + '-helper');
-    textContainer.innerHTML = this._text;
+    let textHelper = document.createElement('div');
+    textHelper.classList.add('d_' + this._elementType + '-helper');
+    textHelper.innerHTML = this._text;
 
-    document.body.appendChild(textContainer);
+    document.body.appendChild(textHelper);
     this._insertVariables();
     this._insertActorProps();
-    this._text = this._insertWraps(textContainer);
-    textContainer.parentNode.removeChild(textContainer);
+    this._text = this._insertWraps(textHelper);
+    textHelper.parentNode.removeChild(textHelper);
 
     this._textLength = this._text.length;
 

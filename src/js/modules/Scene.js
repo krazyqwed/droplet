@@ -65,7 +65,7 @@ class Scene {
     window.addEventListener('DOMMouseScroll', scrollEvent.bind(this), false);
 
     window.addEventListener('mousedown', (event) => {
-      if (!event.target.classList.contains('js_input') && !event.target.classList.contains('js_input_button')) {
+      if (!event.target.classList.contains('d_button') && !event.target.classList.contains('js_input') && !event.target.classList.contains('js_input_button')) {
         event.preventDefault();
         D.SceneStore.setData('actionFired', Math.random());
         this._fastForward();

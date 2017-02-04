@@ -80,7 +80,7 @@ class Main {
       this._dom.mainWarpper.style.height = parseInt(1080 * scaleX) + 'px';
     }
 
-    const guiElements = this._dom.mainWarpper.querySelectorAll('.js_gui_element');
+    const guiElements = this._dom.mainWarpper.querySelectorAll('.js_gui_element, .js_game_menu');
 
     [].forEach.call(guiElements, (elem) => {
       elem.style.transform = 'scale(' + scale + ')';

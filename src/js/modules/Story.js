@@ -300,9 +300,12 @@ let sampleStory = {
 class Story {
   constructor() {
     this._sceneId = 1;
+    this._dom = {};
+    this._dom.gameMenu = document.querySelector('.js_game_menu');
   }
 
   start() {
+    this._dom.gameMenu.classList.add('d_game-menu--visible');
     this.loadScene(sampleStory.startingScene);
   }
 
