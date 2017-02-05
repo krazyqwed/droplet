@@ -52,6 +52,13 @@ class Scene {
 
   _input() {
     function scrollEvent(event) {
+      const classList = event.target.classList;
+      const isHistory = classList.contains('js_history') || classList.contains('js_history_content');
+
+      if (isHistory) {
+        return;
+      }
+
       const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 
       if (delta === -1) {
@@ -65,11 +72,22 @@ class Scene {
     window.addEventListener('DOMMouseScroll', scrollEvent.bind(this), false);
 
     window.addEventListener('mousedown', (event) => {
-      if (!event.target.classList.contains('d_button') && !event.target.classList.contains('js_input') && !event.target.classList.contains('js_input_button')) {
-        event.preventDefault();
-        D.SceneStore.setData('actionFired', Math.random());
-        this._fastForward();
+      if (event.which !== 1 || !event.target) {
+        return;
       }
+
+      const classList = event.target.classList;
+      const isButton = classList.contains('d_button');
+      const isInput = classList.contains('js_input');
+      const isHistory = classList.contains('js_history') || classList.contains('js_history_content');
+
+      if (isButton || isInput || isHistory) {
+        return;
+      }
+
+      event.preventDefault();
+      D.SceneStore.setData('actionFired', Math.random());
+      this._fastForward();
     }, false);
 
     window.addEventListener('keydown', (event) => {
@@ -180,6 +198,7 @@ class Scene {
       this._sceneLoaded = true;
       this._loadKeyframe(this._scene.keyframes[this._keyframe]);
       this._timer.destroy('load');
+      D.GameMenu.show();
     }
   }
 }

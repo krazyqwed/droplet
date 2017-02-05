@@ -49,6 +49,20 @@ let sampleStory = {
           ]
         },
         {
+          id: 10,
+          actions: [
+            {
+              type: 'input',
+              store: '__globals__.player.nickname'
+            },
+            {
+              type: 'dialog',
+              dialog: 'Enter your nickname...',
+              noHistory: true
+            }
+          ]
+        },
+        {
           id: 2,
           actions: [
             {
@@ -68,7 +82,8 @@ let sampleStory = {
               dialog: [
                 'Look! An actor has appeared!',
                 'She wants to say something'
-              ]
+              ],
+              character: 'player'
             },
             {
               type: 'narrator',
@@ -166,14 +181,12 @@ let sampleStory = {
                     keyframe: 7
                   }
                 }
-              ],
-              options: {
-                dialog: 'Select an answer...'
-              }
+              ]
             },
             {
               type: 'dialog',
-              dialog: 'Choose your destiny!'
+              dialog: 'Choose your destiny!',
+              noHistory: true
             }
           ]
         },
@@ -204,19 +217,6 @@ let sampleStory = {
             {
               type: 'dialog',
               dialog: 'Why you so negative? Your variable is <d-text d-var="test" d-color="#f00"></d-text> now<d-text d-speed="20">...</d-text>'
-            }
-          ]
-        },
-        {
-          id: 10,
-          actions: [
-            {
-              type: 'input',
-              store: '__globals__.player.nickname'
-            },
-            {
-              type: 'dialog',
-              dialog: 'Enter your nickname...'
             }
           ]
         },
@@ -300,12 +300,9 @@ let sampleStory = {
 class Story {
   constructor() {
     this._sceneId = 1;
-    this._dom = {};
-    this._dom.gameMenu = document.querySelector('.js_game_menu');
   }
 
   start() {
-    this._dom.gameMenu.classList.add('d_game-menu--visible');
     this.loadScene(sampleStory.startingScene);
   }
 

@@ -18,7 +18,7 @@ class DActor extends HTMLElement {
       if (attr === 'player') {
         color = D.Variable.get('__globals__.player.color');
       } else {
-        const actor = D.Character.loadCharacterById(parseInt(attr));
+        const actor = D.Character.loadCharacterById(attr);
         color = actor.getData()['color'];
       }
 
@@ -141,6 +141,10 @@ class TextClass {
     this._text = this._insertWraps(textHelper);
     textHelper.parentNode.removeChild(textHelper);
 
+    if (!this._action.noHistory) {
+      D.History.writeHistory(this._action.character, this._text);
+    }
+
     this._textLength = this._text.length;
 
     this._timer.start('write');
@@ -172,7 +176,7 @@ class TextClass {
             const prop = D.Variable.get('__globals__.player.' + attributes['d-prop']);
             this._text = StringHelper.splice(this._text, i + 1, 0, prop);
           } else {
-            const character = D.Character.loadCharacterById(parseInt(attributes['d-id']));
+            const character = D.Character.loadCharacterById(attributes['d-id']);
             const prop = character.getData()[attributes['d-prop']];
             this._text = StringHelper.splice(this._text, i + 1, 0, prop);
           }

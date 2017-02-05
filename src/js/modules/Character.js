@@ -6,16 +6,14 @@ let sampleCharacters = [
     fullName: 'Katsumata Kahori',
     nickname: 'Kahori',
     color: '#a8adcd',
-    bgColor: '#454b78',
-    image: 'char_1'
+    bgColor: '#454b78'
   },
   {
     id: 2,
     fullName: 'Tsukamoto Fumiko',
     nickname: 'Fumiko',
     color: '#fc5045',
-    bgColor: '#ca7d78',
-    image: 'char_2'
+    bgColor: '#ca7d78'
   }
 ];
 
@@ -28,7 +26,6 @@ class Actor {
     this._pose = data.pose ? data.pose : 1;
     this._color = data.color;
     this._bgColor = data.bgColor;
-    this._image = data.image;
     this._sprite = new PIXI.Sprite();
     this._clone = new PIXI.Sprite();
     this._timer = new Timer();
@@ -49,7 +46,7 @@ class Actor {
     this._sprite.position.x = 0;
     this._sprite.position.y = 0;
     this._sprite.position.z = 3;
-    this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+    this._sprite.setTexture(PIXI.Texture.fromFrame('char_' + this._id + '_' + this._pose));
     D.Stage.addChild(this._sprite);
 
     this._clone.anchor.x = 0.5;
@@ -69,8 +66,7 @@ class Actor {
       nickname: this._nickname,
       color: this._color,
       bgColor: this._bgColor,
-      pose: this._pose,
-      image: this._image
+      pose: this._pose
     };
   }
 
@@ -116,7 +112,7 @@ class Actor {
 
   _showCharacter() {
     this._pose = this._action.pose;
-    this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+    this._sprite.setTexture(PIXI.Texture.fromFrame('char_' + this._id + '_' + this._pose));
     this._sprite.alpha = 0.001;
     this._sprite.position.z = 3;
 
@@ -133,7 +129,7 @@ class Actor {
     this._clone.position.z = 3;
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
-    this._clone.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+    this._clone.setTexture(PIXI.Texture.fromFrame('char_' + this._id + '_' + this._pose));
   }
 
   _calculatePosition() {
@@ -271,7 +267,7 @@ class Actor {
     this._clone.alpha = (0.97 - clampAlpha) / (1 - clampAlpha);
 
     if (event.over) {
-      this._sprite.setTexture(PIXI.Texture.fromFrame(this._image + '_' + this._pose));
+      this._sprite.setTexture(PIXI.Texture.fromFrame('char_' + this._id + '_' + this._pose));
       this._sprite.alpha = 1;
       this._sprite.position.z = 3;
       this._clone.alpha = 0.001;
@@ -309,7 +305,7 @@ class Character {
 
   loadCharacterById(id) {
     return this._characters.filter((character) => {
-      if (character.getId() === id) {
+      if (character.getId() === parseInt(id, 10)) {
         return character;
       }
     })[0];

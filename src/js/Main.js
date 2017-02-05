@@ -1,4 +1,5 @@
 import MainMenu from './modules/MainMenu';
+import GameMenu from './modules/GameMenu';
 import Variable from './modules/Variable';
 import Background from './modules/Background';
 import Story from './modules/Story';
@@ -8,6 +9,7 @@ import Character from './modules/Character';
 import Choose from './modules/Choose';
 import Input from './modules/Input';
 import Sound from './modules/Sound';
+import History from './modules/History';
 import SceneStore from './stores/SceneStore';
 
 class Main {
@@ -20,6 +22,7 @@ class Main {
       SceneStore: new SceneStore(),
 
       MainMenu: MainMenu,
+      GameMenu: GameMenu,
 
       Variable: Variable,
       Background: Background,
@@ -31,6 +34,7 @@ class Main {
       Choose: Choose,
       Input: Input,
       Sound: Sound,
+      History: History,
 
       FPSMeter: new FPSMeter()
     };
@@ -80,7 +84,7 @@ class Main {
       this._dom.mainWarpper.style.height = parseInt(1080 * scaleX) + 'px';
     }
 
-    const guiElements = this._dom.mainWarpper.querySelectorAll('.js_gui_element, .js_game_menu');
+    const guiElements = this._dom.mainWarpper.querySelectorAll('.js_gui_element');
 
     [].forEach.call(guiElements, (elem) => {
       elem.style.transform = 'scale(' + scale + ')';
@@ -101,6 +105,9 @@ class Main {
       'static/school_3.jpg',
       'static/char_1.json',
       'static/char_2.json',
+      'static/player_avatar.png',
+      'static/char_1_avatar.png',
+      'static/char_2_avatar.png',
       'static/bgm_1.mp3',
       'static/bgm_2.mp3',
       'static/whosh.mp3',

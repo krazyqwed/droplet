@@ -1,15 +1,7 @@
-@mixin stripe {
-  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,.4);
+@mixin stripe($opacity: .4) {
+  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,$opacity);
   background-position: center, center, center;
   background-size: auto 4px, cover, auto;
-}
-
-*,
-*:before,
-*:after {
-  pointer-events: none;
-  user-select: none;
-  -webkit-tap-highlight-color: rgba(#fff,0);
 }
 
 html {
@@ -27,6 +19,14 @@ body {
   touch-action: none;
   user-select: none;
   width: 100%;
+
+  *,
+  *:before,
+  *:after {
+    pointer-events: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(#fff,0);
+  }
 }
 
 canvas {
@@ -367,3 +367,4 @@ canvas {
 
 @import 'text';
 @import 'game_menu';
+@import 'history';
