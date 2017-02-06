@@ -35,12 +35,11 @@
 
 .d_history {
   height: 1080px;
-  left: 0;
+  left: 50%;
   position: absolute;
   padding: 30px;
-  right: 0;
   top: 0;
-  transform-origin: center top;
+  transform-origin: left top;
   transition: opacity .3s;
   width: 1920px;
 

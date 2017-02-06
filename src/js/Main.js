@@ -91,6 +91,10 @@ class Main {
     });
     this._dom.mainWarpper.style.position = 'relative';
 
+    const history = this._dom.mainWarpper.querySelector('.js_history .js_gui_element');
+
+    history.style.transform = 'scale(' + scale + ') translateX(-50%)';
+
     canvas.style.transform = 'scale(' + scale + ')';
     canvas.style.marginLeft = this._dom.mainWarpper.offsetLeft + 'px';
     canvas.style.display = 'block';
