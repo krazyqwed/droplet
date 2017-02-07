@@ -18,11 +18,19 @@ class SubMenu {
 
     this._dom.submenu[name].classList.add('d_gui-element--visible');
     this._dom.submenu[name].classList.remove('d_gui-element--disable');
+
+    if (name === 'load') {
+      this._menuLoad();
+    }
   }
 
   _hide(name) {
     this._dom.submenu[name].classList.remove('d_gui-element--visible');
     this._dom.submenu[name].classList.add('d_gui-element--disable');
+  }
+
+  _menuLoad() {
+    const saves = D.Save.getSaves();
   }
 }
 

@@ -2,7 +2,7 @@
 
 const execSync = require('child_process').execSync;
 
-let pull = function() {
+const pull = function() {
   execSync('git pull');
   execSync('git fetch --tags');
 };

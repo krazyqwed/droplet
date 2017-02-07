@@ -10,6 +10,7 @@ import Choose from './modules/Choose';
 import Input from './modules/Input';
 import Sound from './modules/Sound';
 import History from './modules/History';
+import Save from './modules/Save';
 import SceneStore from './stores/SceneStore';
 
 class Main {
@@ -35,6 +36,8 @@ class Main {
       Input: Input,
       Sound: Sound,
       History: History,
+
+      Save: Save,
 
       FPSMeter: new FPSMeter()
     };
@@ -93,7 +96,7 @@ class Main {
 
     const history = this._dom.mainWarpper.querySelector('.js_history .js_gui_element');
 
-    history.style.transform = 'scale(' + scale + ') translateX(-50%)';
+    history.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
 
     canvas.style.transform = 'scale(' + scale + ')';
     canvas.style.marginLeft = this._dom.mainWarpper.offsetLeft + 'px';
