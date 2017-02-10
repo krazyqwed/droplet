@@ -51,7 +51,7 @@ class Scene {
   }
 
   getCurrentScene() {
-    return this._scene.id;
+    return this._scene;
   }
 
   getCurrentKeyframe() {

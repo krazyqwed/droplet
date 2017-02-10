@@ -34,7 +34,7 @@ class GameMenu {
       return;
     }
 
-    D.Save.show();
+    D.Save.show(true);
   }
 }
 

@@ -10,27 +10,9 @@ class SubMenu {
   }
 
   show(name) {
-    [].forEach.call(Object.keys(this._dom.submenu), (submenu) => {
-      if (name !== submenu) {
-        this._hide(submenu);
-      }
-    });
-
-    this._dom.submenu[name].classList.add('d_gui-element--visible');
-    this._dom.submenu[name].classList.remove('d_gui-element--disable');
-
-    if (name === 'load') {
-      this._menuLoad();
+    switch (name) {
+      case 'load': D.Save.show();
     }
-  }
-
-  _hide(name) {
-    this._dom.submenu[name].classList.remove('d_gui-element--visible');
-    this._dom.submenu[name].classList.add('d_gui-element--disable');
-  }
-
-  _menuLoad() {
-    const saves = D.Save.getSaves();
   }
 }
 

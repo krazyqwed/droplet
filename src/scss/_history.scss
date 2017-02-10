@@ -33,23 +33,37 @@
 }
 
 .d_history {
-  @include stripe(rgba(#c8ebff,.8));
-
   height: 1080px;
   left: 50%;
+  overflow: hidden;
   position: absolute;
   padding: 30px;
   top: 50%;
   transform-origin: left top;
   width: 1920px;
 
+  &:before {
+    background: url('./static/submenu_1.jpg');
+    background-size: 100%;
+    background-position: center center;
+    bottom: -100px;
+    content: '';
+    filter: blur(10px);
+    left: -100px;
+    position: absolute;
+    right: -100px;
+    top: -100px;
+  }
+
   &__content {
     @extend %scrollbar;
 
+    backface-visibility: hidden;
     height: 100%;
     overflow: auto;
     overflow-y: visible;
     padding: 0 30px;
+    position: relative;
   }
 
   &__entry {

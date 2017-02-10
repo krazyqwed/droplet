@@ -4,6 +4,7 @@ let sampleStory = {
   scenes: [
     {
       id: 1,
+      title: 'Prologue',
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_1',
       bgm: {
@@ -273,6 +274,7 @@ let sampleStory = {
     },
     {
       id: 2,
+      title: 'So intense...',
       description: 'Lorem ipsum dolor sit amet.',
       background: 'school_2',
       bgm: {
