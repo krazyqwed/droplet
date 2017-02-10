@@ -1,5 +1,5 @@
-@mixin stripe($opacity: .4) {
-  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), rgba(#000,$opacity);
+@mixin stripe($color: rgba(#000,.4)) {
+  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), $color;
   background-position: center, center, center;
   background-size: auto 4px, cover, auto;
 }
@@ -368,3 +368,4 @@ canvas {
 @import 'text';
 @import 'game_menu';
 @import 'history';
+@import 'save';

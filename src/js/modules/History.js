@@ -22,14 +22,15 @@ class History {
 
   show() {
     this._dom.content.innerHTML = '';
+    this._dom.wrap.style.removeProperty('display');
 
     this._generateEntries();
 
-    this._dom.wrap.style.display = 'block';
-    this._dom.wrap.classList.add('d_history-wrap--visible');
-    this._dom.content.scrollTop = this._dom.content.scrollHeight;
-
-    window.addEventListener('keydown', this._events.show);
+    requestAnimationFrame(() => {
+      this._dom.wrap.classList.add('d_history-wrap--visible');
+      this._dom.content.scrollTop = this._dom.content.scrollHeight;
+      window.addEventListener('keydown', this._events.show);
+    });
   }
 
   _showEvent(event) {

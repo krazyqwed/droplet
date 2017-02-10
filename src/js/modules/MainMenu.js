@@ -69,17 +69,17 @@ class MainMenu {
       background: 'main_menu'
     });
 
+    D.Text.init();
+    D.Narrator.init();
+    D.Character.init();
+    D.Scene.init();
+
     this._buildItems();
     this._showMenu();
   }
 
   _newGameCallback() {
     this._hideMenu();
-
-    D.Text.init();
-    D.Narrator.init();
-    D.Character.init();
-    D.Scene.init();
 
     D.Story.start();
   }

@@ -94,9 +94,11 @@ class Main {
     });
     this._dom.mainWarpper.style.position = 'relative';
 
-    const history = this._dom.mainWarpper.querySelector('.js_history .js_gui_element');
+    const gameMenuHistory = this._dom.mainWarpper.querySelector('.js_history .js_gui_element');
+    gameMenuHistory.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
 
-    history.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
+    const gameMenuSave = this._dom.mainWarpper.querySelector('.js_save .js_gui_element');
+    gameMenuSave.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
 
     canvas.style.transform = 'scale(' + scale + ')';
     canvas.style.marginLeft = this._dom.mainWarpper.offsetLeft + 'px';

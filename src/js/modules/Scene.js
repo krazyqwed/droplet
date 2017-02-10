@@ -50,12 +50,17 @@ class Scene {
     this._loadKeyframe(this._scene.keyframes[++this._keyframe]);
   }
 
+  getCurrentScene() {
+    return this._scene.id;
+  }
+
+  getCurrentKeyframe() {
+    return this._keyframe;
+  }
+
   _input() {
     function scrollEvent(event) {
-      const classList = event.target.classList;
-      const isHistory = classList.contains('js_history') || classList.contains('js_history_content');
-
-      if (isHistory) {
+      if (event.target.classList.contains('.js_prevent_skip') || event.target.closest('.js_prevent_skip')) {
         return;
       }
 
@@ -76,12 +81,15 @@ class Scene {
         return;
       }
 
+      if (event.target.classList.contains('.js_prevent_skip') || event.target.closest('.js_prevent_skip')) {
+        return;
+      }
+
       const classList = event.target.classList;
       const isButton = classList.contains('d_button');
       const isInput = classList.contains('js_input');
-      const isHistory = classList.contains('js_history') || classList.contains('js_history_content');
 
-      if (isButton || isInput || isHistory) {
+      if (isButton || isInput) {
         return;
       }
 
@@ -126,11 +134,9 @@ class Scene {
     D.SceneStore.setData('fastForward', true);
 
     if (this._canJumpToNext()) {
-      if (this._scene.keyframes[this._keyframe].goTo) {
-        if (this._scene.keyframes[this._keyframe].goTo.scene) {
-          D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-          return;
-        }
+      if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
+        D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+        return;
       }
 
       this.loadNextFrame();
@@ -189,7 +195,12 @@ class Scene {
         element.classList.remove('d_gui-element--visible');
       });
 
-      D.Character.hideCharacters();
+      if (!D.SceneStore.getData('loadFromSave')) {
+        D.Character.hideCharacters();
+      }
+
+      D.SceneStore.setData('loadFromSave', false);
+
       D.Choose.clearChoose();
       D.Input.clearInput();
     }
@@ -197,8 +208,10 @@ class Scene {
     if (event.over) {
       this._sceneLoaded = true;
       this._loadKeyframe(this._scene.keyframes[this._keyframe]);
-      this._timer.destroy('load');
+
       D.GameMenu.show();
+
+      this._timer.destroy('load');
     }
   }
 }

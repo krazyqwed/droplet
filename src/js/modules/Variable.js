@@ -1,24 +1,24 @@
-let sampleVariable = {
-  __globals__: {
-    player: {
-      fullName: 'John Doe',
-      nickname: 'John',
-      color: '#f0f',
-      bgColor: '#56b30c'
-    }
-  },
-  test: 0,
-  test_group: {
-    inner: 'test inner',
-    inner_group: {
-      inner: 0
-    }
-  }
-};
-
 class Variable {
   constructor() {
-    this._variables = sampleVariable;
+    this._sampleVariables = {
+      __globals__: {
+        player: {
+          fullName: 'John Doe',
+          nickname: 'John',
+          color: '#f0f',
+          bgColor: '#56b30c'
+        }
+      },
+      test: 0,
+      test_group: {
+        inner: 'test inner',
+        inner_group: {
+          inner: 0
+        }
+      }
+    };
+
+    this._variables = this._sampleVariables;
   }
 
   handleAction(action) {
@@ -89,6 +89,10 @@ class Variable {
     }
 
     return result;
+  }
+
+  getCurrentVariables() {
+    return this._variables;
   }
 }
 

@@ -1,4 +1,5 @@
 import Timer from './Timer'; 
+import CommonHelper from '../helpers/Common';
 
 let sampleCharacters = [
   {
@@ -108,6 +109,31 @@ class Actor {
     this._timer.over('hide');
     this._timer.over('move');
     this._timer.over('pose');
+  }
+
+  getCharacterState() {
+    return {
+      id: this._id,
+      visible: this._sprite.visible,
+      position: [
+        this._sprite.position.x,
+        this._sprite.position.y,
+        this._sprite.position.new_x,
+        this._sprite.position.new_y
+      ],
+      pose: this._pose,
+    };
+  }
+
+  setCharacterState(data) {
+    this._pose = data.pose;
+    this._sprite.setTexture(PIXI.Texture.fromFrame('char_' + this._id + '_' + this._pose));
+    this._sprite.position.x = data.position[0];
+    this._sprite.position.y = data.position[1];
+    this._sprite.position.new_x = data.position[2];
+    this._sprite.position.new_y = data.position[3];
+    this._sprite.alpha = data.visible ? 1 : 0.001;
+    this._sprite.visible = data.visible;
   }
 
   _showCharacter() {
@@ -312,15 +338,33 @@ class Character {
   }
 
   hideCharacters() {
-    this._characters.forEach((character, i) => {
-      this._characters[i].hideCharacter();
+    this._characters.forEach((character) => {
+      character.hideCharacter();
     });
   }
 
   forceEndAnimations() {
-    this._characters.forEach((character, i) => {
-      this._characters[i].forceEndAnimations();
+    this._characters.forEach((character) => {
+      character.forceEndAnimations();
     });
+  }
+
+  getCurrentCharacters() {
+    return this._characters.map((character) => {
+      return character.getCharacterState();
+    });
+  }
+
+  restoreCharacters(data) {
+    CommonHelper.requestTimeout(() => {
+      data.forEach((state, i) => {
+        this._characters.forEach((character) => {
+          if (character.getId() === data[i].id) {
+            character.setCharacterState(state);
+          }
+        });
+      });
+    }, 500);
   }
 
   _prepareCharacters() {
