@@ -69,6 +69,7 @@ class MainMenu {
       background: 'main_menu'
     });
 
+    D.Save.init();
     D.Text.init();
     D.Narrator.init();
     D.Character.init();

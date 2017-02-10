@@ -54,6 +54,8 @@
 
   &__tile {
     background: rgba(#000,.4);
+    background-position: center center;
+    background-size: cover;
     box-shadow: 8px 8px 0 0 rgba(#000,.4);
     cursor: pointer;
     flex: 0 0 30%;

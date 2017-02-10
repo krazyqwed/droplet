@@ -11,6 +11,7 @@ import Input from './modules/Input';
 import Sound from './modules/Sound';
 import History from './modules/History';
 import Save from './modules/Save';
+import EngineStore from './stores/EngineStore';
 import SceneStore from './stores/SceneStore';
 
 class Main {
@@ -20,6 +21,7 @@ class Main {
       Stage: null,
       Loader: null,
 
+      EngineStore: new EngineStore(),
       SceneStore: new SceneStore(),
 
       MainMenu: MainMenu,
@@ -169,6 +171,11 @@ class Main {
 
   _render() {
     D.Renderer.render(D.Stage);
+
+    if (D.EngineStore.getData('takeScreenshot')) {
+      D.EngineStore.setData('takeScreenshot', false);
+    }
+
     D.FPSMeter.tick();
   }
 }

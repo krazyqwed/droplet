@@ -11,6 +11,10 @@ class Save {
     this._events.show = this._showEvent.bind(this);
   }
 
+  init() {
+    D.EngineStore.subscribe('takeScreenshot', this._save.bind(this));
+  }
+
   load(data) {
     D.SceneStore.setData('loadFromSave', true);
     D.Story.loadScene(data.state.scene, data.state.keyframe);
@@ -23,20 +27,7 @@ class Save {
     this._dom.content.innerHTML = '';
     this._dom.wrap.style.removeProperty('display');
 
-/*
-    localStorage.setItem('d_saves', JSON.stringify([
-      {
-        date: new Date().toString(),
-        thumbnail: 'data:image/png;base64',
-        state: {
-          scene: D.Scene.getCurrentScene(),
-          keyframe: D.Scene.getCurrentKeyframe(),
-          characters: D.Character.getCurrentCharacters(),
-          variables: D.Variable.getCurrentVariables()
-        }
-      }
-    ]));
-*/
+    D.EngineStore.setData('takeScreenshot', true);
 
     this._generateSaves();
 
@@ -62,8 +53,34 @@ class Save {
     window.removeEventListener('keydown', this._events.show);
   }
 
-  _save() {
-    
+  _save(data) {
+    return;
+
+    if (data) {
+      return;
+    }
+
+    let img = document.createElement('img');
+    img.src = D.Renderer.view.toDataURL('image/jpeg', 1);
+
+    var canvas = document.createElement("canvas");
+    canvas.width = 1920 / 4;
+    canvas.height = 1080 / 4;
+
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    localStorage.setItem('d_saves', JSON.stringify([
+      {
+        date: new Date().toString(),
+        thumbnail: canvas.toDataURL('image/jpeg', 1),
+        state: {
+          scene: D.Scene.getCurrentScene(),
+          keyframe: D.Scene.getCurrentKeyframe(),
+          characters: D.Character.getCurrentCharacters(),
+          variables: D.Variable.getCurrentVariables()
+        }
+      }
+    ]));
   }
 
   _getSaves() {
