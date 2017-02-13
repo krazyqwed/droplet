@@ -4,6 +4,20 @@
   background-size: auto 4px, cover, auto;
 }
 
+%scrollbar {
+  &::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(#000,.4);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #fff; 
+  }
+}
+
 html {
   height: 100%;
 }

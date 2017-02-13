@@ -175,8 +175,8 @@ class Main {
   _render() {
     D.Renderer.render(D.Stage);
 
-    if (D.EngineStore.getData('takeScreenshot')) {
-      D.EngineStore.setData('takeScreenshot', false);
+    if (D.EngineStore.getData('createSave')) {
+      D.EngineStore.setData('createSave', false);
     }
 
     D.FPSMeter.tick();

@@ -13,13 +13,16 @@ class Save {
   }
 
   init() {
-    D.EngineStore.subscribe('takeScreenshot', this._save.bind(this));
+    D.EngineStore.subscribe('createSave', this._save.bind(this));
   }
 
   load(data) {
     D.SceneStore.setData('loadFromSave', true);
+    D.Variable.setState(data.state.variables);
     D.Story.loadScene(data.state.scene, data.state.keyframe);
-    D.Character.restoreCharacters(data.state.characters);
+    D.Character.setState(data.state.characters);
+    D.Background.setState(data.state.background);
+    D.Sound.setState(data.state.sounds);
 
     CommonHelper.requestTimeout(() => {
       this._hide();
@@ -29,7 +32,6 @@ class Save {
   show(isSave) {
     this._saves = this._getSaves();
     this._isSave = !isSave || isSave === false ? false : true;
-    this._dom.content.innerHTML = '';
     this._dom.wrap.style.removeProperty('display');
 
     this._generateSaves();
@@ -66,29 +68,36 @@ class Save {
 
     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    let currentSaves = JSON.parse(localStorage.getItem('d_saves'));
-
     const saveData = {
       date: new Date().toString(),
       thumbnail: canvas.toDataURL('image/jpeg', 1),
-      title: D.Scene.getCurrentScene().title,
+      title: D.Scene.getState().scene.title,
       state: {
-        scene: D.Scene.getCurrentScene().id,
-        keyframe: D.Scene.getCurrentKeyframe(),
-        characters: D.Character.getCurrentCharacters(),
-        variables: D.Variable.getCurrentVariables(),
-        background: false,
-        fade: false,
-        music: false,
-        sounds: false
+        scene: D.Scene.getState().scene.id,
+        keyframe: D.Scene.getState().keyframe,
+        characters: D.Character.getState(),
+        variables: D.Variable.getState(),
+        background: D.Background.getState(),
+        sounds: D.Sound.getState()
       }
     };
 
+    let currentSaves = JSON.parse(localStorage.getItem('d_saves'));
     currentSaves[this._selectedSaveSlot] = saveData;
 
     localStorage.setItem('d_saves', JSON.stringify(currentSaves));
 
     this._hide();
+  }
+
+  _delete(tile) {
+    let currentSaves = JSON.parse(localStorage.getItem('d_saves'));
+    currentSaves[this._selectedSaveSlot] = null;
+
+    localStorage.setItem('d_saves', JSON.stringify(currentSaves));
+
+    this._saves = this._getSaves();
+    this._generateSaves();
   }
 
   _getSaves() {
@@ -109,6 +118,8 @@ class Save {
   }
 
   _generateSaves() {
+    this._dom.content.innerHTML = '';
+
     for (let i = 0; i < 100; ++i) {
       const tile = this._generateSaveTile(this._saves[i], i);
       this._dom.content.appendChild(tile);
@@ -142,7 +153,7 @@ class Save {
     if (this._isSave) {
       saveButton.addEventListener('click', () => {
         this._selectedSaveSlot = index;
-        D.EngineStore.setData('takeScreenshot', true);
+        D.EngineStore.setData('createSave', true);
       });
     } else {
       saveButton.classList.add('d_button--disabled');
@@ -165,6 +176,10 @@ class Save {
       date.textContent = new Date(data.date).toLocaleDateString() + ' ' + new Date(data.date).toLocaleTimeString();
 
       loadButton.addEventListener('click', () => this.load(data));
+      deleteButton.addEventListener('click', () => {
+        this._selectedSaveSlot = index;
+        this._delete(tile);
+      });
     } else {
       thumb.src = './static/submenu_2.jpg';
       title.textContent = '-';

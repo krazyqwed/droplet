@@ -55,6 +55,26 @@ class Background {
     }
   }
 
+  getState() {
+    return {
+      background: {
+        texture: this._background.texture.baseTexture.imageUrl
+      },
+      fader: {
+        alpha: this._sceneFader.alpha,
+        z: this._sceneFader.position.z,
+        tint: this._sceneFader.tint
+      }
+    };
+  }
+
+  setState(data) {
+    this._background.setTexture(PIXI.Texture.fromImage(data.background.texture));
+    this._sceneFader.alpha = data.fader.alpha;
+    this._sceneFader.z = data.fader.z;
+    this._sceneFader.tint = data.fader.tint;
+  }
+
   _showScene() {
     this._sceneFader.position.z = 0;
     this._timer.setRunLimit('showScene', this._action.duration ? this._action.duration : 60);

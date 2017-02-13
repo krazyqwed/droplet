@@ -5,7 +5,7 @@ class EngineStore extends Store {
     super();
 
     this._data = {
-      takeScreenshot: false
+      createSave: false
     };
   }
 }

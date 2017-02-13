@@ -50,12 +50,11 @@ class Scene {
     this._loadKeyframe(this._scene.keyframes[++this._keyframe]);
   }
 
-  getCurrentScene() {
-    return this._scene;
-  }
-
-  getCurrentKeyframe() {
-    return this._keyframe;
+  getState() {
+    return {
+      scene: this._scene,
+      keyframe: this._keyframe
+    }
   }
 
   _input() {
@@ -199,8 +198,6 @@ class Scene {
         D.Character.hideCharacters();
       }
 
-      D.SceneStore.setData('loadFromSave', false);
-
       D.Choose.clearChoose();
       D.Input.clearInput();
     }
@@ -208,6 +205,7 @@ class Scene {
     if (event.over) {
       this._sceneLoaded = true;
       this._loadKeyframe(this._scene.keyframes[this._keyframe]);
+      D.SceneStore.setData('loadFromSave', false);
 
       D.GameMenu.show();
 

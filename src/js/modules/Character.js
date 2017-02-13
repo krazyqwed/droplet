@@ -111,7 +111,7 @@ class Actor {
     this._timer.over('pose');
   }
 
-  getCharacterState() {
+  getState() {
     return {
       id: this._id,
       visible: this._sprite.visible,
@@ -125,9 +125,9 @@ class Actor {
     };
   }
 
-  setCharacterState(data) {
+  setState(data) {
     this._pose = data.pose;
-    this._sprite.setTexture(PIXI.Texture.fromFrame('char_' + this._id + '_' + this._pose));
+    this._sprite.setTexture(PIXI.Texture.fromFrame('char_' + data.id + '_' + data.pose));
     this._sprite.position.x = data.position[0];
     this._sprite.position.y = data.position[1];
     this._sprite.position.new_x = data.position[2];
@@ -325,6 +325,10 @@ class Character {
   }
 
   handleAction(action) {
+    if (D.SceneStore.getData('loadFromSave')) {
+      return;
+    }
+
     const character = this.loadCharacterById(action.id);
     character.setAction(action);
   }
@@ -349,18 +353,19 @@ class Character {
     });
   }
 
-  getCurrentCharacters() {
+  getState() {
+    console.log(this._characters);
     return this._characters.map((character) => {
-      return character.getCharacterState();
+      return character.getState();
     });
   }
 
-  restoreCharacters(data) {
+  setState(data) {
     CommonHelper.requestTimeout(() => {
       data.forEach((state, i) => {
         this._characters.forEach((character) => {
           if (character.getId() === data[i].id) {
-            character.setCharacterState(state);
+            character.setState(state);
           }
         });
       });

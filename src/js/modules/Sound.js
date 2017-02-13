@@ -1,4 +1,5 @@
-import Timer from './Timer'; 
+import Timer from './Timer';
+import CommonHelper from '../helpers/Common';
 
 class Audio {
   constructor() {
@@ -19,6 +20,14 @@ class Audio {
 
   getSound() {
     return this._action.sound;
+  }
+
+  getState() {
+    return this._sound._state !== 'unloaded' && (this._action.loop || this._action.persist) ? this._action : false;
+  }
+
+  stopImmidiately() {
+    this._sound.unload();
   }
 
   _play() {
@@ -62,6 +71,10 @@ class Sound {
   }
 
   handleAction(action) {
+    if (D.SceneStore.getData('loadFromSave')) {
+      return;
+    }
+
     this._action = action;
 
     if (!this._action.event) {
@@ -69,26 +82,64 @@ class Sound {
     }
 
     switch(this._action.event) {
-      case 'bgm': this._setBgm(); break;
-      case 'playSound': this._playSound(); break;
-      case 'stopSound': this._stopSound(); break;
+      case 'bgm': this._setBgm(this._action); break;
+      case 'playSound': this._playSound(this._action); break;
+      case 'stopSound': this._stopSound(this._action); break;
     }
   }
 
-  _setBgm() {
-    if (this._action.sound && this._action.sound !== true && this._action.sound !== false) {
+  getState() {
+    const bgm = {
+      sound: this._bgm._src.substring(this._bgm._src.lastIndexOf('/') + 1, this._bgm._src.lastIndexOf('.')),
+      volume: this._bgm._volume
+    };
+
+    let sounds = this._sounds.map((sound) => {
+      return sound.getState();
+    });
+
+    return {
+      bgm: bgm,
+      sounds: sounds
+    };
+  }
+
+  setState(data) {
+    if (this._bgm) {
+      this._bgm.unload();
+      delete this._bgm;
+    }
+
+    this._sounds.forEach((sound, i) => {
+      sound.stopImmidiately();
+      delete this._sounds[i];
+    });
+
+    CommonHelper.requestTimeout(() => {
+      this._createMusic(data.bgm);
+
+      data.sounds.forEach((sound) => {
+        if (sound) {
+          this._playSound(sound);
+        }
+      });
+    }, 1500);
+  }
+
+  _setBgm(action) {
+    if (action.sound && action.sound !== true && action.sound !== false) {
       if (this._bgm) {
         this._bgm.on('fade', () => {
           this._bgm.unload();
 
-          this._createMusic();
+          this._createMusic(action);
         });
 
         this._bgm.fade(this._bgm._volume, 0, 500);
       } else {
-        this._createMusic();
+        this._createMusic(action);
       }
-    } else if (this._action.sound === false && this._bgm) {
+    } else if (action.sound === false && this._bgm) {
       this._bgm.on('fade', () => {
         this._bgm.unload();
         this._bgm = false;
@@ -97,34 +148,34 @@ class Sound {
     }
   }
 
-  _createMusic() {
+  _createMusic(action) {
     this._bgm = new Howl({
-      src: ['static/' + this._action.sound + '.mp3'],
+      src: ['static/' + action.sound + '.mp3'],
       loop: true
     });
     this._bgm.play();
-    this._bgm.fade(0, (this._action.volume || this._action.volume === 0) ? this._action.volume : 1, 500);
+    this._bgm.fade(0, (action.volume || action.volume === 0) ? action.volume : 1, 500);
   }
 
-  _playSound() {
+  _playSound(action) {
     let foundSound = this._sounds.some((sound) => {
-      if (sound.getSound() === this._action.sound) {
-        sound.handleAction(this._action);
+      if (sound.getSound() === action.sound) {
+        sound.handleAction(action);
         return true;
       }
     });
 
     if (!foundSound) {
       let sound = new Audio();
-      sound.handleAction(this._action);
+      sound.handleAction(action);
       this._sounds.push(sound);
     }
   }
 
-  _stopSound() {
+  _stopSound(action) {
     this._sounds.some((sound) => {
-      if (sound.getSound() === this._action.sound) {
-        sound.handleAction(this._action);
+      if (sound.getSound() === action.sound) {
+        sound.handleAction(action);
         return true;
       }
     });

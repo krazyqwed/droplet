@@ -91,8 +91,12 @@ class Variable {
     return result;
   }
 
-  getCurrentVariables() {
+  getState() {
     return this._variables;
+  }
+
+  setState(data) {
+    this._variables = data;
   }
 }
 
