@@ -46,6 +46,7 @@ class MainMenu {
   }
 
   show() {
+    D.SceneStore.setData('gameInProgress', false);
     D.Background.handleAction({
       event: 'load',
       background: 'main_menu'

@@ -314,6 +314,7 @@ class Story {
     let scene = this._getSceneById(this._sceneId);
 
     D.Scene.loadScene(scene, keyframe);
+    D.SceneStore.setData('gameInProgress', true);
   }
 
   _getSceneById(sceneId) {

@@ -354,7 +354,6 @@ class Character {
   }
 
   getState() {
-    console.log(this._characters);
     return this._characters.map((character) => {
       return character.getState();
     });

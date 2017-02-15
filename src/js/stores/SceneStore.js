@@ -5,6 +5,7 @@ class SceneStore extends Store {
     super();
 
     this._data = {
+      gameInProgress: false,
       fastForward: false,
       skipAsync: false,
       nextScene: false,

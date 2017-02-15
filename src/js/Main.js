@@ -11,6 +11,7 @@ import Input from './modules/Input';
 import Sound from './modules/Sound';
 import History from './modules/History';
 import Save from './modules/Save';
+import Alert from './modules/Alert';
 import EngineStore from './stores/EngineStore';
 import SceneStore from './stores/SceneStore';
 
@@ -40,6 +41,7 @@ class Main {
       History: History,
 
       Save: Save,
+      Alert: Alert,
 
       FPSMeter: new FPSMeter()
     };
@@ -101,6 +103,9 @@ class Main {
 
     const gameMenuSave = this._dom.mainWarpper.querySelector('.js_save .js_gui_element');
     gameMenuSave.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
+
+    const gameMenuAlert = this._dom.mainWarpper.querySelector('.js_alert .js_gui_element');
+    gameMenuAlert.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
 
     canvas.style.transform = 'scale(' + scale + ')';
     canvas.style.marginLeft = this._dom.mainWarpper.offsetLeft + 'px';

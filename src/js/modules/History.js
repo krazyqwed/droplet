@@ -7,6 +7,8 @@ class History {
     this._dom = {};
     this._dom.wrap = document.querySelector('.js_history');
     this._dom.content = document.querySelector('.js_history_content');
+    this._dom.back = document.querySelector('.js_history_back');
+    this._dom.back.addEventListener('mousedown', this._hide.bind(this));
     this._events = {};
     this._events.show = this._showEvent.bind(this);
   }
@@ -21,9 +23,7 @@ class History {
   }
 
   show() {
-    this._dom.content.innerHTML = '';
     this._dom.wrap.style.removeProperty('display');
-
     this._generateEntries();
 
     requestAnimationFrame(() => {
@@ -50,6 +50,8 @@ class History {
   }
 
   _generateEntries() {
+    this._dom.content.innerHTML = '';
+
     this._history.forEach((entry) => {
       const element = document.createElement('div');
       element.classList.add('d_history__entry');

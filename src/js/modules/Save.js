@@ -5,9 +5,12 @@ class Save {
   constructor() {
     this._isSave = true;
     this._selectedSaveSlot = 0;
+    this._saves = this._getSaves();
     this._dom = {};
     this._dom.wrap = document.querySelector('.js_save');
     this._dom.content = document.querySelector('.js_save_content');
+    this._dom.back = document.querySelector('.js_save_back');
+    this._dom.back.addEventListener('mousedown', this._hide.bind(this));
     this._events = {};
     this._events.show = this._showEvent.bind(this);
   }
@@ -16,21 +19,7 @@ class Save {
     D.EngineStore.subscribe('createSave', this._save.bind(this));
   }
 
-  load(data) {
-    D.SceneStore.setData('loadFromSave', true);
-    D.Variable.setState(data.state.variables);
-    D.Story.loadScene(data.state.scene, data.state.keyframe);
-    D.Character.setState(data.state.characters);
-    D.Background.setState(data.state.background);
-    D.Sound.setState(data.state.sounds);
-
-    CommonHelper.requestTimeout(() => {
-      this._hide();
-    }, 500);
-  }
-
   show(isSave) {
-    this._saves = this._getSaves();
     this._isSave = !isSave || isSave === false ? false : true;
     this._dom.wrap.style.removeProperty('display');
 
@@ -38,12 +27,13 @@ class Save {
 
     requestAnimationFrame(() => {
       this._dom.wrap.classList.add('d_save-wrap--visible');
+
       window.addEventListener('keydown', this._events.show);
     });
   }
 
   _showEvent(event) {
-    if (event.which === 27) {
+    if (event.which === 27 && !D.EngineStore.getData('alertOpen')) {
       event.preventDefault();
       this._hide();
     }
@@ -51,11 +41,35 @@ class Save {
 
   _hide() {
     this._dom.wrap.classList.remove('d_save-wrap--visible');
+
+    window.removeEventListener('keydown', this._events.show);
+
     CommonHelper.requestTimeout(() => {
       this._dom.wrap.style.display = 'none';
     }, 300);
+  }
 
-    window.removeEventListener('keydown', this._events.show);
+  _promptSave() {
+    if (this._saves[this._selectedSaveSlot] === null) {
+      D.EngineStore.setData('createSave', true);
+      return;
+    }
+
+    const saveSubscription = D.EngineStore.subscribe('alertAnswer', (data, prev, name) => {
+      if (data === true) {
+        D.EngineStore.setData('createSave', true);
+      }
+
+      D.Alert.hide();
+      saveSubscription.unsubscribe();
+      D.EngineStore.setData(name, null);
+    });
+
+    D.Alert.show({
+      description: 'Are you sure you want to overwrite an existing save?',
+      cancel: 'No, keep it...',
+      confirm: 'Yes, I\'m sure!'
+    });
   }
 
   _save() {
@@ -82,21 +96,73 @@ class Save {
       }
     };
 
-    let currentSaves = JSON.parse(localStorage.getItem('d_saves'));
-    currentSaves[this._selectedSaveSlot] = saveData;
+    this._saves[this._selectedSaveSlot] = saveData;
 
-    localStorage.setItem('d_saves', JSON.stringify(currentSaves));
+    localStorage.setItem('d_saves', JSON.stringify(this._saves));
 
     this._hide();
   }
 
-  _delete(tile) {
-    let currentSaves = JSON.parse(localStorage.getItem('d_saves'));
-    currentSaves[this._selectedSaveSlot] = null;
+  _promptLoad(loadData) {
+    if (!D.SceneStore.getData('gameInProgress')) {
+      this._load(loadData);
+      return;
+    }
 
-    localStorage.setItem('d_saves', JSON.stringify(currentSaves));
+    const loadSubscription = D.EngineStore.subscribe('alertAnswer', (data, prev, name) => {
+      if (data === true) {
+        this.load(loadData);
+      }
 
-    this._saves = this._getSaves();
+      D.Alert.hide();
+      loadSubscription.unsubscribe();
+      D.EngineStore.setData(name, null);
+    });
+
+    D.Alert.show({
+      description: 'Are you sure you want to leave from the current session?',
+      cancel: 'No, stay here...',
+      confirm: 'Yes, I\'m sure!'
+    });
+  }
+
+  _load(data) {
+    D.SceneStore.setData('loadFromSave', true);
+    D.Variable.setState(data.state.variables);
+    D.Story.loadScene(data.state.scene, data.state.keyframe);
+    D.Character.setState(data.state.characters);
+    D.Background.setState(data.state.background);
+    D.Sound.setState(data.state.sounds);
+
+    CommonHelper.requestTimeout(() => {
+      this._hide();
+    }, 500);
+  }
+
+
+  _promptDelete() {
+    const deleteSubscription = D.EngineStore.subscribe('alertAnswer', (data, prev, name) => {
+      if (data === true) {
+        this._delete();
+      }
+
+      D.Alert.hide();
+      deleteSubscription.unsubscribe();
+      D.EngineStore.setData(name, null);
+    });
+
+    D.Alert.show({
+      description: 'Are you sure you want to delete this save?',
+      cancel: 'No, keep it...',
+      confirm: 'Yes, I\'m sure!'
+    });
+  }
+
+  _delete() {
+    this._saves[this._selectedSaveSlot] = null;
+
+    localStorage.setItem('d_saves', JSON.stringify(this._saves));
+
     this._generateSaves();
   }
 
@@ -153,7 +219,7 @@ class Save {
     if (this._isSave) {
       saveButton.addEventListener('click', () => {
         this._selectedSaveSlot = index;
-        D.EngineStore.setData('createSave', true);
+        this._promptSave();
       });
     } else {
       saveButton.classList.add('d_button--disabled');
@@ -175,10 +241,10 @@ class Save {
       title.textContent = data.title;
       date.textContent = new Date(data.date).toLocaleDateString() + ' ' + new Date(data.date).toLocaleTimeString();
 
-      loadButton.addEventListener('click', () => this.load(data));
+      loadButton.addEventListener('click', () => this._promptLoad(data));
       deleteButton.addEventListener('click', () => {
         this._selectedSaveSlot = index;
-        this._delete(tile);
+        this._promptDelete();
       });
     } else {
       thumb.src = './static/submenu_2.jpg';
