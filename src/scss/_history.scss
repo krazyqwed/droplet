@@ -53,7 +53,7 @@
   }
 
   &__entry {
-    background: rgba(#000,.15);
+    background: linear-gradient(0deg, rgba(#000,.1) 2px, transparent 2px, transparent 0), rgba(#000,.15);
     background-position: center, center;
     background-size: auto 4px, auto;
     color: #fff;
