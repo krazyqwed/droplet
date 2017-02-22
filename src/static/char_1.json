@@ -3,100 +3,76 @@
 "char_1_1":
 {
 	"frame":{"x":0,"y":0,"w":407,"h":848},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":407,"y":848},
 	"sourceSize":{"w":407,"h":848}
 },
 "char_1_2":
 {
 	"frame":{"x":408,"y":0,"w":407,"h":848},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":407,"y":848},
 	"sourceSize":{"w":407,"h":848}
 },
 "char_1_3":
 {
 	"frame":{"x":816,"y":0,"w":407,"h":848},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":407,"y":848},
 	"sourceSize":{"w":407,"h":848}
 },
 "char_1_4":
 {
 	"frame":{"x":1224,"y":0,"w":407,"h":848},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":407,"y":848},
 	"sourceSize":{"w":407,"h":848}
 },
 "char_1_5":
 {
 	"frame":{"x":1632,"y":0,"w":407,"h":848},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":407,"y":848},
 	"sourceSize":{"w":407,"h":848}
 },
 "char_1_10":
 {
 	"frame":{"x":0,"y":849,"w":379,"h":804},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":379,"y":804},
 	"sourceSize":{"w":379,"h":804}
 },
 "char_1_11":
 {
 	"frame":{"x":380,"y":849,"w":379,"h":804},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":379,"y":804},
 	"sourceSize":{"w":379,"h":804}
 },
 "char_1_9":
 {
 	"frame":{"x":760,"y":849,"w":379,"h":804},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":379,"y":804},
 	"sourceSize":{"w":379,"h":804}
 },
 "char_1_6":
 {
 	"frame":{"x":1140,"y":849,"w":301,"h":833},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":301,"y":833},
 	"sourceSize":{"w":301,"h":833}
 },
 "char_1_7":
 {
 	"frame":{"x":1442,"y":849,"w":301,"h":833},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":301,"y":833},
 	"sourceSize":{"w":301,"h":833}
 },
 "char_1_8":
 {
 	"frame":{"x":1744,"y":849,"w":301,"h":833},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":301,"y":833},
 	"sourceSize":{"w":301,"h":833}
 },
 "char_1_12":
 {
 	"frame":{"x":2040,"y":0,"w":299,"h":844},
-	"rotated":false,
-	"trimmed":false,
 	"spriteSourceSize":{"x":0,"y":0,"w":299,"y":844},
 	"sourceSize":{"w":299,"h":844}
 }},
 "meta": {
-	"image": "char_1.png"
+	"image": "char_1"
 }
 }

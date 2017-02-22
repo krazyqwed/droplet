@@ -98,7 +98,15 @@ class Save {
 
     this._saves[this._selectedSaveSlot] = saveData;
 
-    localStorage.setItem('d_saves', JSON.stringify(this._saves));
+    if (SystemHelper.isElectron()) {
+      const app = require('electron').remote.app;
+      const savesFolder = app.getPath('userData') + '\\saves';
+      const fs = require('fs');
+
+      fs.writeFileSync(savesFolder + '\\' + this._selectedSaveSlot + '.json', JSON.stringify(saveData));
+    } else {
+      localStorage.setItem('d_saves', JSON.stringify(this._saves));
+    }
 
     this._hide();
   }
@@ -111,7 +119,7 @@ class Save {
 
     const loadSubscription = D.EngineStore.subscribe('alertAnswer', (data, prev, name) => {
       if (data === true) {
-        this.load(loadData);
+        this._load(loadData);
       }
 
       D.Alert.hide();
@@ -161,14 +169,41 @@ class Save {
   _delete() {
     this._saves[this._selectedSaveSlot] = null;
 
-    localStorage.setItem('d_saves', JSON.stringify(this._saves));
+    if (SystemHelper.isElectron()) {
+      const app = require('electron').remote.app;
+      const savesFolder = app.getPath('userData') + '\\saves';
+      const fs = require('fs');
+
+      fs.unlinkSync(savesFolder + '\\' + this._selectedSaveSlot + '.json');
+    } else {
+      localStorage.setItem('d_saves', JSON.stringify(this._saves));
+    }
 
     this._generateSaves();
   }
 
   _getSaves() {
     if (SystemHelper.isElectron()) {
+      const app = require('electron').remote.app;
+      const savesFolder = app.getPath('userData') + '\\saves';
+      const fs = require('fs');
+      const saves = new Array(100);
 
+      if (!fs.existsSync(savesFolder)){
+        fs.mkdirSync(savesFolder);
+      }
+
+      const files = fs.readdirSync(savesFolder);
+
+      files.forEach(file => {
+        let fileId = file.split('.');
+        fileId.pop();
+        fileId = fileId[0];
+
+        saves[fileId] = JSON.parse(fs.readFileSync(savesFolder + '\\' + file).toString());
+      });
+
+      return saves;
     } else {
       const currentSaves = localStorage.getItem('d_saves');
 
@@ -247,7 +282,7 @@ class Save {
         this._promptDelete();
       });
     } else {
-      thumb.src = './static/submenu_2.jpg';
+      thumb.src = 'static/submenu_2.jpg';
       title.textContent = '-';
       date.textContent = '-';
 

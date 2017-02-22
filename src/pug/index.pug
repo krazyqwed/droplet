@@ -9,6 +9,8 @@ html
   body
     .d_version #{version}
 
+    .d_dimension-helper.js_dimension_helper
+      .d_dimension-helper__scale.js_scale_helper
     .d_main-wrapper.js_main_wrapper
       .d_main-menu.js_main_menu_wrap.d_gui-element.js_gui_element.d_gui-interactive
         .d_main-menu__inner.js_main_menu
@@ -26,26 +28,29 @@ html
 
     .d_fader.d_fader--visible.js_fader
 
-    script(src="vendor/pixi.min.js")
-    script(src="vendor/howler.core.min.js")
-    script(src="vendor/fpsmeter.min.js")
+    script(async src="vendor/pixi.min.js")
+    script(async src="vendor/howler.core.min.js")
+    script(async src="vendor/fpsmeter.min.js")
+    script(async src="vendor/resourceloader.min.js")
     script.
       function loadApp() {
-        var script = document.createElement('script');
-        script.src = isChrome ? 'app.js' : 'app-fallback.js';
-        script.src += '?v=#{version}';
-        document.body.appendChild(script);
+        var scriptElement = document.createElement('script');
+        scriptElement.setAttribute('async', '');
+        scriptElement.src = isChrome ? 'app.js' : 'app-fallback.js';
+        scriptElement.src += '?v=#{version}';
+        document.body.appendChild(scriptElement);
       }
 
       var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
       if (!isChrome) {
-        var scriptElements = document.createElement('script');
-        scriptElements.onload = function() {
+        var scriptElement = document.createElement('script');
+        scriptElement.onload = function() {
           loadApp(isChrome);
         };
-        scriptElements.src = 'vendor/customelements.min.js';
-        document.body.appendChild(scriptElements);
+        scriptElement.setAttribute('async', '');
+        scriptElement.src = 'vendor/customelements.min.js';
+        document.body.appendChild(scriptElement);
       } else {
         loadApp(isChrome);
       }

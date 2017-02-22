@@ -1,4 +1,5 @@
-import Timer from './Timer'; 
+import StringHelper from '../helpers/String';
+import Timer from './Timer';
 
 class Background {
   constructor() {
@@ -56,9 +57,11 @@ class Background {
   }
 
   getState() {
+    let texturePath = this._background.texture.baseTexture.source.src;
+
     return {
       background: {
-        texture: this._background.texture.baseTexture.imageUrl
+        texture: StringHelper.extractFilename(texturePath)
       },
       fader: {
         alpha: this._sceneFader.alpha,
@@ -93,7 +96,7 @@ class Background {
   }
 
   _load() {
-    let background = PIXI.Texture.fromImage('static/' + this._action.background + '.jpg');
+    let background = PIXI.Texture.fromImage(this._action.background);
 
     this._backgroundClone.setTexture(this._background.texture);
     this._backgroundClone.alpha = this._background.alpha;
