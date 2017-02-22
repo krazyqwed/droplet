@@ -50,7 +50,7 @@ class Save {
   }
 
   _promptSave() {
-    if (this._saves[this._selectedSaveSlot] === null) {
+    if (!this._saves[this._selectedSaveSlot]) {
       D.EngineStore.setData('createSave', true);
       return;
     }
