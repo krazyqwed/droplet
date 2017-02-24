@@ -56,6 +56,7 @@ class MainMenu {
     D.Text.init();
     D.Narrator.init();
     D.Character.init();
+    D.Picture.init();
     D.Scene.init();
 
     this._buildItems();

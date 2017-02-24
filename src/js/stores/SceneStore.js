@@ -12,7 +12,6 @@ class SceneStore extends Store {
 
       textRunning: false,
       narratorRunning: false,
-      characterRunning: false,
       interactionRunning: false,
 
       loadFromSave: false

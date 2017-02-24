@@ -46,6 +46,7 @@ class Scene {
   loadNextFrame() {
     D.SceneStore.setData('fastForward', false);
     D.Character.forceEndAnimations();
+    D.Picture.forceEndAnimations();
 
     this._loadKeyframe(this._scene.keyframes[++this._keyframe]);
   }
@@ -165,6 +166,7 @@ class Scene {
         case 'dialog': D.Text.handleAction(action); break;
         case 'narrator': D.Narrator.handleAction(action); break;
         case 'character': D.Character.handleAction(action); break;
+        case 'picture': D.Picture.handleAction(action); break;
         case 'choose': D.Choose.handleAction(action); break;
         case 'input': D.Input.handleAction(action); break;
       }
@@ -196,6 +198,7 @@ class Scene {
 
       if (!D.SceneStore.getData('loadFromSave')) {
         D.Character.hideCharacters();
+        D.Picture.hidePictures();
       }
 
       D.Choose.clearChoose();

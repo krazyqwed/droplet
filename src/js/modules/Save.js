@@ -90,6 +90,7 @@ class Save {
         scene: D.Scene.getState().scene.id,
         keyframe: D.Scene.getState().keyframe,
         characters: D.Character.getState(),
+        pictures: D.Picture.getState(),
         variables: D.Variable.getState(),
         background: D.Background.getState(),
         sounds: D.Sound.getState()
@@ -139,6 +140,7 @@ class Save {
     D.Variable.setState(data.state.variables);
     D.Story.loadScene(data.state.scene, data.state.keyframe);
     D.Character.setState(data.state.characters);
+    D.Picture.setState(data.state.pictures);
     D.Background.setState(data.state.background);
     D.Sound.setState(data.state.sounds);
 

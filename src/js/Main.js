@@ -8,6 +8,7 @@ import Story from './modules/Story';
 import Scene from './modules/Scene';
 import { Text, Narrator } from './modules/Text';
 import Character from './modules/Character';
+import Picture from './modules/Picture';
 import Choose from './modules/Choose';
 import Input from './modules/Input';
 import Sound from './modules/Sound';
@@ -37,6 +38,7 @@ class Main {
       Text: Text,
       Narrator: Narrator,
       Character: Character,
+      Picture: Picture,
       Choose: Choose,
       Input: Input,
       Sound: Sound,
@@ -140,6 +142,7 @@ class Main {
       'submenu_1.jpg',
       'submenu_2.jpg',
       'player_avatar.png',
+      'picture_1.png',
       'bgm_1.mp3',
       'bgm_2.mp3',
       'whosh.mp3',

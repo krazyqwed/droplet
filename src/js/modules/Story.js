@@ -41,6 +41,13 @@ let sampleStory = {
           id: 4324,
           actions: [
             {
+              type: 'picture',
+              id: 1,
+              position: [50, 75],
+              from: [0, 0],
+              duration: 10
+            },
+            {
               type: 'dialog',
               dialog: [
                 'Ok, that\'s the first dialog!',
