@@ -11,7 +11,8 @@ class SubMenu {
 
   show(name) {
     switch (name) {
-      case 'load': D.Save.show();
+      case 'load': D.Save.show(); break;
+      case 'settings': D.Settings.show(); break;
     }
   }
 }

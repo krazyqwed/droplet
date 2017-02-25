@@ -1,0 +1,109 @@
+d-slider {
+  display: block;
+
+  &[disabled] {
+    opacity: .5;
+  }
+
+  &[range] {
+    .d-slider__line:before {
+      background-color: rgba(#000,.4);
+    }
+  }
+}
+
+.d-slider {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  padding: 10px 0;
+  position: relative;
+
+  &__line {
+    background-clip: content-box;
+    background-color: rgba(#000,.4);
+    border-bottom: 5px solid transparent;
+    border-top: 5px solid transparent;
+    height: 20px;
+    position: relative;
+
+    &:before,
+    &:after {
+      background-color: rgba(#000,.4);
+      bottom: 0;
+      content: '';
+      height: 10px;
+      position: absolute;
+      width: 10px;
+    }
+
+    &:before {
+      background-color: #2a8bff;
+      left: -10px;
+    }
+
+    &:after {
+      right: -10px;
+    }
+  }
+
+  &__fill {
+    background-color: #2a8bff;
+    height: 10px;
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
+
+  &__steps {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  &__step {
+    background: rgba(#fff, .5);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    transform: translateX(-1px);
+    width: 2px;
+  }
+
+  &__label {
+    bottom: 22px;
+    color: #666;
+    font-size: 11px;
+    position: absolute;
+
+    &-min {
+      left: -10px;
+    }
+
+    &-max {
+      right: -10px;
+    }
+  }
+
+  &__bubble {
+    background: linear-gradient(0deg, rgba(#000,.1) 2px, transparent 2px, transparent 0), #2a8bff;
+    background-position: center, center, center;
+    background-size: auto 4px, cover, auto;
+    border: 2px solid rgba(#000,.4);
+    height: 40px;
+    outline: 0;
+    position: absolute;
+    top: 0;
+    transform: translateX(-10px);
+    width: 20px;
+
+    &--hover {
+      border: 2px solid rgba(#fff,.4);
+    }
+
+    &--active {
+      border: 2px solid rgba(#fff,.8);
+    }
+  }
+}
