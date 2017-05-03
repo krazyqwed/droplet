@@ -26,10 +26,10 @@ $textbox-width: 95%;
 
 .d_textbox,
 .d_narrator {
+  @extend %text-default;
+
   border-top: 2px solid rgba(#000,.4);
   color: #fff;
-  font-size: 38px;
-  font-weight: bold;
   height: 250px;
   line-height: 1.35;
   outline: 2px solid #fff;
@@ -78,15 +78,14 @@ $textbox-width: 95%;
 }
 
 .d_textbox {
-  @include stripe;
+  @include gradient-stripe;
 
   width: $textbox-width;
 }
 
 .d_narrator {
-  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), rgba(#000,.4);
-  background-position: center, center;
-  background-size: auto 4px, auto;
+  @include stripe;
+
   border-top: 0;
   height: auto;
   outline: 0;
@@ -104,10 +103,10 @@ $textbox-width: 95%;
 
 .d_textbox-helper,
 .d_narrator-helper {
+  @extend %text-default;
+
   box-sizing: border-box;
   visibility: hidden;
-  font-size: 38px;
-  font-weight: bold;
   height: auto;
   padding: 0 30px;
   position: absolute;

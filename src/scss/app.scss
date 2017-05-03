@@ -1,9 +1,3 @@
-@mixin stripe($color: rgba(#000,.4)) {
-  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), $color;
-  background-position: center, center, center;
-  background-size: auto 4px, cover, auto;
-}
-
 %scrollbar {
   &::-webkit-scrollbar {
     width: 16px;
@@ -18,12 +12,28 @@
   }
 }
 
+@import 'colors';
+@import 'typography';
+@import 'backgrounds';
+@import 'button';
+@import 'input';
+@import 'choose';
+@import 'main_menu';
+@import 'game_menu';
+@import 'text';
+@import 'history';
+@import 'save';
+@import 'alert';
+@import 'slider';
+@import 'settings';
+
 html {
   height: 100%;
 }
 
 body {
   background: #000;
+  color: #fff;
   display: flex;
   font-family: 'Arial', sans-serif;
   height: 100%;
@@ -52,60 +62,6 @@ canvas {
   top: 0;
   transform-origin: left center;
   vertical-align: top;
-}
-
-.d_button {
-  @include stripe;
-
-  box-shadow: inset 0 0 0px 2px rgba(#000,.2);
-  color: #fff;
-  cursor: pointer;
-  display: inline-block;
-  filter: drop-shadow(4px 4px 0 rgba(#000,.4));
-  font-size: 32px;
-  font-weight: bold;
-  height: 72px;
-  line-height: 72px;
-  outline: 2px solid #fff;
-  padding: 0 40px;
-  text-align: center;
-  text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
-
-  &:hover:not(.d_button--success) {
-    background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
-    transition: background .2s linear;
-  }
-
-  &--small {
-    font-size: 20px;
-    height: 36px;
-    line-height: 36px;
-  }
-
-  &--warning:hover:not(.d_button--success) {
-    background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#ff2a2a,.4);
-  }
-
-  &--success {
-    animation: blink_button_success .2s linear infinite;
-  }
-
-  &--disabled {
-    cursor: default;
-    opacity: .5;
-
-    &:hover:not(.d_button--success) {
-      @include stripe;
-
-      transition: none;
-    }
-  }
-}
-
-@keyframes blink_button_success {
-  50% {
-    background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#aaff2a,.4);
-  }
 }
 
 .d_dimension-helper {
@@ -196,52 +152,6 @@ canvas {
   }
 }
 
-.d_main-menu {
-  align-items: center;
-  display: flex;
-  flex-direction: row-reverse;
-  height: 1080px;
-  justify-content: flex-start;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  padding: 30px;
-  position: absolute;
-  top: 0;
-  transform-origin: left top;
-  width: 1920px;
-
-  &__inner {
-    background: linear-gradient(0deg, rgba(#000,.1) 2px, transparent 2px, transparent 0), rgba(#000,.4);
-    background-position: center, center;
-    background-size: auto 4px, auto;
-    flex: 0 0 auto;
-    height: calc(100% + 60px);
-    padding: 200px 30px 0;
-  }
-
-  &__item {
-    border: 2px solid transparent;
-    color: #fff;
-    cursor: pointer;
-    font-size: 38px;
-    font-weight: bold;
-    padding: 20px 30px;
-    text-align: center;
-    text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
-
-    &--active {
-      background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
-      border: 2px solid #fff;
-      transition: background .2s linear;
-    }
-
-    &--blink {
-      animation: blink_chosen .2s linear infinite;
-    }
-  }
-}
-
 .d_choose-wrap {
   align-items: center;
   display: flex;
@@ -255,86 +165,6 @@ canvas {
   top: 0;
   transform-origin: left top;
   width: 1920px;
-}
-
-.d_choose {
-  @include stripe;
-
-  border: 2px solid rgba(#000,.4);
-  box-shadow: 8px 8px 0 0 rgba(#000,.4);
-  line-height: 1.35;
-  outline: 2px solid #fff;
-  padding: 8px;
-  width: 70%;
-  word-wrap: break-word;
-
-  &__item {
-    border: 2px solid transparent;
-    color: #fff;
-    cursor: pointer;
-    font-size: 38px;
-    font-weight: bold;
-    padding: 20px 30px;
-    text-align: left;
-    text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
-
-    &--active {
-      background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);
-      border: 2px solid #fff;
-      transition: background .2s linear;
-    }
-
-    &--blink {
-      animation: blink_chosen .2s linear infinite;
-    }
-  }
-}
-
-@keyframes blink_chosen {
-  50% {
-    background: linear-gradient(0deg, rgba(#000,.3), rgba(#000,0)), rgba(#2a8bff,.2);
-    border: 2px solid rgba(#fff,.5);
-  }
-}
-
-.d_input-wrap {
-  align-items: center;
-  display: flex;
-  height: 1080px;
-  justify-content: center;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  padding-bottom: 250px;
-  position: absolute;
-  top: 0;
-  transform-origin: left top;
-  width: 1920px;
-
-
-  .d_button {
-    margin-left: 16px;
-  }
-}
-
-.d_input {
-  @include stripe;
-
-  border: 2px solid rgba(#000,.4);
-  box-shadow: 8px 8px 0 0 rgba(#000,.4);
-  color: #fff;
-  font-size: 38px;
-  font-weight: bold;
-  height: 72px;
-  line-height: 1.35;
-  outline: 2px solid #fff;
-  padding: 8px;
-  text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
-  width: 50%;
-
-  &:focus {
-    outline-offset: 0;
-  }
 }
 
 .d_fader {
@@ -352,11 +182,3 @@ canvas {
     opacity: 1;
   }
 }
-
-@import 'text';
-@import 'game_menu';
-@import 'history';
-@import 'save';
-@import 'alert';
-@import 'slider';
-@import 'settings';

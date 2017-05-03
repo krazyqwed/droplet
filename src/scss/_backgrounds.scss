@@ -1,0 +1,15 @@
+@mixin stripe($color: rgba(#000,.4)) {
+  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), $color;
+  background-position: center, center, center;
+  background-size: auto 4px, cover, auto;
+}
+
+@mixin gradient-stripe($color: rgba(#000,.4)) {
+  @include stripe($color);
+
+  background: linear-gradient(0deg, rgba(#000,.1) 2px, rgba(#000,0) 2px, rgba(#000,0) 0), linear-gradient(0deg, rgba(#000,.9), rgba(#000,0)), $color;
+}
+
+@mixin gradient($color: rgba(#000,.4)) {
+  background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba($color,.4);
+}

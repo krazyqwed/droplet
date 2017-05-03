@@ -121,6 +121,7 @@ class DSlider extends HTMLElement {
     this._events.mouseDownHandler = this._handleMouseDown.bind(this);
     this._events.mouseMoveHandler = this._handleMouseMove.bind(this);
     this._events.mouseUpHandler = this._handleMouseUp.bind(this);
+    this._events.mouseScrollHandler = this._handleMouseScroll.bind(this);
     this._events.keyDownHandler = this._handleKeyDown.bind(this);
 
     this._isMouseDown = false;
@@ -326,6 +327,8 @@ class DSlider extends HTMLElement {
 
   _registerClickOnLine() {
     this._dom.line.addEventListener('mousedown', this._events.mouseDownHandler);
+    this.addEventListener('mousewheel', this._events.mouseScrollHandler);
+    this.addEventListener('DOMMouseScroll', this._events.mouseScrollHandler);
   }
 
   _registerDragHandlers(bubble) {
@@ -392,6 +395,15 @@ class DSlider extends HTMLElement {
     this._dispatchEvent();
   }
 
+  _handleMouseScroll(event) {
+    const realEvent = window.event || event;
+    const delta = Math.max(-1, Math.min(1, (realEvent.wheelDelta || -realEvent.detail))) * 3;
+    const positionValue = delta + this._state.value[this._focusedBubbleIndex];
+    this._changeFocusAccordingToPosition(positionValue);
+    this._updateFocusedPosition(positionValue);
+    this._dispatchEvent();
+  }
+
   _calculatePositionFromEvent(position) {
     const { left, width } = this._dom.line.getBoundingClientRect();
     const percentageOfMousePosition = (position - left) / width;
@@ -450,20 +462,19 @@ class DSlider extends HTMLElement {
   }
 
   _changeFocusAccordingToPosition(positionValue) {
-    if (!this.range) {
-      return;
+    if (this.range) {
+      const nonFocusedBubbleIndex = +!this._focusedBubbleIndex;
+      const nonFocusedBubbleValue = this._state.value[nonFocusedBubbleIndex];
+      const isLargerNow = this._focusedBubbleIndex === 0 && positionValue > nonFocusedBubbleValue;
+      const isSmallerNow = this._focusedBubbleIndex === 1 && positionValue < nonFocusedBubbleValue;
+
+      if (isLargerNow || isSmallerNow) {
+        this._state.update(this._focusedBubbleIndex, positionValue);
+        this._focusedBubbleIndex = nonFocusedBubbleIndex;
+      }
     }
 
-    const nonFocusedBubbleIndex = +!this._focusedBubbleIndex;
-    const nonFocusedBubbleValue = this._state.value[nonFocusedBubbleIndex];
-    const isLargerNow = this._focusedBubbleIndex === 0 && positionValue > nonFocusedBubbleValue;
-    const isSmallerNow = this._focusedBubbleIndex === 1 && positionValue < nonFocusedBubbleValue;
-
-    if (isLargerNow || isSmallerNow) {
-      this._state.update(this._focusedBubbleIndex, positionValue);
-      this._focusedBubbleIndex = nonFocusedBubbleIndex;
-      this._dom.bubbles[this._focusedBubbleIndex].focus();
-    }
+    this._dom.bubbles[this._focusedBubbleIndex].focus();
   }
 
   _updateFocusedPosition(positionValue) {

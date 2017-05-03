@@ -1,0 +1,54 @@
+.d_button {
+  @include stripe;
+  @extend %text-button;
+
+  box-shadow: inset 0 0 0px 2px rgba(#000,.2);
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  filter: drop-shadow(4px 4px 0 rgba(#000,.4));
+  height: 72px;
+  line-height: 72px;
+  outline: 2px solid #fff;
+  padding: 0 40px;
+  text-align: center;
+  text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+
+  &:hover:not(.d_button--success) {
+    @include gradient(rgba($c-primary,.4));
+
+    transition: background .2s linear;
+  }
+
+  &--small {
+    @extend %text-button-small;
+
+    height: 36px;
+    line-height: 36px;
+  }
+
+  &--warning:hover:not(&--success) {
+    @include gradient(rgba($c-warning,.4));
+  }
+
+  &--success {
+    animation: blink_button_success .2s linear infinite;
+  }
+
+  &--disabled {
+    cursor: default;
+    opacity: .5;
+
+    &:hover:not(.d_button--success) {
+      @include stripe;
+
+      transition: none;
+    }
+  }
+}
+
+@keyframes blink_button_success {
+  50% {
+    @include gradient(rgba($c-success,.4));
+  }
+}

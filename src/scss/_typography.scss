@@ -1,0 +1,19 @@
+$font-size-small: 14px;
+$font-size-medium: 20px;
+$font-size-large: 32px;
+$font-size-xlarge: 38px;
+
+%text-default {
+  font-size: $font-size-xlarge;
+  font-weight: bold;
+}
+
+%text-button {
+  font-size: $font-size-large;
+  font-weight: bold;
+}
+
+%text-button-small {
+  font-size: $font-size-medium;
+  font-weight: bold;
+}

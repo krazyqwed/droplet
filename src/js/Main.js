@@ -174,7 +174,6 @@ class Main {
       next();
     });
     D.Loader.on('complete', (loader) => {
-      console.log();
       D.Loader.reset();
       D.Loader.on('after', (resource, next) => {
         if (resource.type === 3) {
