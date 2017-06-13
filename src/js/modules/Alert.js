@@ -9,8 +9,10 @@ class Alert {
     this._dom.cancel = document.querySelector('.js_alert_cancel');
     this._dom.confirm.addEventListener('mousedown', this._confirm.bind(this));
     this._dom.cancel.addEventListener('mousedown', this._cancel.bind(this));
+
     this._events = {};
     this._events.keyboard = this._keyboardEvent.bind(this);
+    this._events.transitionEnd = this._transitionEndEvent.bind(this);
   }
 
   show(options) {
@@ -22,23 +24,20 @@ class Alert {
 
     this._dom.alert.style.removeProperty('display');
 
-    requestAnimationFrame(() => {
-      this._dom.alert.classList.add('d_alert-wrap--visible');
+    this._dom.alert.offsetHeight;
+    this._dom.alert.removeEventListener('transitionEnd', this._events.transitionEnd);
+    this._dom.alert.classList.add('d_alert-wrap--visible');
 
-      window.addEventListener('keydown', this._events.keyboard);
-    });
+    window.addEventListener('keydown', this._events.keyboard);
   }
 
   hide() {
     D.EngineStore.setData('alertOpen', false);
 
+    this._dom.alert.addEventListener('transitionEnd', this._events.transitionEnd);
     this._dom.alert.classList.remove('d_alert-wrap--visible');
 
     window.removeEventListener('keydown', this._events.keyboard);
-
-    CommonHelper.requestTimeout(() => {
-      this._dom.alert.style.display = 'none';
-    }, 300);
   }
 
   _confirm() {
@@ -54,6 +53,10 @@ class Alert {
       event.preventDefault();
       this._cancel();
     }
+  }
+
+  _transitionEndEvent() {
+    this._dom.alert.style.display = 'none';
   }
 }
 

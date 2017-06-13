@@ -4,10 +4,12 @@ class Input {
   constructor() {
     this._action = false;
     this._inputted = false;
+
     this._dom = {};
     this._dom.inputWrap = document.querySelector('.js_input-wrap');
     this._dom.input = document.querySelector('.js_input');
     this._dom.inputButton = document.querySelector('.js_input_button');
+
     this._timer = new Timer();
     this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);
     this._timer.addEvent('input', this._inputEvent.bind(this), 1, true, 24);
@@ -55,12 +57,10 @@ class Input {
 
   _showInput() {
     this._dom.inputWrap.classList.add('d_gui-element--disable');
-
-    requestAnimationFrame(() => {
-      this._dom.inputWrap.classList.remove('d_gui-element--no-fade');
-      this._dom.inputWrap.classList.add('d_gui-element--visible');
-      this._dom.input.focus();
-    });
+    this._dom.inputWrap.offsetHeight;
+    this._dom.inputWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.inputWrap.classList.add('d_gui-element--visible');
+    this._dom.input.focus();
 
     this._timer.start('show');
   }

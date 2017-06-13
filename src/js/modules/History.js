@@ -4,13 +4,16 @@ import StringHelper from '../helpers/String';
 class History {
   constructor() {
     this._history = [];
+
     this._dom = {};
     this._dom.wrap = document.querySelector('.js_history');
     this._dom.content = document.querySelector('.js_history_content');
     this._dom.back = document.querySelector('.js_history_back');
     this._dom.back.addEventListener('mousedown', this._hide.bind(this));
+
     this._events = {};
     this._events.show = this._showEvent.bind(this);
+    this._events.transitionEnd = this._transitionEndEvent.bind(this);
   }
 
   writeHistory(actor, text) {
@@ -23,14 +26,14 @@ class History {
   }
 
   show() {
-    this._dom.wrap.style.removeProperty('display');
     this._generateEntries();
 
-    requestAnimationFrame(() => {
-      this._dom.wrap.classList.add('d_history-wrap--visible');
-      this._dom.content.scrollTop = this._dom.content.scrollHeight;
-      window.addEventListener('keydown', this._events.show);
-    });
+    this._dom.wrap.style.removeProperty('display');
+    this._dom.wrap.offsetHeight;
+    this._dom.wrap.removeEventListener('transitionEnd', this._events.transitionEnd);
+    this._dom.wrap.classList.add('d_history-wrap--visible');
+    this._dom.content.scrollTop = this._dom.content.scrollHeight;
+    window.addEventListener('keydown', this._events.show);
   }
 
   _showEvent(event) {
@@ -41,10 +44,9 @@ class History {
   }
 
   _hide() {
+    this._dom.wrap.addEventListener('transitionEnd', this._events.transitionEnd);
     this._dom.wrap.classList.remove('d_history-wrap--visible');
-    CommonHelper.requestTimeout(() => {
-      this._dom.wrap.style.display = 'none';
-    }, 300);
+    this._dom.wrap.style.display = 'none';
 
     window.removeEventListener('keydown', this._events.show);
   }
@@ -81,6 +83,10 @@ class History {
 
       this._dom.content.appendChild(element);
     });
+  }
+
+  _transitionEndEvent() {
+    this._dom.wrap.style.display = 'none';
   }
 }
 

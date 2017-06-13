@@ -70,7 +70,8 @@ class Main {
     D.Renderer = PIXI.autoDetectRenderer(this._windowWidth, this._windowHeight, {
       antialias: false,
       transparent: false,
-      resolution: 1
+      resolution: 1,
+      preserveDrawingBuffer: true
     });
     D.Renderer.view.style.display = 'none';
 
@@ -246,11 +247,6 @@ class Main {
 
   _render() {
     D.Renderer.render(D.Stage);
-
-    if (D.EngineStore.getData('createSave')) {
-      D.EngineStore.setData('createSave', false);
-    }
-
     D.FPSMeter.tick();
   }
 }

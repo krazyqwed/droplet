@@ -1,6 +1,6 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-import { minify } from 'uglify-js';
+import { minify } from 'uglify-es';
 
 export default {
   entry: 'src/js/Main.js',

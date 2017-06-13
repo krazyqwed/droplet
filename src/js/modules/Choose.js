@@ -4,9 +4,11 @@ class Choose {
   constructor() {
     this._action = false;
     this._selected = false;
+
     this._dom = {};
     this._dom.chooseWrap = document.querySelector('.js_choose_wrap');
     this._dom.choose = document.querySelector('.js_choose');
+
     this._timer = new Timer();
     this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);
     this._timer.addEvent('chose', this._blinkEvent.bind(this), 1, true, 24);
@@ -77,10 +79,9 @@ class Choose {
   _showChoose() {
     this._dom.chooseWrap.classList.add('d_gui-element--disable');
 
-    requestAnimationFrame(() => {
-      this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
-      this._dom.chooseWrap.classList.add('d_gui-element--visible');
-    });
+    this._dom.chooseWrap.offsetHeight;
+    this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.chooseWrap.classList.add('d_gui-element--visible');
 
     this._timer.start('show');
   }

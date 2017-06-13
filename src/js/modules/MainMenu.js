@@ -111,11 +111,9 @@ class MainMenu {
 
   _showMenu() {
     this._dom.menuWrap.classList.add('d_gui-element--disable');
-
-    requestAnimationFrame(() => {
-      this._dom.menuWrap.classList.remove('d_gui-element--no-fade');
-      this._dom.menuWrap.classList.add('d_gui-element--visible');
-    });
+    this._dom.menuWrap.offsetHeight;
+    this._dom.menuWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.menuWrap.classList.add('d_gui-element--visible');
 
     this._timer.start('show');
   }

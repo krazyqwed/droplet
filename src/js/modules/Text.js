@@ -42,11 +42,13 @@ class TextClass {
     this._textLength = 0;
     this._textFormatActive = false;
     this._writeSpeed = [2];
+
     this._dom = {};
     this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
     this._dom.textBox = document.querySelector('.js_' + this._elementType);
     this._dom.textBoxInner = document.querySelector('.js_' + this._elementType + '_inner');
     this._dom.speaker = document.querySelector('.js_speaker');
+
     this._timer = new Timer();
     this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true, 0, this._writeEventEvery.bind(this));
   }
@@ -94,10 +96,9 @@ class TextClass {
       this._dom.textBoxWrap.classList.remove('d_' + this._elementType + '-wrap--top');
     }
 
-    requestAnimationFrame(() => {
-      this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
-      this._dom.textBoxWrap.classList.add('d_gui-element--visible');
-    });
+    this._dom.textBoxWrap.offsetHeight;
+    this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
+    this._dom.textBoxWrap.classList.add('d_gui-element--visible');
 
     if (this._action.noNext) {
       this._dom.textBox.setAttribute('no-next', 'true');

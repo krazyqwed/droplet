@@ -6,13 +6,16 @@ class Save {
     this._isSave = true;
     this._selectedSaveSlot = 0;
     this._saves = this._getSaves();
+
     this._dom = {};
     this._dom.wrap = document.querySelector('.js_save');
     this._dom.content = document.querySelector('.js_save_content');
     this._dom.back = document.querySelector('.js_save_back');
     this._dom.back.addEventListener('mousedown', this._hide.bind(this));
+
     this._events = {};
     this._events.show = this._showEvent.bind(this);
+    this._events.transitionEnd = this._transitionEndEvent.bind(this);
   }
 
   init() {
@@ -21,15 +24,15 @@ class Save {
 
   show(isSave) {
     this._isSave = !isSave || isSave === false ? false : true;
-    this._dom.wrap.style.removeProperty('display');
 
     this._generateSaves();
 
-    requestAnimationFrame(() => {
-      this._dom.wrap.classList.add('d_save-wrap--visible');
+    this._dom.wrap.style.removeProperty('display');
+    this._dom.wrap.offsetHeight;
+    this._dom.wrap.removeEventListener('transitionEnd', this._events.transitionEnd);
+    this._dom.wrap.classList.add('d_save-wrap--visible');
 
-      window.addEventListener('keydown', this._events.show);
-    });
+    window.addEventListener('keydown', this._events.show);
   }
 
   _showEvent(event) {
@@ -40,13 +43,10 @@ class Save {
   }
 
   _hide() {
+    this._dom.wrap.addEventListener('transitionEnd', this._events.transitionEnd);
     this._dom.wrap.classList.remove('d_save-wrap--visible');
 
     window.removeEventListener('keydown', this._events.show);
-
-    CommonHelper.requestTimeout(() => {
-      this._dom.wrap.style.display = 'none';
-    }, 300);
   }
 
   _promptSave() {
@@ -73,43 +73,53 @@ class Save {
   }
 
   _save() {
-    let img = document.createElement('img');
-    img.src = D.Renderer.view.toDataURL('image/jpeg', 1);
-
-    var canvas = document.createElement("canvas");
-    canvas.width = 1920 / 4;
-    canvas.height = 1080 / 4;
-
-    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const saveData = {
-      date: new Date().toString(),
-      thumbnail: canvas.toDataURL('image/jpeg', 1),
-      title: D.Scene.getState().scene.title,
-      state: {
-        scene: D.Scene.getState().scene.id,
-        keyframe: D.Scene.getState().keyframe,
-        characters: D.Character.getState(),
-        pictures: D.Picture.getState(),
-        variables: D.Variable.getState(),
-        background: D.Background.getState(),
-        sounds: D.Sound.getState()
-      }
-    };
-
-    this._saves[this._selectedSaveSlot] = saveData;
-
-    if (SystemHelper.isElectron()) {
-      const app = require('electron').remote.app;
-      const savesFolder = app.getPath('userData') + '\\saves';
-      const fs = require('fs');
-
-      fs.writeFileSync(savesFolder + '\\' + this._selectedSaveSlot + '.json', JSON.stringify(saveData));
-    } else {
-      localStorage.setItem('d_saves', JSON.stringify(this._saves));
+    if (!D.EngineStore.getData('createSave')) {
+      return;
     }
 
-    this._hide();
+    let img = document.createElement('img');
+
+    D.Renderer.render(D.Stage);
+    img.src = D.Renderer.view.toDataURL('image/jpeg', 1);
+
+    requestAnimationFrame(() => {
+      var canvas = document.createElement("canvas");
+      canvas.width = D.Renderer.width / 8;
+      canvas.height = D.Renderer.height / 8;
+
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const saveData = {
+        date: new Date().toString(),
+        thumbnail: canvas.toDataURL('image/jpeg', 1),
+        title: D.Scene.getState().scene.title,
+        state: {
+          scene: D.Scene.getState().scene.id,
+          keyframe: D.Scene.getState().keyframe,
+          characters: D.Character.getState(),
+          pictures: D.Picture.getState(),
+          variables: D.Variable.getState(),
+          background: D.Background.getState(),
+          sounds: D.Sound.getState()
+        }
+      };
+
+      this._saves[this._selectedSaveSlot] = saveData;
+
+      if (SystemHelper.isElectron()) {
+        const app = require('electron').remote.app;
+        const savesFolder = app.getPath('userData') + '\\saves';
+        const fs = require('fs');
+
+        fs.writeFileSync(savesFolder + '\\' + this._selectedSaveSlot + '.json', JSON.stringify(saveData));
+      } else {
+        localStorage.setItem('d_saves', JSON.stringify(this._saves));
+      }
+
+      this._hide();
+    });
+
+    D.EngineStore.setData('createSave', false);
   }
 
   _promptLoad(loadData) {
@@ -148,7 +158,6 @@ class Save {
       this._hide();
     }, 500);
   }
-
 
   _promptDelete() {
     const deleteSubscription = D.EngineStore.subscribe('alertAnswer', (data, prev, name) => {
@@ -302,6 +311,10 @@ class Save {
     tile.appendChild(deleteButton);
 
     return tile;
+  }
+
+  _transitionEndEvent() {
+    this._dom.wrap.style.display = 'none';
   }
 }
 
