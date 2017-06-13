@@ -35,7 +35,7 @@
     "conventional-recommended-bump": "^1.0.0",
     "cpy-cli": "^1.0.1",
     "cross-env": "^5.0.1",
-    "git-latest-tag": "^0.0.6",
+    "git-latest-semver-tag": "^1.0.2",
     "javascript-obfuscator": "^0.9.1",
     "node-sass": "^4.5.3",
     "npm-run-all": "^4.0.2",
