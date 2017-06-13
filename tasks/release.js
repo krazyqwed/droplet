@@ -2,12 +2,12 @@
 
 const fs = require('fs');
 const conventionalRecommendedBump = require('conventional-recommended-bump');
-const gitLatestSemverTag = require('git-latest-semver-tag');
+const gitLatestTag = require('git-latest-tag');
 const semver = require('semver');
 const execSync = require('child_process').execSync;
 
 const getRevision = function(callback) {
-  gitLatestSemverTag(function(err, revision) {
+  gitLatestTag(function(err, revision) {
     callback(revision);
   });
 };
