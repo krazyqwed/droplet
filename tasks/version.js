@@ -1,12 +1,12 @@
 'use strict';
 
 const fs = require('fs');
-const getLatestTag = require('git-latest-tag');
+const getLatestSemverTag = require('git-latest-semver-tag');
 
 const setVersionJson = function(revision) {
   fs.writeFileSync('./version.json', '{ "version": "' + revision + '" }');
 }
 
-getLatestTag(true, function(err, tag) {
-  setVersionJson(tag);
+getLatestSemverTag(function(err, revision) {
+  setVersionJson(revision);
 });
