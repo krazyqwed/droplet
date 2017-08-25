@@ -95,6 +95,7 @@ canvas {
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 2;
 
   &:before,
   &:after {
@@ -176,6 +177,22 @@ canvas {
   right: 0;
   top: 0;
   transition: opacity .25s linear;
+  z-index: 3;
+
+  &--visible {
+    opacity: 1;
+  }
+}
+
+.d_blink {
+  height: 1080px;
+  left: 0;
+  opacity: 0;
+  outline: 5px solid #000;
+  position: absolute;
+  top: 0;
+  transform-origin: 50% 0;
+  width: 1920px;
   z-index: 1;
 
   &--visible {

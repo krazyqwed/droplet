@@ -53,13 +53,6 @@ class MainMenu {
       background: 'main_menu'
     });
 
-    D.Save.init();
-    D.Text.init();
-    D.Narrator.init();
-    D.Character.init();
-    D.Picture.init();
-    D.Scene.init();
-
     this._buildItems();
     this._showMenu();
   }

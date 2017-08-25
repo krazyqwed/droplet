@@ -2,7 +2,7 @@ import StringHelper from '../helpers/String';
 import Timer from './Timer';
 
 class Background {
-  constructor() {
+  init() {
     this._background = new PIXI.Sprite();
     this._background.anchor.x = 0;
     this._background.anchor.y = 0;
@@ -20,6 +20,7 @@ class Background {
     this._sceneFader = new PIXI.Graphics();
     this._sceneFader.beginFill(0xFFFFFF);
     this._sceneFader.drawRect(0, 0, 1920, 1080);
+    this._sceneFader.endFill();
     this._sceneFader = new PIXI.Sprite(this._sceneFader.generateTexture());
     this._sceneFader.tint = 0x000000;
     this._sceneFader.alpha = 0.001;
@@ -27,15 +28,15 @@ class Background {
 
     this._dom = {};
     this._dom.fader = document.querySelector('.js_fader');
+    this._dom.blink = document.querySelector('.js_blink');
 
     this._timer = new Timer();
     this._timer.addEvent('showScene', this._showSceneEvent.bind(this), 1, true);
     this._timer.addEvent('hideScene', this._hideSceneEvent.bind(this), 1, true);
+    this._timer.addEvent('blink', this._blinkEvent.bind(this), 1, true);
     this._timer.addEvent('change', this._changeEvent.bind(this), 1, true, 60);
     this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
-  }
 
-  init() {
     D.Stage.addChild(this._background);
     D.Stage.addChild(this._backgroundClone);
     D.Stage.addChild(this._sceneFader);
@@ -51,6 +52,7 @@ class Background {
     switch(this._action.event) {
       case 'showScene': this._showScene(); break;
       case 'hideScene': this._hideScene(); break;
+      case 'blink': this._blink(); break;
       case 'change': this._change(); break;
       case 'load': this._load(); break;
     }
@@ -91,6 +93,12 @@ class Background {
     this._timer.start('hideScene');
   }
 
+  _blink() {
+    this._dom.blink.classList.add('d_blink--visible');
+    this._timer.setRunLimit('blink', this._action.duration ? this._action.duration : 30);
+    this._timer.start('blink');
+  }
+
   _change() {
 
   }
@@ -117,6 +125,21 @@ class Background {
     if (event.over || D.SceneStore.getData('fastForward')) {
       this._sceneFader.alpha = 0.001;
       this._timer.destroy('showScene');
+    }
+  }
+
+  _blinkEvent(event) {
+    const closePercent = event.runCount * 2 / event.runLimit;
+
+    if (event.runCount <= event.runLimit / 2) {
+      this._dom.blink.querySelector('#Mask ellipse').setAttribute('ry', Math.round((0.75 - closePercent * 0.75) * 100) + '%');
+    } else if (event.runCount > event.runLimit / 2) {
+      this._dom.blink.querySelector('#Mask ellipse').setAttribute('ry', Math.round((closePercent - 1) * 100) + '%');
+    }
+
+    if (event.over || D.SceneStore.getData('fastForward')) {
+      this._dom.blink.classList.remove('d_blink--visible');
+      this._timer.destroy('blink');
     }
   }
 

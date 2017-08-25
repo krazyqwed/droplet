@@ -3,6 +3,7 @@ import Loader from './modules/Loader';
 import MainMenu from './modules/MainMenu';
 import GameMenu from './modules/GameMenu';
 import Variable from './modules/Variable';
+import Filter from './modules/Filter';
 import Background from './modules/Background';
 import Story from './modules/Story';
 import Scene from './modules/Scene';
@@ -23,6 +24,7 @@ import Slider from './modules/Slider';
 class Main {
   constructor() {
     window.D = {
+      App: null,
       Renderer: null,
       Stage: null,
       Loader: Loader,
@@ -34,6 +36,7 @@ class Main {
       GameMenu: GameMenu,
 
       Variable: Variable,
+      Filter: Filter,
       Background: Background,
       Story: Story,
       Scene: Scene,
@@ -67,18 +70,20 @@ class Main {
   }
 
   _init() {
-    D.Renderer = PIXI.autoDetectRenderer(this._windowWidth, this._windowHeight, {
+    D.App = new PIXI.Application(this._windowWidth, this._windowHeight, {
       antialias: false,
-      transparent: false,
+      transparent: true,
       resolution: 1,
       preserveDrawingBuffer: true
     });
-    D.Renderer.view.style.display = 'none';
+    D.App.view.style.display = 'none';
+    D.Renderer = D.App.renderer;
 
-    document.body.insertBefore(D.Renderer.view, this._dom.mainWarpper);
+    document.body.insertBefore(D.App.view, this._dom.dimensionHelper.nextSibling);
     window.addEventListener('resize', this._resize.bind(this));
 
-    D.Stage = new PIXI.Container();
+    D.Stage = D.App.stage;
+    D.Stage.filterArea = new PIXI.Rectangle(0, 0, this._windowWidth, this._windowHeight);
 
     this._resize();
     this._load();
@@ -88,7 +93,7 @@ class Main {
     this._windowWidth = this._dom.dimensionHelper.offsetWidth;
     this._windowHeight = this._dom.dimensionHelper.offsetHeight;
 
-    const canvas = D.Renderer.view;
+    const canvas = D.App.view;
     let scale = 1;
     let scaleX = this._windowWidth / 1920;
     let scaleY = this._windowHeight / 1080;
@@ -109,7 +114,7 @@ class Main {
       this._dom.scaleHelper.style.height = parseInt(1080 * scaleX) + 'px';
     }
 
-    const guiElements = this._dom.mainWarpper.querySelectorAll('.js_gui_element');
+    const guiElements = document.querySelectorAll('.js_gui_element');
 
     [].forEach.call(guiElements, (elem) => {
       elem.style.transform = 'scale(' + scale + ')';
@@ -174,8 +179,10 @@ class Main {
 
       next();
     });
+
     D.Loader.on('complete', (loader) => {
       D.Loader.reset();
+
       D.Loader.on('after', (resource, next) => {
         if (resource.type === 3) {
           const image = new Image();
@@ -199,10 +206,12 @@ class Main {
           request.send();
         }
       });
+
       D.Loader.on('progress', this._loadProgress.bind(this));
       D.Loader.on('complete', this._loadFinished.bind(this));
       D.Loader.load(assetsToLoader);
     });
+
     D.Loader.load(assetDefinersToLoader);
   }
 
@@ -215,6 +224,12 @@ class Main {
     this._dom.mainWarpper.style.removeProperty('display');
 
     D.Background.init();
+    D.Save.init();
+    D.Text.init();
+    D.Narrator.init();
+    D.Character.init();
+    D.Picture.init();
+    D.Scene.init();
     D.MainMenu.show();
 
     this._update();
@@ -236,6 +251,7 @@ class Main {
 
   _update() {
     D.FPSMeter.tickStart();
+    D.Filter.tick();
 
     this._updateLayersOrder();
 

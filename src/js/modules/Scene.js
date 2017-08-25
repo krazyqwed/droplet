@@ -169,6 +169,7 @@ class Scene {
         case 'picture': D.Picture.handleAction(action); break;
         case 'choose': D.Choose.handleAction(action); break;
         case 'input': D.Input.handleAction(action); break;
+        case 'filter': D.Filter.handleAction(action); break;
       }
     });
   }
@@ -190,7 +191,7 @@ class Scene {
   }
 
   _loadEvent(event) {
-    if (event.runCount === 60) {
+    if (event.runCount === event.runLimit / 2) {
       [].forEach.call(document.querySelectorAll('.d_gui-element--visible'), (element) => {
         element.classList.add('d_gui-element--no-fade');
         element.classList.remove('d_gui-element--visible');

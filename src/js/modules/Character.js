@@ -18,6 +18,67 @@ let sampleCharacters = [
   }
 ];
 
+const modelHaru = {
+  "type": "Live2D Model Setting",
+  "name": "haru",
+  "model": "static/assets/haru/haru_03.moc",
+  "textures":
+  [
+    "static/assets/haru/haru_03.1024/texture_00.png",
+    "static/assets/haru/haru_03.1024/texture_01.png",
+    "static/assets/haru/haru_03.1024/texture_02.png"
+  ],
+  "physics": "static/assets/haru/haru.physics.json",
+  "pose": "static/assets/haru/haru.pose.json",
+  "expressions":
+  [
+    {"name": "f01","file": "static/assets/haru/expressions/f01.exp.json"},
+    {"name": "f02","file": "static/assets/haru/expressions/f02.exp.json"},
+    {"name": "f03","file": "static/assets/haru/expressions/f03.exp.json"},
+    {"name": "f04","file": "static/assets/haru/expressions/f04.exp.json"},
+    {"name": "f05","file": "static/assets/haru/expressions/f05.exp.json"},
+    {"name": "f06","file": "static/assets/haru/expressions/f06.exp.json"},
+    {"name": "f07","file": "static/assets/haru/expressions/f07.exp.json"},
+    {"name": "f08","file": "static/assets/haru/expressions/f08.exp.json"}
+  ],
+  "hit_areas":
+  [
+    {"name": "head", "id": "D_REF.HEAD"},
+    {"name": "body", "id": "D_REF.BODY"}
+  ],
+  "motions":
+  {
+    "idle":
+    [
+      {"file": "static/assets/haru/motions/idle_00.mtn", "fade_in": 2000, "fade_out": 2000},
+      {"file": "static/assets/haru/motions/idle_01.mtn", "fade_in": 2000, "fade_out": 2000},
+      {"file": "static/assets/haru/motions/idle_02.mtn", "fade_in": 2000, "fade_out": 2000}
+    ],
+    "tap_body":
+    [
+      { "file": "static/assets/haru/motions/tapBody_00.mtn" , "sound": "static/assets/haru/sounds/tapBody_00.mp3"},
+      { "file": "static/assets/haru/motions/tapBody_01.mtn" , "sound": "static/assets/haru/sounds/tapBody_01.mp3"},
+      { "file": "static/assets/haru/motions/tapBody_02.mtn" , "sound": "static/assets/haru/sounds/tapBody_02.mp3"}
+    ],
+    "pinch_in":
+    [
+      { "file": "static/assets/haru/motions/pinchIn_00.mtn", "sound": "static/assets/haru/sounds/pinchIn_00.mp3" }
+    ],
+    "pinch_out":
+    [
+      { "file": "static/assets/haru/motions/pinchOut_00.mtn", "sound": "static/assets/haru/sounds/pinchOut_00.mp3" }
+    ],
+    "shake":
+    [
+      { "file": "static/assets/haru/motions/shake_00.mtn", "sound": "static/assets/haru/sounds/shake_00.mp3", "fade_in": 500 }
+    ],
+    "flick_head":
+    [
+      { "file": "static/assets/haru/motions/flickHead_00.mtn" }
+    ]
+  }
+};
+
 class Character {
   constructor(data) {
     this._action = false;
@@ -159,6 +220,26 @@ class CharacterCollection {
   _prepareCharacters() {
     this._characters.forEach((character, i) => {
       this._characters[i] = new Character(character);
+    });
+
+        const live2dSprite = new PIXI.Live2DSprite(modelHaru, {
+      debugLog: false,
+      randomMotion: true,
+      eyeBlink: true
+    });
+    live2dSprite.position.z = 10;
+    D.Stage.addChild(live2dSprite);
+
+    live2dSprite.adjustScale(0, 0, 0.5);
+    live2dSprite.adjustTranslate(0.4, 0);
+    live2dSprite.startRandomMotion('idle');
+    live2dSprite.on('mousemove', (evt) => {
+      const point = evt.data.global;
+      live2dSprite.setViewPoint(point.x, point.y);
+    });
+
+    document.addEventListener('click', () => {
+      live2dSprite.startMotion('flick_head', 0);
     });
   }
 }

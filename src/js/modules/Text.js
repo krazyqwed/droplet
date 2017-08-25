@@ -191,19 +191,19 @@ class TextClass {
     let height = container.offsetHeight;
 
     for (let i = 0; i <= this._text.length; i++) {
-      if (this._text.substring(i, i + 7) === '<d-text') {
+      if (this._cursorIsOnText(this._text, i, '<d-text')) {
         const match = this._text.substring(i).match(/<\s*\/?\s*d-text\s*.*?>/i);
         i += match[0].length - 1;
-      } else if (this._text.substring(i, i + 9) === '</d-text>') {
+      } else if (this._cursorIsOnText(this._text, i, '</d-text>')) {
         i += 8;
-      } else if (this._text.substring(i, i + 8) === '<d-actor') {
+      } else if (this._cursorIsOnText(this._text, i, '<d-actor')) {
         const match = this._text.substring(i).match(/<\s*\/?\s*d-actor\s*.*?>/i);
         i += match[0].length - 1;
-      } else if (this._text.substring(i, i + 10) === '</d-actor>') {
+      } else if (this._cursorIsOnText(this._text, i, '</d-actor>')) {
         i += 9;
-      } else if (this._text.substring(i, i + 1) === '\\') {
+      } else if (this._cursorIsOnText(this._text, i, '\\')) {
         i += 1;
-      } else if (this._text.substring(i, i + 1) === '&') {
+      } else if (this._cursorIsOnText(this._text, i, '&')) {
         const match = this._text.substring(i - 1).match(/&[^\s]*;/i);
 
         if (match[0]) {
@@ -216,10 +216,10 @@ class TextClass {
       if (height * 1.5 < container.offsetHeight) {
         height = container.offsetHeight;
 
-        if (this._text[i - 1] !== ' ' && container.textContent.indexOf(' ') !== -1) {
+        if (this._text[i - 1] !== ' ' && container.textContent.indexOf(' ') !== -1 && container.textContent.indexOf('-') !== -1) {
           do {
             i--;
-          } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '>');
+          } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '-' && this._text[i] !== '>');
 
           if (i === 0) {
             break;
@@ -255,29 +255,29 @@ class TextClass {
   _writeEvent(event) {
     const cursorBefore = this._cursorPosition;
 
-    if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 6) === '<d-text') {
+    if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '<d-text')) {
       const match = this._text.substring(this._cursorPosition - 1).match(/<\s*\/?\s*d-text\s*.*?>/i);
       const attributes = this._getAttributes(match[0]);
 
       this._handleSpeedAdd(attributes['d-speed']);
 
       this._cursorPosition += match[0].length - 1;
-    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 8) === '</d-text>') {
+    } else if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '</d-text>')) {
       this._handleSpeedRemove();
 
       this._cursorPosition += 8;
-    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 7) === '<d-actor') {
+    } else if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '<d-actor')) {
       const match = this._text.substring(this._cursorPosition - 1).match(/<\s*\/?\s*d-actor\s*.*?>/i);
       const attributes = this._getAttributes(match[0]);
 
       this._cursorPosition += match[0].length - 1;
-    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 9) === '</d-actor>') {
+    } else if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '</d-actor>')) {
       this._cursorPosition += 9;
-    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition + 3) === '<br>') {
+    } else if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '<br>')) {
       this._cursorPosition += 3;
-    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition) === '\\') {
+    } else if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '\\')) {
       this._cursorPosition += 1;
-    } else if (this._text.substring(this._cursorPosition - 1, this._cursorPosition) === '&') {
+    } else if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '&')) {
       const match = this._text.substring(this._cursorPosition - 1).match(/&[^\s]*;/i);
 
       if (match[0]) {
@@ -293,6 +293,10 @@ class TextClass {
     this._dom.textBoxInner.innerHTML = tempText;
 
     this._cursorPosition++;
+  }
+
+  _cursorIsOnText(source, position, keyword) {
+    return source.substring(position, position + keyword.length) === keyword;
   }
 
   _writeEventEvery(event) {
