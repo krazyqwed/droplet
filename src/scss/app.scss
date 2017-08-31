@@ -128,7 +128,7 @@ canvas {
   right: 20px;
   text-shadow: 2px 2px 0 #000, 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
   top: 20px;
-  z-index: 2;
+  z-index: 10;
 }
 
 .d_gui-element {
@@ -184,6 +184,18 @@ canvas {
   }
 }
 
+.d_effect-wrapper {
+  bottom: 0;
+  display: flex;
+  left: 0;
+  margin: auto;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
 .d_blink {
   height: 1080px;
   left: 0;
@@ -191,9 +203,8 @@ canvas {
   outline: 5px solid #000;
   position: absolute;
   top: 0;
-  transform-origin: 50% 0;
+  transform-origin: left top;
   width: 1920px;
-  z-index: 1;
 
   &--visible {
     opacity: 1;

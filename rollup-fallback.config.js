@@ -3,10 +3,12 @@ import uglify from 'rollup-plugin-uglify';
 import { minify } from 'uglify-es';
 
 export default {
-  entry: 'src/js/Main.js',
-  dest: 'dist/app-fallback.js',
-  format: 'iife',
-  sourceMap: 'inline',
+  input: 'src/js/Main.js',
+  output: {
+    file: 'dist/app-fallback.js',
+    format: 'iife'
+  },
+  sourcemap: 'inline',
   plugins: [
     babel({
       exclude: 'node_modules/**',

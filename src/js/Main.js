@@ -62,6 +62,7 @@ class Main {
     this._dom.dimensionHelper = document.querySelector('.js_dimension_helper');
     this._dom.scaleHelper = document.querySelector('.js_scale_helper');
     this._dom.mainWarpper = document.querySelector('.js_main_wrapper');
+    this._dom.effectWrapper = document.querySelector('.js_effect_wrapper');
 
     this._windowWidth = 1920;
     this._windowHeight = 1080;
@@ -94,32 +95,24 @@ class Main {
     this._windowHeight = this._dom.dimensionHelper.offsetHeight;
 
     const canvas = D.App.view;
-    let scale = 1;
-    let scaleX = this._windowWidth / 1920;
-    let scaleY = this._windowHeight / 1080;
+    const scaleX = this._windowWidth / 1920;
+    const scaleY = this._windowHeight / 1080;
+    const scale = scaleX > scaleY ? this._windowHeight / 1080 : this._windowWidth / 1920;
+    const wrapperWidth = scaleX > scaleY ? parseInt(1920 * scaleY) : this._windowWidth;
+    const wrapperHeight = scaleX > scaleY ? this._windowHeight : parseInt(1080 * scaleX);
 
-    if (scaleX > scaleY) {
-      scale = this._windowHeight / 1080;
-
-      this._dom.mainWarpper.style.width = parseInt(1920 * scaleY) + 'px';
-      this._dom.mainWarpper.style.height = this._windowHeight + 'px';
-      this._dom.scaleHelper.style.width = parseInt(1920 * scaleY) + 'px';
-      this._dom.scaleHelper.style.height = this._windowHeight + 'px';
-    } else {
-      scale = this._windowWidth / 1920;
-
-      this._dom.mainWarpper.style.width = this._windowWidth + 'px';
-      this._dom.mainWarpper.style.height = parseInt(1080 * scaleX) + 'px';
-      this._dom.scaleHelper.style.width = this._windowWidth + 'px';
-      this._dom.scaleHelper.style.height = parseInt(1080 * scaleX) + 'px';
-    }
+    this._dom.mainWarpper.style.width = wrapperWidth + 'px';
+    this._dom.mainWarpper.style.height = wrapperHeight + 'px';
+    this._dom.effectWrapper.style.width = wrapperWidth + 'px';
+    this._dom.effectWrapper.style.height = wrapperHeight + 'px';
+    this._dom.scaleHelper.style.width = wrapperWidth + 'px';
+    this._dom.scaleHelper.style.height = wrapperHeight + 'px';
 
     const guiElements = document.querySelectorAll('.js_gui_element');
 
     [].forEach.call(guiElements, (elem) => {
       elem.style.transform = 'scale(' + scale + ')';
     });
-    this._dom.mainWarpper.style.position = 'relative';
 
     const gameMenuHistory = this._dom.mainWarpper.querySelector('.js_history .js_gui_element');
     gameMenuHistory.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
