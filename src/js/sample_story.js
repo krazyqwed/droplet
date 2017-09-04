@@ -13,27 +13,8 @@ export default {
       },
       keyframes: [
         {
-          id: 0,
-          actions: [
-            {
-              type: 'filter',
-              filter: 'snow',
-              event: 'on'
-            },
-            {
-              type: 'background',
-              event: 'blink',
-              duration: 90
-            }
-          ]
-        },
-        {
           id: 1,
           actions: [
-            {
-              type: 'background',
-              event: 'blink'
-            },
             {
               type: 'sound',
               sound: 'birds',
@@ -103,6 +84,11 @@ export default {
               pose: 2,
               position: [40, 'bottom'],
               from: [-5, 0]
+            },
+            {
+              type: 'picture',
+              id: 1,
+              event: 'hide'
             },
             {
               type: 'dialog',
@@ -290,11 +276,6 @@ export default {
                 'A Halloween party leaves <d-actor d-id="player" d-prop="nickname" d-color></d-actor> with some startling questions about his past, and he sets off to creepy <d-actor d-id="2" d-prop="nickname" d-color></d-actor> to find some answers.'
               ],
               noBackground: true
-            },
-            {
-              type: 'filter',
-              filter: 'snow',
-              event: 'off'
             }
           ],
           goTo: {

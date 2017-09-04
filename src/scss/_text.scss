@@ -27,7 +27,8 @@ $textbox-width: 95%;
 .d_textbox,
 .d_narrator {
   @extend %text-default;
-
+  
+  backface-visibility: hidden;
   border-top: 2px solid rgba(#000,.4);
   color: #fff;
   height: 250px;

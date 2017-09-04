@@ -20,8 +20,8 @@
     "build:js-vendor": "cpy \"./src/js/vendor/**/*\" \"./dist/vendor/\"",
     "build:static": "ncp \"./src/static\" \"./dist/static\"",
     "watch:pug": "chokidar \"./src/pug/\" -c \"npm run build:pug\"",
-    "watch:sass": "chokidar \"./src/scss/\" -c \"npm run build:sass\"",
-    "watch:js": "chokidar \"./src/js/\" -c \"npm run build:js\"",
+    "watch:sass": "npm run build:sass && node-sass ./src/scss/app.scss -w ./dist/app.css",
+    "watch:js": "cross-env NODE_ENV=production rollup -wc",
     "watch:js-vendor": "chokidar \"./src/js/vendor/\" -c \"npm run build:js-vendor\"",
     "watch:static": "chokidar \"./src/static/\" -c \"npm run build:static\""
   },
