@@ -50,7 +50,7 @@ class MainMenu {
     D.SceneStore.setData('gameInProgress', false);
     D.Background.handleAction({
       event: 'load',
-      background: 'main_menu'
+      image: 'main_menu'
     });
 
     this._buildItems();

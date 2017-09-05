@@ -14,6 +14,11 @@ class Scene {
 
     this._timer = new Timer();
     this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
+
+    this._event = {};
+    this._event.scrollEvent = this._scrollEvent.bind(this);
+    this._event.mousedownEvent = this._mousedownEvent.bind(this);
+    this._event.keydownEvent = this._keydownEvent.bind(this);
   }
 
   init() {
@@ -59,68 +64,66 @@ class Scene {
   }
 
   _input() {
-    function scrollEvent(event) {
-      if (event.target.classList.contains('.js_prevent_skip') || event.target.closest('.js_prevent_skip')) {
-        return;
-      }
+    window.addEventListener('mousewheel', this._event.scrollEvent, false);
+    window.addEventListener('DOMMouseScroll', this._event.scrollEvent, false);
+    window.addEventListener('mousedown', this._event.mousedownEvent, false);
+    window.addEventListener('keydown', this._event.keydownEvent, false);
+  }
 
-      const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+  _scrollEvent(event) {
+    if (event.target.classList.contains('.js_prevent_skip') || event.target.closest('.js_prevent_skip')) {
+      return;
+    }
 
-      if (delta === -1) {
+    const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+
+    if (delta === -1) {
+      event.preventDefault();
+      D.SceneStore.setData('actionFired', Math.random());
+      this._fastForward();
+    }
+  }
+
+  _mousedownEvent(event) {
+    if (event.which !== 1 || !event.target) {
+      return;
+    }
+
+    if (event.target.classList.contains('.js_prevent_skip') || event.target.closest('.js_prevent_skip')) {
+      return;
+    }
+
+    const classList = event.target.classList;
+    const isButton = classList.contains('d_button');
+    const isInput = classList.contains('js_input');
+
+    if (isButton || isInput) {
+      return;
+    }
+
+    event.preventDefault();
+    D.SceneStore.setData('actionFired', Math.random());
+    this._fastForward();
+  }
+
+  _keydownEvent(event) {
+    if (!event.target.classList.contains('js_input')) {
+      if (event.which === 32 || event.which === 13) {
         event.preventDefault();
         D.SceneStore.setData('actionFired', Math.random());
         this._fastForward();
       }
     }
-
-    window.addEventListener('mousewheel', scrollEvent.bind(this), false);
-    window.addEventListener('DOMMouseScroll', scrollEvent.bind(this), false);
-
-    window.addEventListener('mousedown', (event) => {
-      if (event.which !== 1 || !event.target) {
-        return;
-      }
-
-      if (event.target.classList.contains('.js_prevent_skip') || event.target.closest('.js_prevent_skip')) {
-        return;
-      }
-
-      const classList = event.target.classList;
-      const isButton = classList.contains('d_button');
-      const isInput = classList.contains('js_input');
-
-      if (isButton || isInput) {
-        return;
-      }
-
-      event.preventDefault();
-      D.SceneStore.setData('actionFired', Math.random());
-      this._fastForward();
-    }, false);
-
-    window.addEventListener('keydown', (event) => {
-      if (!event.target.classList.contains('js_input')) {
-        if (event.which === 32 || event.which === 13) {
-          event.preventDefault();
-          D.SceneStore.setData('actionFired', Math.random());
-          this._fastForward();
-        }
-      }
-    }, false);
   }
 
   _prepareScene() {
     D.SceneStore.setData('fastForward', false);
 
-    D.Background.handleAction({
-      event: 'load',
-      background: this._scene.background
+    this._scene.pre.forEach((action) => {
+      D.ActionQueue.add('pre', action);
     });
-
-    D.Sound.handleAction({
-      event: 'bgm',
-      sound: this._scene.bgm.name,
-      volume: this._scene.bgm.volume
+    this._scene.post.forEach((action) => {
+      D.ActionQueue.add('post', action);
     });
 
     this._timer.start('load');
@@ -135,6 +138,7 @@ class Scene {
 
     if (this._canJumpToNext()) {
       if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
+        D.ActionQueue.run('post');
         D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
         return;
       }
@@ -159,19 +163,10 @@ class Scene {
     this._resetRunnings();
 
     keyframe.actions.forEach((action) => {
-      switch (action.type) {
-        case 'background': D.Background.handleAction(action); break;
-        case 'sound': D.Sound.handleAction(action); break;
-        case 'variable': D.Variable.handleAction(action); break;
-        case 'dialog': D.Text.handleAction(action); break;
-        case 'narrator': D.Narrator.handleAction(action); break;
-        case 'character': D.Character.handleAction(action); break;
-        case 'picture': D.Picture.handleAction(action); break;
-        case 'choose': D.Choose.handleAction(action); break;
-        case 'input': D.Input.handleAction(action); break;
-        case 'filter': D.Filter.handleAction(action); break;
-      }
+      D.ActionQueue.add('frame', action);
     });
+
+    D.ActionQueue.run('frame');
   }
 
   _resetRunnings() {
@@ -192,6 +187,8 @@ class Scene {
 
   _loadEvent(event) {
     if (event.runCount === event.runLimit / 2) {
+      D.ActionQueue.run('pre');
+
       [].forEach.call(document.querySelectorAll('.d_gui-element--visible'), (element) => {
         element.classList.add('d_gui-element--no-fade');
         element.classList.remove('d_gui-element--visible');
@@ -207,12 +204,12 @@ class Scene {
     }
 
     if (event.over) {
-      this._sceneLoaded = true;
       this._loadKeyframe(this._scene.keyframes[this._keyframe]);
-      D.SceneStore.setData('loadFromSave', false);
 
+      D.SceneStore.setData('loadFromSave', false);
       D.GameMenu.show();
 
+      this._sceneLoaded = true;
       this._timer.destroy('load');
     }
   }

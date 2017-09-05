@@ -1,4 +1,4 @@
-import sampleStory from '../sample_story';
+import sampleStory from '../sample_story_new';
 
 class Story {
   constructor() {

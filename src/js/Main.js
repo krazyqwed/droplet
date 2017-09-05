@@ -5,6 +5,7 @@ import GameMenu from './modules/GameMenu';
 import Variable from './modules/Variable';
 import Filter from './modules/Filter';
 import Background from './modules/Background';
+import ActionQueue from './modules/ActionQueue';
 import Story from './modules/Story';
 import Scene from './modules/Scene';
 import { Text, Narrator } from './modules/Text';
@@ -38,6 +39,7 @@ class Main {
       Variable: Variable,
       Filter: Filter,
       Background: Background,
+      ActionQueue: ActionQueue,
       Story: Story,
       Scene: Scene,
       Text: Text,

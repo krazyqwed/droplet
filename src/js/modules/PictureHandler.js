@@ -3,8 +3,9 @@ import CommonHelper from '../helpers/Common';
 
 class PictureHandler {
   constructor(image) {
+    this._options = false;
+
     this._image = PIXI.Texture.fromFrame(image);
-    this._action = false;
     this._sprite = new PIXI.Sprite();
     this._sprite.setTexture(this._image);
     this._clone = new PIXI.Sprite();
@@ -40,13 +41,13 @@ class PictureHandler {
   }
 
   setAction(action) {
-    this._action = action;
+    this._options = action;
     this._animationRunning = true;
 
     let position;
 
-    if (!this._action.event) {
-      this._action.event = 'show';
+    if (!this._options.event) {
+      this._options.event = 'show';
     }
 
     switch (action.event) {
@@ -56,8 +57,8 @@ class PictureHandler {
       case 'switch': this._switch(action.image); break;
     }
 
-    this._timer.setRunLimit(this._action.event, this._action.duration ? this._action.duration : 30);
-    this._timer.start(this._action.event, {
+    this._timer.setRunLimit(this._options.event, this._options.duration ? this._options.duration : 30);
+    this._timer.start(this._options.event, {
       position: position ? position : false
     });
   }
@@ -117,26 +118,26 @@ class PictureHandler {
 
   _calculatePosition() {
     let position = {
-      dest_x: this._action.position[0],
-      dest_y: this._action.position[1],
-      src_x: this._action.position[0],
-      src_y: this._action.position[1]
+      dest_x: this._options.position[0],
+      dest_y: this._options.position[1],
+      src_x: this._options.position[0],
+      src_y: this._options.position[1]
     };
 
-    if (this._action.position[0] === 'center') {
-      this._action.position[0] = 50;
+    if (this._options.position[0] === 'center') {
+      this._options.position[0] = 50;
     }
 
-    if (this._action.position[1] === 'bottom') {
-      this._action.position[1] = 100;
+    if (this._options.position[1] === 'bottom') {
+      this._options.position[1] = 100;
     }
 
-    position.dest_x = parseInt(1920 * this._action.position[0] / 100);
-    position.dest_y = parseInt(1080 * this._action.position[1] / 100 - this._sprite.height / 2);
+    position.dest_x = parseInt(1920 * this._options.position[0] / 100);
+    position.dest_y = parseInt(1080 * this._options.position[1] / 100 - this._sprite.height / 2);
 
-    if (this._action.from) {
-      position.src_x = this._action.position[0] + this._action.from[0];
-      position.src_y = this._action.position[1] + this._action.from[1];
+    if (this._options.from) {
+      position.src_x = this._options.position[0] + this._options.from[0];
+      position.src_y = this._options.position[1] + this._options.from[1];
 
       position.src_x = parseInt(1920 * position.src_x / 100);
       position.src_y = parseInt(1080 * position.src_y / 100 - this._sprite.height / 2);
@@ -149,31 +150,31 @@ class PictureHandler {
   }
 
   _calculatePositionFrom() {
-    if (!this._action.position) {
-      this._action.position = [0, 0];
+    if (!this._options.position) {
+      this._options.position = [0, 0];
     }
 
     let position = {
-      dest_x: this._action.position[0],
-      dest_y: this._action.position[1],
+      dest_x: this._options.position[0],
+      dest_y: this._options.position[1],
       src_x: this._sprite.position.new_x,
       src_y: this._sprite.position.new_y
     };
 
-    if (this._action.position[0] === 'center') {
-      this._action.position[0] = 50;
+    if (this._options.position[0] === 'center') {
+      this._options.position[0] = 50;
     }
 
-    if (this._action.position[1] === 'bottom') {
-      this._action.position[1] = 100;
+    if (this._options.position[1] === 'bottom') {
+      this._options.position[1] = 100;
     }
 
-    if (this._action.absolute) {
-      position.dest_x = parseInt(1920 * this._action.position[0] / 100);
-      position.dest_y = parseInt(1080 * this._action.position[1] / 100 - this._sprite.height / 2);
+    if (this._options.absolute) {
+      position.dest_x = parseInt(1920 * this._options.position[0] / 100);
+      position.dest_y = parseInt(1080 * this._options.position[1] / 100 - this._sprite.height / 2);
     } else {
-      position.dest_x = parseInt(position.src_x + 1920 * this._action.position[0] / 100);
-      position.dest_y = parseInt(position.src_y + 1080 * this._action.position[1] / 100);
+      position.dest_x = parseInt(position.src_x + 1920 * this._options.position[0] / 100);
+      position.dest_y = parseInt(position.src_y + 1080 * this._options.position[1] / 100);
     }
 
     this._sprite.position.new_x = position.dest_x;

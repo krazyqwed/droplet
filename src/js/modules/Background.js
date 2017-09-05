@@ -3,6 +3,8 @@ import Timer from './Timer';
 
 class Background {
   init() {
+    this._options = null;
+
     this._background = new PIXI.Sprite();
     this._background.anchor.x = 0;
     this._background.anchor.y = 0;
@@ -42,14 +44,14 @@ class Background {
     D.Stage.addChild(this._sceneFader);
   }
 
-  handleAction(action) {
-    this._action = action;
+  handleAction(options) {
+    this._options = options;
 
-    if (!this._action.event) {
-      this._action.event = 'show';
+    if (!this._options.event) {
+      this._options.event = 'show';
     }
 
-    switch(this._action.event) {
+    switch(this._options.event) {
       case 'showScene': this._showScene(); break;
       case 'hideScene': this._hideScene(); break;
       case 'blink': this._blink(); break;
@@ -82,20 +84,20 @@ class Background {
 
   _showScene() {
     this._sceneFader.position.z = 0;
-    this._timer.setRunLimit('showScene', this._action.duration ? this._action.duration : 60);
+    this._timer.setRunLimit('showScene', this._options.duration ? this._options.duration : 60);
     this._timer.start('showScene');
   }
 
   _hideScene() {
-    this._sceneFader.tint = this._action.tint ? parseInt('0x' + this._action.tint) : 0x000000;
+    this._sceneFader.tint = this._options.tint ? parseInt('0x' + this._options.tint) : 0x000000;
     this._sceneFader.position.z = 100;
-    this._timer.setRunLimit('hideScene', this._action.duration ? this._action.duration : 60);
+    this._timer.setRunLimit('hideScene', this._options.duration ? this._options.duration : 60);
     this._timer.start('hideScene');
   }
 
   _blink() {
     this._dom.blink.classList.add('d_blink--visible');
-    this._timer.setRunLimit('blink', this._action.duration ? this._action.duration : 30);
+    this._timer.setRunLimit('blink', this._options.duration ? this._options.duration : 30);
     this._timer.start('blink');
   }
 
@@ -104,7 +106,7 @@ class Background {
   }
 
   _load() {
-    let background = PIXI.Texture.fromImage(this._action.background);
+    let background = PIXI.Texture.fromImage(this._options.image);
 
     this._backgroundClone.setTexture(this._background.texture);
     this._backgroundClone.alpha = this._background.alpha;

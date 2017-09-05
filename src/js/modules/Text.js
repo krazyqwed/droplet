@@ -32,7 +32,8 @@ customElements.define('d-actor', DActor);
 
 class TextClass {
   constructor() {
-    this._action = false;
+    this._options = null;
+
     this._elementType = 'textbox';
     this._actionFired = false;
     this._subframe = 0;
@@ -65,13 +66,13 @@ class TextClass {
   }
 
   handleAction(action) {
-    this._action = action;
+    this._options = action;
 
-    if (!this._action.event) {
-      this._action.event = 'show';
+    if (!this._options.event) {
+      this._options.event = 'show';
     }
 
-    switch (this._action.event) {
+    switch (this._options.event) {
       case 'show': this._showTextbox(); break;
       case 'hide': this.hideTextbox(); break;
     }
@@ -90,7 +91,7 @@ class TextClass {
     this._writeSpeed = [2];
     this._dom.textBoxInner.innerHTML = '';
 
-    if (this._action.position === 'top') {
+    if (this._options.position === 'top') {
       this._dom.textBoxWrap.classList.add('d_' + this._elementType + '-wrap--top');
     } else {
       this._dom.textBoxWrap.classList.remove('d_' + this._elementType + '-wrap--top');
@@ -100,20 +101,20 @@ class TextClass {
     this._dom.textBoxWrap.classList.remove('d_gui-element--no-fade');
     this._dom.textBoxWrap.classList.add('d_gui-element--visible');
 
-    if (this._action.noNext) {
+    if (this._options.noNext) {
       this._dom.textBox.setAttribute('no-next', 'true');
     } else {
       this._dom.textBox.removeAttribute('no-next');
     }
 
-    if (this._action.noBackground) {
+    if (this._options.noBackground) {
       this._dom.textBox.setAttribute('no-background', 'true');
     } else {
       this._dom.textBox.removeAttribute('no-background');
     }
 
-    if (Array.isArray(this._action.dialog)) {
-      this._textList = this._action.dialog;
+    if (Array.isArray(this._options.text)) {
+      this._textList = this._options.text;
     }
 
     this._showSpeaker();
@@ -129,7 +130,7 @@ class TextClass {
       this._text = this._textList[this._subframe];
       this._subframe++;
     } else {
-      this._text = this._action.dialog;
+      this._text = this._options.text;
     }
 
     let textHelper = document.createElement('div');
@@ -142,8 +143,8 @@ class TextClass {
     this._text = this._insertWraps(textHelper);
     textHelper.parentNode.removeChild(textHelper);
 
-    if (!this._action.noHistory) {
-      D.History.writeHistory(this._action.character, this._text);
+    if (!this._options.noHistory) {
+      D.History.writeHistory(this._options.character, this._text);
     }
 
     this._textLength = this._text.length;
@@ -235,11 +236,11 @@ class TextClass {
   }
 
   _showSpeaker() {
-    if (this._action.character) {
+    if (this._options.character) {
       this._dom.speaker.style.display = 'block';
 
-      if (this._action.character !== 'player') {
-        const character = D.Character.loadCharacterById(this._action.character);
+      if (this._options.character !== 'player') {
+        const character = D.Character.loadCharacterById(this._options.character);
         const characterData = character.getData();
         this._dom.speaker.innerHTML = characterData.nickname;
         this._dom.speaker.style.backgroundColor = characterData.color;

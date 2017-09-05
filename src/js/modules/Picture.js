@@ -10,7 +10,6 @@ let samplePictures = [
 
 class Picture {
   constructor(data) {
-    this._action = false;
     this._id = data.id;
     this._picture = new PictureHandler('picture_' + this._id);
   }
