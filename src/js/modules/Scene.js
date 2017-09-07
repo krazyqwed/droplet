@@ -173,7 +173,6 @@ class Scene {
 
     this._resetRunnings();
     this._loadSubframe(keyframe.actions[0]);
-    console.log(keyframe);
   }
 
   _loadSubframe(action) {
