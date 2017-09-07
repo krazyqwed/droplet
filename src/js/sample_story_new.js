@@ -40,6 +40,7 @@ export default {
           actions: [
             {
               module: 'narrator',
+              parallel: true,
               options: {
                 text: 'Sed distinctio placeat ea vitae, cupiditate voluptates alias.',
                 position: 'top',
@@ -53,6 +54,12 @@ export default {
                   'Ok, that\'s the first dialog!',
                   'And that\'s the second...'
                 ]
+              }
+            },
+            {
+              module: 'narrator',
+              options: {
+                event: 'hide'
               }
             }
           ]

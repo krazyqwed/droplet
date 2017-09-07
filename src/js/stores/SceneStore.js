@@ -10,7 +10,7 @@ class SceneStore extends Store {
       skipAsync: false,
       nextScene: false,
 
-      textRunning: false,
+      dialogRunning: false,
       narratorRunning: false,
       interactionRunning: false,
 

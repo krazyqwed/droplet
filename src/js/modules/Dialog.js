@@ -30,7 +30,7 @@ class DActor extends HTMLElement {
 customElements.define('d-text', DText);
 customElements.define('d-actor', DActor);
 
-class TextClass {
+class DialogClass {
   constructor() {
     this._options = null;
 
@@ -83,7 +83,7 @@ class TextClass {
   }
 
   _showTextbox() {
-    D.SceneStore.setData((this._elementType === 'textbox' ? 'text' : 'narrator') + 'Running', true);
+    D.SceneStore.setData((this._elementType === 'textbox' ? 'dialog' : 'narrator') + 'Running', true);
 
     this._actionFired = false;
     this._subframe = 0;
@@ -309,7 +309,7 @@ class TextClass {
       this._timer.destroy('write');
 
       if (this._textList === false || this._subframe >= this._textList.length) {
-        D.SceneStore.setData((this._elementType === 'textbox' ? 'text' : 'narrator') + 'Running', false);
+        D.SceneStore.setData((this._elementType === 'textbox' ? 'dialog' : 'narrator') + 'Running', false);
       }
     }
   }
@@ -357,7 +357,7 @@ class TextClass {
   }
 }
 
-class NarratorClass extends TextClass {
+class NarratorClass extends DialogClass {
   constructor() {
     super();
 
@@ -368,10 +368,10 @@ class NarratorClass extends TextClass {
   }
 }
 
-let text = new TextClass();
+let dialog = new DialogClass();
 let narrator = new NarratorClass();
 
 export {
-  text as Text,
+  dialog as Dialog,
   narrator as Narrator
 };

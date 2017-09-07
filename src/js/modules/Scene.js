@@ -6,6 +6,7 @@ class Scene {
     this._sceneLoaded = false;
 
     this._keyframe = 0;
+    this._subframe = 0;
     this._loadedByAction = false;
 
     this._textFinished = false;
@@ -53,7 +54,13 @@ class Scene {
     D.Character.forceEndAnimations();
     D.Picture.forceEndAnimations();
 
-    this._loadKeyframe(this._scene.keyframes[++this._keyframe]);
+    if (this._subframe < this._scene.keyframes[this._keyframe].actions.length - 1) {
+      ++this._subframe;
+      this._loadSubframe(this._scene.keyframes[this._keyframe].actions[this._subframe]);
+    } else {
+      ++this._keyframe;
+      this._loadKeyframe(this._scene.keyframes[this._keyframe]);
+    }
   }
 
   getState() {
@@ -79,7 +86,7 @@ class Scene {
 
     if (delta === -1) {
       event.preventDefault();
-      D.SceneStore.setData('actionFired', Math.random());
+      D.SceneStore.triggerCallback('actionFired');
       this._fastForward();
     }
   }
@@ -102,7 +109,7 @@ class Scene {
     }
 
     event.preventDefault();
-    D.SceneStore.setData('actionFired', Math.random());
+    D.SceneStore.triggerCallback('actionFired');
     this._fastForward();
   }
 
@@ -110,7 +117,7 @@ class Scene {
     if (!event.target.classList.contains('js_input')) {
       if (event.which === 32 || event.which === 13) {
         event.preventDefault();
-        D.SceneStore.setData('actionFired', Math.random());
+        D.SceneStore.triggerCallback('actionFired');
         this._fastForward();
       }
     }
@@ -137,10 +144,12 @@ class Scene {
     D.SceneStore.setData('fastForward', true);
 
     if (this._canJumpToNext()) {
-      if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
-        D.ActionQueue.run('post');
-        D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-        return;
+      if (this._subframe >= this._scene.keyframes[this._keyframe].actions.length - 1) {
+        if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
+          D.ActionQueue.run('post');
+          D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+          return;
+        }
       }
 
       this.loadNextFrame();
@@ -148,25 +157,36 @@ class Scene {
   }
 
   _canJumpToNext() {
-    const text = !D.SceneStore.getData('textRunning');
+    const dialog = !D.SceneStore.getData('dialogRunning');
     const narrator = !D.SceneStore.getData('narratorRunning');
     const interaction = !D.SceneStore.getData('interactionRunning');
 
-    return text && narrator && interaction;
+    return dialog && narrator && interaction;
   }
 
   _loadKeyframe(keyframe) {
+    this._subframe = 0;
+
     if (this._handleConditions()) {
       return;
     }
 
     this._resetRunnings();
+    this._loadSubframe(keyframe.actions[0]);
+    console.log(keyframe);
+  }
 
-    keyframe.actions.forEach((action) => {
-      D.ActionQueue.add('frame', action);
-    });
-
+  _loadSubframe(action) {
+    D.ActionQueue.add('frame', action);
     D.ActionQueue.run('frame');
+
+    if (action.parallel) {
+      ++this._subframe;
+
+      if (this._subframe < this._scene.keyframes[this._keyframe].actions.length - 1) {
+        this._loadSubframe(this._scene.keyframes[this._keyframe].actions[this._subframe]);
+      }
+    }
   }
 
   _resetRunnings() {

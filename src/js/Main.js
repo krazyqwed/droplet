@@ -8,7 +8,7 @@ import Background from './modules/Background';
 import ActionQueue from './modules/ActionQueue';
 import Story from './modules/Story';
 import Scene from './modules/Scene';
-import { Text, Narrator } from './modules/Text';
+import { Dialog, Narrator } from './modules/Dialog';
 import Character from './modules/Character';
 import Picture from './modules/Picture';
 import Choose from './modules/Choose';
@@ -42,7 +42,7 @@ class Main {
       ActionQueue: ActionQueue,
       Story: Story,
       Scene: Scene,
-      Text: Text,
+      Dialog: Dialog,
       Narrator: Narrator,
       Character: Character,
       Picture: Picture,
@@ -220,7 +220,7 @@ class Main {
 
     D.Background.init();
     D.Save.init();
-    D.Text.init();
+    D.Dialog.init();
     D.Narrator.init();
     D.Character.init();
     D.Picture.init();
