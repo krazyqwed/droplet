@@ -3,27 +3,27 @@ import CommonHelper from '../helpers/Common';
 
 class Audio {
   constructor() {
-    this._action = false;
+    this._options = false;
     this._sound = false;
     this._timer = new Timer();
     this._timer.addEvent('sound', this._soundEvent.bind(this), 1, true);
   }
 
-  handleAction(action) {
-    this._action = action;
+  handleAction(options) {
+    this._options = options;
 
-    switch(this._action.event) {
+    switch(this._options.event) {
       case 'playSound': this._play(); break;
       case 'stopSound': this._stop(); break;
     }
   }
 
   getSound() {
-    return this._action.sound;
+    return this._options.sound;
   }
 
   getState() {
-    return this._sound._state !== 'unloaded' && (this._action.loop || this._action.persist) ? this._action : false;
+    return this._sound._state !== 'unloaded' && (this._options.loop || this._options.persist) ? this._options : false;
   }
 
   stopImmidiately() {
@@ -31,12 +31,18 @@ class Audio {
   }
 
   _play() {
+    if (this._sound && !this._options.persist) {
+      this._sound.unload();
+    } else if (this._sound && this._options.persist) {
+      return;
+    }
+
     this._sound = new Howl({
-      src: ['static/' + this._action.sound + '.mp3'],
+      src: ['static/' + this._options.sound + '.mp3'],
       autoplay: true,
-      loop: this._action.loop ? this._action.loop : false
+      loop: this._options.loop ? this._options.loop : false
     });
-    this._sound.fade(0, (this._action.volume || this._action.volume === 0) ? this._action.volume : 1, 250);
+    this._sound.fade(0, (this._options.volume || this._options.volume === 0) ? this._options.volume : 1, 250);
 
     this._timer.setRunLimit(Math.ceil(this._sound._duration * 60));
     this._timer.start('sound');
@@ -52,7 +58,7 @@ class Audio {
   }
 
   _soundEvent(event) {
-    if ((event.over || D.SceneStore.getData('fastForward')) && !this._action.persist) {
+    if ((event.over || D.SceneStore.getData('fastForward')) && !this._options.persist) {
       this._sound.on('fade', () => {
         this._sound.unload();
       });
@@ -65,26 +71,23 @@ class Audio {
 
 class Sound {
   constructor() {
-    this._action = false;
     this._bgm = false;
     this._sounds = [];
   }
 
-  handleAction(action) {
+  handleAction(options) {
     if (D.SceneStore.getData('loadFromSave')) {
       return;
     }
 
-    this._action = action;
-
-    if (!this._action.event) {
-      this._action.event = 'playSound';
+    if (!options.event) {
+      options.event = 'playSound';
     }
 
-    switch(this._action.event) {
-      case 'bgm': this._setBgm(this._action); break;
-      case 'playSound': this._playSound(this._action); break;
-      case 'stopSound': this._stopSound(this._action); break;
+    switch(options.event) {
+      case 'bgm': this._setBgm(options); break;
+      case 'playSound': this._playSound(options); break;
+      case 'stopSound': this._stopSound(options); break;
     }
   }
 
@@ -116,7 +119,7 @@ class Sound {
     });
 
     CommonHelper.requestTimeout(() => {
-      this._createMusic(data.bgm);
+      this._createMusic(data.sound);
 
       data.sounds.forEach((sound) => {
         if (sound) {
@@ -126,20 +129,26 @@ class Sound {
     }, 1500);
   }
 
-  _setBgm(action) {
-    if (action.sound && action.sound !== true && action.sound !== false) {
+  stopAll() {
+    this._sounds.forEach((sound) => {
+      sound.handleAction({ event: 'stopSound' });
+    });
+  }
+
+  _setBgm(options) {
+    if (options.sound && options.sound !== false) {
       if (this._bgm) {
         this._bgm.on('fade', () => {
           this._bgm.unload();
 
-          this._createMusic(action);
+          this._createMusic(options);
         });
 
         this._bgm.fade(this._bgm._volume, 0, 500);
       } else {
-        this._createMusic(action);
+        this._createMusic(options);
       }
-    } else if (action.sound === false && this._bgm) {
+    } else if (options.sound === false && this._bgm) {
       this._bgm.on('fade', () => {
         this._bgm.unload();
         this._bgm = false;
@@ -148,34 +157,34 @@ class Sound {
     }
   }
 
-  _createMusic(action) {
+  _createMusic(options) {
     this._bgm = new Howl({
-      src: ['static/' + action.sound + '.mp3'],
+      src: ['static/' + options.sound + '.mp3'],
       loop: true
     });
     this._bgm.play();
-    this._bgm.fade(0, (action.volume || action.volume === 0) ? action.volume : 1, 500);
+    this._bgm.fade(0, (options.volume || options.volume === 0) ? options.volume : 1, 500);
   }
 
-  _playSound(action) {
+  _playSound(options) {
     let foundSound = this._sounds.some((sound) => {
-      if (sound.getSound() === action.sound) {
-        sound.handleAction(action);
+      if (sound.getSound() === options.sound) {
+        sound.handleAction(options);
         return true;
       }
     });
 
     if (!foundSound) {
       let sound = new Audio();
-      sound.handleAction(action);
+      sound.handleAction(options);
       this._sounds.push(sound);
     }
   }
 
-  _stopSound(action) {
+  _stopSound(options) {
     this._sounds.some((sound) => {
-      if (sound.getSound() === action.sound) {
-        sound.handleAction(action);
+      if (sound.getSound() === options.sound) {
+        sound.handleAction(options);
         return true;
       }
     });

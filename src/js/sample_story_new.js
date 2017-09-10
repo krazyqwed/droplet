@@ -17,9 +17,8 @@ export default {
         {
           module: 'sound',
           options: {
+            event: 'bgm',
             sound: 'bgm_1',
-            loop: true,
-            persist: true,
             volume: 0.5
           }
         },
@@ -38,54 +37,65 @@ export default {
           id: 1,
           type: 'flow',
           actions: [
-            {
-              module: 'narrator',
-              parallel: true,
-              options: {
-                text: 'Sed distinctio placeat ea vitae, cupiditate voluptates alias.',
-                position: 'top',
-                noNext: true
+            [
+              {
+                module: 'narrator',
+                options: {
+                  text: 'Sed distinctio placeat ea vitae, cupiditate voluptates alias.',
+                  position: 'top',
+                  speed: 0,
+                  noNext: true
+                }
+              },
+              {
+                module: 'dialog',
+                options: {
+                  text: [
+                    'Ok, that\'s the first dialog!',
+                    'And that\'s the second...'
+                  ]
+                }
               }
-            },
-            {
-              module: 'dialog',
-              options: {
-                text: [
-                  'Ok, that\'s the first dialog!',
-                  'And that\'s the second...'
-                ]
-              }
-            },
-            {
-              module: 'narrator',
-              options: {
-                event: 'hide'
-              }
-            }
+            ]
           ]
         },
         {
           id: 4324,
           actions: [
-            {
-              module: 'picture',
-              options: {
-                id: 1,
-                position: [50, 75],
-                from: [0, 0],
-                duration: 10
+            [
+              {
+                module: 'narrator',
+                options: {
+                  event: 'hide'
+                }
+              },
+              {
+                module: 'background',
+                options: {
+                  event: 'change',
+                  image: 'school_2'
+                }
+              },
+              {
+                module: 'picture',
+                options: {
+                  id: 1,
+                  position: [50, 75],
+                  from: [0, 0],
+                  duration: 10
+                }
+              },
+              {
+                module: 'dialog',
+                options: {
+                  text: [
+                    'So, this is working with the new ActionQueue',
+                    'That\'s awesome!',
+                    'Wild Bastion appeared...'
+                  ]
+                }
               }
-            },
-            {
-              module: 'dialog',
-              options: {
-                text: [
-                  'So, this is working with the new ActionQueue',
-                  'That\'s awesome!',
-                  'Wild Bastion appeared...'
-                ]
-              }
-            }
+            ]
           ],
           goTo: {
             scene: 1
@@ -93,12 +103,12 @@ export default {
         }
       ],
       post: [
-        {
-          module: 'narrator',
-          options: {
-            event: 'hide'
-          }
-        }
+        // {
+        //   module: 'narrator',
+        //   options: {
+        //     event: 'hide'
+        //   }
+        // }
       ]
     }
   ]

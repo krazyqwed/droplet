@@ -35,7 +35,7 @@ class Timer {
         this._events[i].ticker = 0;
 
         if (params) {
-          this._events[i].params = params;
+          this._events[i].params = Object.assign(this._events[i].params, params);
         } else {
           this._events[i].params = false;
         }
@@ -57,6 +57,7 @@ class Timer {
         this._events[i].over = true;
         this._events[i].running = false;
         this._events[i].callback(this._events[i]);
+        this._events[i].callbackEvery(this._events[i]);
       }
     }
   }
@@ -92,7 +93,7 @@ class Timer {
   _tick() {
     requestAnimationFrame(() => {
       for (let i in this._events) {
-        if (this._events[i].running && !this._events[i].over) {
+        if (this._events[i].running && !this._events[i].over && this._events[i].tickRate !== 0) {
           this._events[i].ticker++;
 
           if (this._events[i].ticker % this._events[i].tickRate === 0) {

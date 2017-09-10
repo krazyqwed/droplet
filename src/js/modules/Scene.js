@@ -143,17 +143,20 @@ class Scene {
 
     D.SceneStore.setData('fastForward', true);
 
-    if (this._canJumpToNext()) {
-      if (this._subframe >= this._scene.keyframes[this._keyframe].actions.length - 1) {
-        if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
-          D.ActionQueue.run('post');
-          D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-          return;
-        }
-      }
-
-      this.loadNextFrame();
+    if (!this._canJumpToNext()) {
+      return;
     }
+
+    if (this._subframe >= this._scene.keyframes[this._keyframe].actions.length - 1) {
+      if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
+        D.ActionQueue.run('post');
+        D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+
+        return;
+      }
+    }
+
+    this.loadNextFrame();
   }
 
   _canJumpToNext() {
@@ -176,15 +179,14 @@ class Scene {
   }
 
   _loadSubframe(action) {
-    D.ActionQueue.add('frame', action);
-    D.ActionQueue.run('frame');
-
-    if (action.parallel) {
-      ++this._subframe;
-
-      if (this._subframe < this._scene.keyframes[this._keyframe].actions.length - 1) {
-        this._loadSubframe(this._scene.keyframes[this._keyframe].actions[this._subframe]);
-      }
+    if (action.constructor === Array) {
+      action.forEach(parallelAction => {
+        D.ActionQueue.add('frame', parallelAction);
+        D.ActionQueue.run('frame');
+      });
+    } else {
+      D.ActionQueue.add('frame', action);
+      D.ActionQueue.run('frame');
     }
   }
 
@@ -205,9 +207,11 @@ class Scene {
   }
 
   _loadEvent(event) {
-    if (event.runCount === event.runLimit / 2) {
-      D.ActionQueue.run('pre');
+    if (event.runCount === 1) {
+      D.Background.handleAction({ event: 'unload' });
+    }
 
+    if (event.runCount === event.runLimit / 2) {
       [].forEach.call(document.querySelectorAll('.d_gui-element--visible'), (element) => {
         element.classList.add('d_gui-element--no-fade');
         element.classList.remove('d_gui-element--visible');
@@ -220,6 +224,9 @@ class Scene {
 
       D.Choose.clearChoose();
       D.Input.clearInput();
+      D.Sound.stopAll();
+
+      D.ActionQueue.run('pre');
     }
 
     if (event.over) {

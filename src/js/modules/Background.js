@@ -33,11 +33,11 @@ class Background {
     this._dom.blink = document.querySelector('.js_blink');
 
     this._timer = new Timer();
+    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 30);
     this._timer.addEvent('showScene', this._showSceneEvent.bind(this), 1, true);
     this._timer.addEvent('hideScene', this._hideSceneEvent.bind(this), 1, true);
     this._timer.addEvent('blink', this._blinkEvent.bind(this), 1, true);
     this._timer.addEvent('change', this._changeEvent.bind(this), 1, true, 60);
-    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
 
     D.Stage.addChild(this._background);
     D.Stage.addChild(this._backgroundClone);
@@ -48,15 +48,16 @@ class Background {
     this._options = options;
 
     if (!this._options.event) {
-      this._options.event = 'show';
+      this._options.event = 'load';
     }
 
     switch(this._options.event) {
+      case 'load': this._load(); break;
+      case 'unload': this._unload(); break;
       case 'showScene': this._showScene(); break;
       case 'hideScene': this._hideScene(); break;
       case 'blink': this._blink(); break;
       case 'change': this._change(); break;
-      case 'load': this._load(); break;
     }
   }
 
@@ -88,6 +89,17 @@ class Background {
     this._timer.start('showScene');
   }
 
+  _showSceneEvent(event) {
+    const percent = event.runCount / event.runLimit;
+
+    this._sceneFader.alpha = 1 - percent + 0.001;
+
+    if (event.over || D.SceneStore.getData('fastForward')) {
+      this._sceneFader.alpha = 0.001;
+      this._timer.destroy('showScene');
+    }
+  }
+
   _hideScene() {
     this._sceneFader.tint = this._options.tint ? parseInt('0x' + this._options.tint) : 0x000000;
     this._sceneFader.position.z = 100;
@@ -95,17 +107,43 @@ class Background {
     this._timer.start('hideScene');
   }
 
-  _blink() {
-    this._dom.blink.classList.add('d_blink--visible');
-    this._timer.setRunLimit('blink', this._options.duration ? this._options.duration : 30);
-    this._timer.start('blink');
-  }
+  _hideSceneEvent(event) {
+    const percent = event.runCount / event.runLimit;
 
-  _change() {
+    this._sceneFader.alpha = percent + 0.001;
 
+    if (event.over || D.SceneStore.getData('fastForward')) {
+      this._sceneFader.alpha = 1;
+      this._timer.destroy('hideScene');
+    }
   }
 
   _load() {
+    let background = PIXI.Texture.fromImage(this._options.image);
+
+    this._background.setTexture(background);
+    this._background.alpha = 0.001;
+    this._background.position.z = 1;
+
+    this._dom.fader.classList.remove('d_fader--visible');
+    this._timer.start('load');
+  }
+
+  _loadEvent(event) {
+    const percent = event.runCount / event.runLimit;
+
+    this._background.alpha = percent + 0.001;
+
+    if (event.over) {
+      this._timer.destroy('load');
+    }
+  }
+
+  _unload() {
+    this._dom.fader.classList.add('d_fader--visible');
+  }
+
+  _change() {
     let background = PIXI.Texture.fromImage(this._options.image);
 
     this._backgroundClone.setTexture(this._background.texture);
@@ -116,18 +154,28 @@ class Background {
     this._background.alpha = 0.001;
     this._background.position.z = 0;
 
-    this._timer.start('load');
+    this._timer.start('change');
   }
 
-  _showSceneEvent(event) {
+  _changeEvent(event) {
     const percent = event.runCount / event.runLimit;
 
-    this._sceneFader.alpha = 1 - percent + 0.001;
+    this._background.alpha = percent + 0.001;
+    this._background.position.z = 1;
+    this._backgroundClone.alpha = (1 - percent) + 0.001;
+    this._backgroundClone.position.z = 0;
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
-      this._sceneFader.alpha = 0.001;
-      this._timer.destroy('showScene');
+    if (event.over) {
+      this._background.alpha = 1;
+      this._backgroundClone.alpha = 0.001;
+      this._timer.destroy('change');
     }
+  }
+
+  _blink() {
+    this._dom.blink.classList.add('d_blink--visible');
+    this._timer.setRunLimit('blink', this._options.duration ? this._options.duration : 30);
+    this._timer.start('blink');
   }
 
   _blinkEvent(event) {
@@ -142,40 +190,6 @@ class Background {
     if (event.over || D.SceneStore.getData('fastForward')) {
       this._dom.blink.classList.remove('d_blink--visible');
       this._timer.destroy('blink');
-    }
-  }
-
-  _hideSceneEvent(event) {
-    const percent = event.runCount / event.runLimit;
-
-    this._sceneFader.alpha = percent + 0.001;
-
-    if (event.over || D.SceneStore.getData('fastForward')) {
-      this._sceneFader.alpha = 1;
-      this._timer.destroy('hideScene');
-    }
-  }
-
-  _changeEvent(event) {
-
-  }
-
-  _loadEvent(event) {
-    if (event.runCount === 1) {
-      this._dom.fader.classList.add('d_fader--visible');
-    } else if (event.runCount === 30) {
-      this._background.alpha = 1;
-      this._background.position.z = 1;
-      this._backgroundClone.alpha = 0.001;
-      this._backgroundClone.position.z = 0;
-      this._sceneFader.alpha = 0.001;
-      this._sceneFader.position.z = 0;
-    } else if (event.runCount === 60) {
-      this._dom.fader.classList.remove('d_fader--visible');
-    }
-
-    if (event.over) {
-      this._timer.destroy('load');
     }
   }
 }

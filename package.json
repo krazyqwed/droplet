@@ -43,11 +43,11 @@
     "npm-run-all": "^4.1.1",
     "pug-cli": "^1.0.0-alpha6",
     "rimraf": "^2.5.4",
-    "rollup": "^0.49.2",
+    "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
     "semver": "^5.4.1",
-    "uglify-es": "^3.0.28"
+    "uglify-es": "^3.1.0"
   },
   "engines": {
     "node": "~8.1.0",

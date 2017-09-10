@@ -42,7 +42,7 @@ class DialogClass {
     this._text = '';
     this._textLength = 0;
     this._textFormatActive = false;
-    this._writeSpeed = [2];
+    this._writeSpeed = [];
 
     this._dom = {};
     this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
@@ -51,7 +51,7 @@ class DialogClass {
     this._dom.speaker = document.querySelector('.js_speaker');
 
     this._timer = new Timer();
-    this._timer.addEvent('write', this._writeEvent.bind(this), this._writeSpeed[0], true, 0, this._writeEventEvery.bind(this));
+    this._timer.addEvent('write', this._writeEvent.bind(this), 1, true, 0, this._writeEventEvery.bind(this));
   }
 
   init() {
@@ -65,8 +65,8 @@ class DialogClass {
     });
   }
 
-  handleAction(action) {
-    this._options = action;
+  handleAction(options) {
+    this._options = options;
 
     if (!this._options.event) {
       this._options.event = 'show';
@@ -88,7 +88,7 @@ class DialogClass {
     this._actionFired = false;
     this._subframe = 0;
     this._textList = false;
-    this._writeSpeed = [2];
+    this._writeSpeed = [this._options.speed || 2];
     this._dom.textBoxInner.innerHTML = '';
 
     if (this._options.position === 'top') {
@@ -149,7 +149,11 @@ class DialogClass {
 
     this._textLength = this._text.length;
 
-    this._timer.start('write');
+    this._timer.start('write', { tickrate: this._options.speed || 2 });
+
+    if (this._options.speed === 0) {
+      this._timer.over('write');
+    }
   }
 
   _insertVariables() {
