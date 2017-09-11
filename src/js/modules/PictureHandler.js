@@ -11,10 +11,22 @@ class PictureHandler {
     this._clone = new PIXI.Sprite();
     this._timer = new Timer();
     this._animationRunning = false;
-    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('hide', this._hideEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('move', this._moveEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('pose', this._switchEvent.bind(this), 1, true, 30);
+    this._timer.addEvent('show', {
+      callback: this._showEvent.bind(this),
+      runLimit: 30
+    });
+    this._timer.addEvent('hide', {
+      callback: this._hideEvent.bind(this),
+      runLimit: 30
+    });
+    this._timer.addEvent('move', {
+      callback: this._moveEvent.bind(this),
+      runLimit: 30
+    });
+    this._timer.addEvent('pose', {
+      callback: this._switchEvent.bind(this),
+      runLimit: 30
+    });
 
     this._init();
   }
@@ -58,7 +70,7 @@ class PictureHandler {
     }
 
     this._timer.setRunLimit(this._options.event, this._options.duration ? this._options.duration : 30);
-    this._timer.start(this._options.event, {
+    this._timer.start(this._options.event, {}, {
       position: position ? position : false
     });
   }

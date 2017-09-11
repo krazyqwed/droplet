@@ -35,7 +35,6 @@ export default {
       keyframes: [
         {
           id: 1,
-          type: 'flow',
           actions: [
             [
               {
@@ -75,7 +74,9 @@ export default {
                   event: 'change',
                   image: 'school_2'
                 }
-              },
+              }
+            ],
+            [
               {
                 module: 'picture',
                 options: {

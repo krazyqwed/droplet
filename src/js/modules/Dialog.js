@@ -42,7 +42,8 @@ class DialogClass {
     this._text = '';
     this._textLength = 0;
     this._textFormatActive = false;
-    this._writeSpeed = [];
+    this._writeSpeedMs = 10;
+    this._writeSpeedArray = [];
 
     this._dom = {};
     this._dom.textBoxWrap = document.querySelector('.js_' + this._elementType + '_wrap');
@@ -51,7 +52,12 @@ class DialogClass {
     this._dom.speaker = document.querySelector('.js_speaker');
 
     this._timer = new Timer();
-    this._timer.addEvent('write', this._writeEvent.bind(this), 1, true, 0, this._writeEventEvery.bind(this));
+    this._timer.addEvent('write', {
+      callback: this._writeEvent.bind(this),
+      callbackEvery: this._writeEventEvery.bind(this),
+      runLimit: 0,
+      useMillisec: true
+    });
   }
 
   init() {
@@ -88,7 +94,7 @@ class DialogClass {
     this._actionFired = false;
     this._subframe = 0;
     this._textList = false;
-    this._writeSpeed = [this._options.speed || 2];
+    this._writeSpeedArray = [this._options.speed || this._writeSpeedMs];
     this._dom.textBoxInner.innerHTML = '';
 
     if (this._options.position === 'top') {
@@ -149,7 +155,7 @@ class DialogClass {
 
     this._textLength = this._text.length;
 
-    this._timer.start('write', { tickrate: this._options.speed || 2 });
+    this._timer.start('write', { tickRate: this._options.speed || this._writeSpeedMs });
 
     if (this._options.speed === 0) {
       this._timer.over('write');
@@ -332,18 +338,18 @@ class DialogClass {
 
   _handleSpeedAdd(speed) {
     if (speed) {
-      this._writeSpeed.push(parseInt(speed));
+      this._writeSpeedArray.push(parseInt(speed));
     } else {
-      this._writeSpeed.push(this._writeSpeed.slice(-1)[0]);
+      this._writeSpeedArray.push(this._writeSpeedArray.slice(-1)[0]);
     }
 
-    this._timer.setTickRate('write', this._writeSpeed.slice(-1)[0]);
+    this._timer.setTickRate('write', this._writeSpeedArray.slice(-1)[0]);
   }
 
   _handleSpeedRemove() {
-    this._writeSpeed.pop();
+    this._writeSpeedArray.pop();
 
-    this._timer.setTickRate('write', this._writeSpeed.slice(-1)[0]);
+    this._timer.setTickRate('write', this._writeSpeedArray.slice(-1)[0]);
   }
 
   _handleVar(name, i) {

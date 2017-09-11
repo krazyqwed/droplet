@@ -14,7 +14,10 @@ class Scene {
     this._interactionFinished = false;
 
     this._timer = new Timer();
-    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 90);
+    this._timer.addEvent('load', {
+      callback: this._loadEvent.bind(this),
+      runLimit: 90
+    });
 
     this._event = {};
     this._event.scrollEvent = this._scrollEvent.bind(this);
@@ -182,7 +185,7 @@ class Scene {
     if (action.constructor === Array) {
       action.forEach(parallelAction => {
         D.ActionQueue.add('frame', parallelAction);
-        D.ActionQueue.run('frame');
+        D.ActionQueue.run('frame');          
       });
     } else {
       D.ActionQueue.add('frame', action);

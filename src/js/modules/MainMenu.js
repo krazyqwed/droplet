@@ -24,7 +24,10 @@ class MainMenu {
     this._dom.menuWrap = document.querySelector('.js_main_menu_wrap');
     this._dom.menu = document.querySelector('.js_main_menu');
     this._timer = new Timer();
-    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);
+    this._timer.addEvent('show', {
+      callback: this._showEvent.bind(this),
+      runLimit: 45
+    });
 
     this._menuItems = [
       {

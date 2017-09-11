@@ -10,8 +10,14 @@ class Choose {
     this._dom.choose = document.querySelector('.js_choose');
 
     this._timer = new Timer();
-    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);
-    this._timer.addEvent('chose', this._blinkEvent.bind(this), 1, true, 24);
+    this._timer.addEvent('show', {
+      callback: this._showEvent.bind(this),
+      runLimit: 45
+    });
+    this._timer.addEvent('chose', {
+      callback: this._blinkEvent.bind(this),
+      runLimit: 24
+    });
   }
 
   handleAction(action) {
@@ -70,7 +76,7 @@ class Choose {
       });
     }
 
-    this._timer.start('chose', {
+    this._timer.start('chose', {}, {
       item: item,
       itemElement: elem
     });

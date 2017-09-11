@@ -6,7 +6,7 @@ class Audio {
     this._options = false;
     this._sound = false;
     this._timer = new Timer();
-    this._timer.addEvent('sound', this._soundEvent.bind(this), 1, true);
+    this._timer.addEvent('sound', { callback: this._soundEvent.bind(this) });
   }
 
   handleAction(options) {

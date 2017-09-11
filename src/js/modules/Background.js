@@ -33,11 +33,17 @@ class Background {
     this._dom.blink = document.querySelector('.js_blink');
 
     this._timer = new Timer();
-    this._timer.addEvent('load', this._loadEvent.bind(this), 1, true, 30);
-    this._timer.addEvent('showScene', this._showSceneEvent.bind(this), 1, true);
-    this._timer.addEvent('hideScene', this._hideSceneEvent.bind(this), 1, true);
-    this._timer.addEvent('blink', this._blinkEvent.bind(this), 1, true);
-    this._timer.addEvent('change', this._changeEvent.bind(this), 1, true, 60);
+    this._timer.addEvent('load', {
+      callback: this._loadEvent.bind(this),
+      runLimit: 30
+    });
+    this._timer.addEvent('showScene', { callback: this._showSceneEvent.bind(this) });
+    this._timer.addEvent('hideScene', { callback: this._hideSceneEvent.bind(this) });
+    this._timer.addEvent('blink', { callback: this._blinkEvent.bind(this) });
+    this._timer.addEvent('change', {
+      callback: this._changeEvent.bind(this),
+      runLimit: 60
+    });
 
     D.Stage.addChild(this._background);
     D.Stage.addChild(this._backgroundClone);
