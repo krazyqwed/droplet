@@ -73,7 +73,8 @@ export default {
                 options: {
                   event: 'change',
                   image: 'school_2'
-                }
+                },
+                autoContinue: true
               }
             ],
             [

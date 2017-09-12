@@ -321,6 +321,8 @@ class DialogClass {
       if (this._textList === false || this._subframe >= this._textList.length) {
         D.SceneStore.setData((this._elementType === 'textbox' ? 'dialog' : 'narrator') + 'Running', false);
       }
+
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 

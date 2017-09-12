@@ -65,6 +65,7 @@ class Audio {
 
       this._sound.fade(this._sound._volume, 0, 500);
       this._timer.destroy('sound');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 }

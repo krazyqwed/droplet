@@ -26,6 +26,11 @@ class Scene {
   }
 
   init() {
+    D.SceneStore.subscribe('actionFired', () => {
+      D.SceneStore.unsubscribeAll('autoContinue');
+      this.fastForward();
+    });
+
     this._input();
   }
 
@@ -50,6 +55,29 @@ class Scene {
         return true;
       }
     });
+  }
+
+  fastForward() {
+    if (!this._sceneLoaded) {
+      return;
+    }
+
+    D.SceneStore.setData('fastForward', true);
+
+    if (!this._canJumpToNext()) {
+      return;
+    }
+
+    if (this._subframe >= this._scene.keyframes[this._keyframe].actions.length - 1) {
+      if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
+        D.ActionQueue.run('post');
+        D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
+
+        return;
+      }
+    }
+
+    this.loadNextFrame();
   }
 
   loadNextFrame() {
@@ -90,7 +118,6 @@ class Scene {
     if (delta === -1) {
       event.preventDefault();
       D.SceneStore.triggerCallback('actionFired');
-      this._fastForward();
     }
   }
 
@@ -113,7 +140,6 @@ class Scene {
 
     event.preventDefault();
     D.SceneStore.triggerCallback('actionFired');
-    this._fastForward();
   }
 
   _keydownEvent(event) {
@@ -121,7 +147,6 @@ class Scene {
       if (event.which === 32 || event.which === 13) {
         event.preventDefault();
         D.SceneStore.triggerCallback('actionFired');
-        this._fastForward();
       }
     }
   }
@@ -137,29 +162,6 @@ class Scene {
     });
 
     this._timer.start('load');
-  }
-
-  _fastForward() {
-    if (!this._sceneLoaded) {
-      return;
-    }
-
-    D.SceneStore.setData('fastForward', true);
-
-    if (!this._canJumpToNext()) {
-      return;
-    }
-
-    if (this._subframe >= this._scene.keyframes[this._keyframe].actions.length - 1) {
-      if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
-        D.ActionQueue.run('post');
-        D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-
-        return;
-      }
-    }
-
-    this.loadNextFrame();
   }
 
   _canJumpToNext() {

@@ -211,6 +211,7 @@ class PictureHandler {
 
       this._animationRunning = false;
       this._timer.destroy('show');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
@@ -231,6 +232,7 @@ class PictureHandler {
 
       this._animationRunning = false;
       this._timer.destroy('hide');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
@@ -252,6 +254,7 @@ class PictureHandler {
 
       this._animationRunning = false;
       this._timer.destroy('move');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
@@ -271,6 +274,7 @@ class PictureHandler {
 
       this._animationRunning = false;
       this._timer.destroy('switch');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 

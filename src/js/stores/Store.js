@@ -8,7 +8,7 @@ class Store {
     return this._data[name];
   }
 
-  setData(name, data) {
+  setData(name, data, triggerCallback = true) {
     const previousValue = this._data[name];
 
     if (data !== null && typeof data === 'object') {
@@ -17,7 +17,7 @@ class Store {
       this._data[name] = data;
     }
 
-    if (!this._subscriptions) {
+    if (!this._subscriptions || !triggerCallback) {
       return;
     }
 
@@ -34,7 +34,9 @@ class Store {
     }
 
     this._subscriptions.forEach((item) => {
-      item.callback(data, this._data[name], name);
+      if (name === item.name) {
+        item.callback(data, this._data[name], name);
+      }
     });
   }
 
@@ -50,6 +52,14 @@ class Store {
     this._subscriptions.push(subscription);
 
     return subscription;
+  }
+
+  unsubscribeAll(name) {
+    this._subscriptions.forEach((item, index) => {
+      if (item.name === name) {
+        delete this._subscriptions[index];
+      }
+    });
   }
 
   __unsubscribe(store) {

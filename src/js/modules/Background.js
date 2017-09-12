@@ -37,6 +37,10 @@ class Background {
       callback: this._loadEvent.bind(this),
       runLimit: 30
     });
+    this._timer.addEvent('unload', {
+      callback: this._unloadEvent.bind(this),
+      runLimit: 30
+    });
     this._timer.addEvent('showScene', { callback: this._showSceneEvent.bind(this) });
     this._timer.addEvent('hideScene', { callback: this._hideSceneEvent.bind(this) });
     this._timer.addEvent('blink', { callback: this._blinkEvent.bind(this) });
@@ -103,6 +107,7 @@ class Background {
     if (event.over || D.SceneStore.getData('fastForward')) {
       this._sceneFader.alpha = 0.001;
       this._timer.destroy('showScene');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
@@ -121,6 +126,7 @@ class Background {
     if (event.over || D.SceneStore.getData('fastForward')) {
       this._sceneFader.alpha = 1;
       this._timer.destroy('hideScene');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
@@ -142,11 +148,19 @@ class Background {
 
     if (event.over) {
       this._timer.destroy('load');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
   _unload() {
     this._dom.fader.classList.add('d_fader--visible');
+  }
+
+  _unloadEvent(event) {
+    if (event.over) {
+      this._timer.destroy('unload');
+      D.SceneStore.triggerCallback('autoContinue');
+    }
   }
 
   _change() {
@@ -175,6 +189,7 @@ class Background {
       this._background.alpha = 1;
       this._backgroundClone.alpha = 0.001;
       this._timer.destroy('change');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
@@ -196,6 +211,7 @@ class Background {
     if (event.over || D.SceneStore.getData('fastForward')) {
       this._dom.blink.classList.remove('d_blink--visible');
       this._timer.destroy('blink');
+      D.SceneStore.triggerCallback('autoContinue');
     }
   }
 }
