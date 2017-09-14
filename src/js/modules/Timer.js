@@ -3,7 +3,7 @@ class Timer {
     this._defaultOptions = {
       name: '',
       running: false,
-      callback: null,
+      callback: false,
       callbackEvery: false,
       tickRate: 1,
       repeat: true,
@@ -36,7 +36,8 @@ class Timer {
         this._events[i].over = false;
         this._events[i].runCount = 0;
         this._events[i].running = true;
-        this._events[i].ticker = 0;
+        this._events[i].ticker = this._events[i].useMillisec ? new Date().getTime() : 0;
+        this._events[i].timeLimit = new Date().getTime();
       }
     }
   }
@@ -54,8 +55,14 @@ class Timer {
       if (this._events[i].name === name && this._events[i].running) {
         this._events[i].over = true;
         this._events[i].running = false;
-        this._events[i].callback(this._events[i]);
-        this._events[i].callbackEvery(this._events[i]);
+
+        if (this._events[i].callback) {
+          this._events[i].callback(this._events[i]);
+        }
+
+        if (this._events[i].callbackEvery) {
+          this._events[i].callbackEvery(this._events[i]);
+        }
       }
     }
   }
@@ -102,20 +109,6 @@ class Timer {
     });
   }
 
-  _tickMillisec() {
-    setTimeout(() => {
-      for (let i in this._events) {
-        if (!this._events[i].useMillisec) {
-          continue;
-        }
-
-        this._tickFunction(this._events[i]);
-      }
-
-      this._tickMillisec();
-    }, 1);
-  }
-
   _tickFunction(event) {
     if (!event.running || event.over || event.tickRate === 0) {
       return;
@@ -140,6 +133,50 @@ class Timer {
 
     if (event && event.ticker == event.tickRate) {
       event.ticker = 0;
+    }
+  }
+
+  _tickMillisec() {
+    setTimeout(() => {
+      for (let i in this._events) {
+        if (!this._events[i].useMillisec) {
+          continue;
+        }
+
+        this._tickMillisecFunction(this._events[i]);
+      }
+
+      this._tickMillisec();
+    }, 1);
+  }
+
+  _tickMillisecFunction(event) {
+    const time = new Date().getTime();
+    const lastTime = event.ticker;
+
+    if (!event.running || event.over || event.tickRate === 0) {
+      return;
+    }
+
+    if (event.runLimit === 0 && time - lastTime >= event.tickRate) {
+      event.ticker = time;
+
+      if (event.callback) {
+        event.callback(event);
+      }
+    }
+
+    if (event.callbackEvery) {
+      event.callbackEvery(event);
+    }
+
+    if (event.runLimit > 0 && time - event.timeLimit >= event.runLimit) {
+      event.over = true;
+      event.running = false;
+
+      if (event.callback) {
+        event.callback(event);
+      }
     }
   }
 }

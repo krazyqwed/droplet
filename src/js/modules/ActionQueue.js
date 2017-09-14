@@ -18,11 +18,15 @@ class ActionQueue {
       delete this._queue[type][index];
 
       if (action.autoContinue) {
-        D.SceneStore.subscribe('autoContinue', () => {
-          D.SceneStore.unsubscribeAll('autoContinue');
-          D.SceneStore.triggerCallback('actionFired');
-        });
+        this.autoContinue();
       }
+    });
+  }
+
+  autoContinue() {
+    D.SceneStore.subscribe('autoContinue', () => {
+      D.SceneStore.unsubscribeAll('autoContinue');
+      D.SceneStore.triggerCallback('actionFired');
     });
   }
 }

@@ -2,7 +2,7 @@ import Timer from './Timer';
 
 class Input {
   constructor() {
-    this._action = false;
+    this._options = false;
     this._inputted = false;
 
     this._dom = {};
@@ -11,8 +11,14 @@ class Input {
     this._dom.inputButton = document.querySelector('.js_input_button');
 
     this._timer = new Timer();
-    this._timer.addEvent('show', this._showEvent.bind(this), 1, true, 45);
-    this._timer.addEvent('input', this._inputEvent.bind(this), 1, true, 24);
+    this._timer.addEvent('show', {
+      callback: this._showEvent.bind(this),
+      runLimit: 45
+    });
+    this._timer.addEvent('input', {
+      callback: this._inputEvent.bind(this),
+      runLimit: 24
+    });
 
     window.addEventListener('mousedown', (event) => {
       if (event.target.classList.contains('js_input_button')) {
@@ -21,12 +27,12 @@ class Input {
     });
   }
 
-  handleAction(action) {
-    this._action = action;
+  handleAction(options) {
+    this._options = options;
     this._inputted = false;
     D.SceneStore.setData('interactionRunning', true);
 
-    const currentValue = D.Variable.get(this._action.store);
+    const currentValue = D.Variable.get(this._options.store);
 
     if (currentValue) {
       this._dom.input.value = currentValue;
@@ -47,7 +53,7 @@ class Input {
 
     this._inputted = true;
 
-    D.Variable.set(this._action.store, this._dom.input.value, 'string');
+    D.Variable.set(this._options.store, this._dom.input.value, 'string');
 
     this._dom.input.blur();
     this._dom.inputButton.blur();

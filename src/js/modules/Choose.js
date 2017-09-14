@@ -2,7 +2,7 @@ import Timer from './Timer';
 
 class Choose {
   constructor() {
-    this._action = false;
+    this._options = false;
     this._selected = false;
 
     this._dom = {};
@@ -20,8 +20,8 @@ class Choose {
     });
   }
 
-  handleAction(action) {
-    this._action = action;
+  handleAction(options) {
+    this._options = options;
     this._selected = false;
     D.SceneStore.setData('interactionRunning', true);
 
@@ -35,7 +35,7 @@ class Choose {
   }
 
   _buildItems() {
-    this._action.items.forEach((item) => {
+    this._options.items.forEach((item) => {
       let itemElement = document.createElement('div');
       itemElement.className = 'd_choose__item';
       itemElement.innerHTML = item.text;

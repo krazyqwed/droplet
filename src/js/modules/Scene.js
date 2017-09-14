@@ -189,6 +189,15 @@ class Scene {
         D.ActionQueue.add('frame', parallelAction);
         D.ActionQueue.run('frame');          
       });
+    } else if (action.actions) {
+      action.actions.forEach(parallelAction => {
+        D.ActionQueue.add('frame', parallelAction);
+        D.ActionQueue.run('frame');          
+      });
+
+      if (action.autoContinue) {
+        D.ActionQueue.autoContinue();
+      }
     } else {
       D.ActionQueue.add('frame', action);
       D.ActionQueue.run('frame');

@@ -42,7 +42,7 @@ class DialogClass {
     this._text = '';
     this._textLength = 0;
     this._textFormatActive = false;
-    this._writeSpeedMs = 10;
+    this._writeSpeedMs = 20;
     this._writeSpeedArray = [];
 
     this._dom = {};

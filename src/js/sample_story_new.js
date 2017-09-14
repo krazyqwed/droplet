@@ -36,11 +36,28 @@ export default {
         {
           id: 1,
           actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Default sync action'
+              }
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: 'Im next!'
+              }
+            }
+          ]
+        },
+        {
+          id: 2,
+          actions: [
             [
               {
                 module: 'narrator',
                 options: {
-                  text: 'Sed distinctio placeat ea vitae, cupiditate voluptates alias.',
+                  text: 'I can be parallel',
                   position: 'top',
                   speed: 0,
                   noNext: true
@@ -49,59 +66,141 @@ export default {
               {
                 module: 'dialog',
                 options: {
-                  text: [
-                    'Ok, that\'s the first dialog!',
-                    'And that\'s the second...'
-                  ]
+                  text: 'I can be parallel too'
                 }
               }
             ]
           ]
         },
         {
-          id: 4324,
+          id: 2,
           actions: [
-            [
-              {
-                module: 'narrator',
-                options: {
-                  event: 'hide'
-                }
+            {
+              module: 'picture',
+              options: {
+                id: 1,
+                position: [50, 75],
+                from: [0, 0],
+                duration: 10
               },
-              {
-                module: 'background',
-                options: {
-                  event: 'change',
-                  image: 'school_2'
+              autoContinue: true
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: 'Auto continue after picture'
+              }
+            }
+          ]
+        },
+        {
+          id: 3,
+          actions: [
+            {
+              autoContinue: true,
+              actions: [
+                {
+                  module: 'picture',
+                  options: {
+                    id: 1,
+                    event: 'hide'
+                  }
                 },
-                autoContinue: true
-              }
-            ],
-            [
-              {
-                module: 'picture',
-                options: {
-                  id: 1,
-                  position: [50, 75],
-                  from: [0, 0],
-                  duration: 10
+                {
+                  module: 'background',
+                  options: {
+                    event: 'change',
+                    image: 'school_2'
+                  }
                 }
+              ]
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: 'Auto continue after parallel actions'
+              }
+            }
+          ]
+        },
+        {
+          id: 4,
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Wait module'
+              }
+            },
+            {
+              module: 'wait',
+              options: {
+                duration: 1000
+              }
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: '3'
               },
-              {
-                module: 'dialog',
-                options: {
-                  text: [
-                    'So, this is working with the new ActionQueue',
-                    'That\'s awesome!',
-                    'Wild Bastion appeared...'
-                  ]
-                }
+              autoContinue: true
+            },
+            {
+              module: 'wait',
+              options: {
+                duration: 1000
               }
-            ]
-          ],
-          goTo: {
-            scene: 1
-          }
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: '2'
+              },
+              autoContinue: true
+            },
+            {
+              module: 'wait',
+              options: {
+                duration: 1000
+              }
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: '1'
+              },
+              autoContinue: true
+            },
+            {
+              module: 'wait',
+              options: {
+                duration: 1000
+              }
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: 'Done!'
+              }
+            }
+          ]
+        },
+        {
+          id: 5,
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Goto module'
+              }
+            },
+            {
+              module: 'goto',
+              options: {
+                scene: 1
+              }
+            }
+          ]
         }
       ],
       post: [
