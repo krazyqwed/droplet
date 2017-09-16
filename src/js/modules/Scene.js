@@ -68,15 +68,6 @@ class Scene {
       return;
     }
 
-    if (this._subframe >= this._scene.keyframes[this._keyframe].actions.length - 1) {
-      if (this._scene.keyframes[this._keyframe].goTo && this._scene.keyframes[this._keyframe].goTo.scene) {
-        D.ActionQueue.run('post');
-        D.Story.loadScene(this._scene.keyframes[this._keyframe].goTo.scene);
-
-        return;
-      }
-    }
-
     this.loadNextFrame();
   }
 

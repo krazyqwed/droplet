@@ -8,6 +8,7 @@ import Background from './modules/Background';
 import ActionQueue from './modules/ActionQueue';
 import Story from './modules/Story';
 import Scene from './modules/Scene';
+import Goto from './modules/Goto';
 import Wait from './modules/Wait';
 import { Dialog, Narrator } from './modules/Dialog';
 import Character from './modules/Character';
@@ -43,6 +44,7 @@ class Main {
       ActionQueue: ActionQueue,
       Story: Story,
       Scene: Scene,
+      Goto: Goto,
       Wait: Wait,
       Dialog: Dialog,
       Narrator: Narrator,
