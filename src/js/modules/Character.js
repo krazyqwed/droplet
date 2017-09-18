@@ -49,23 +49,19 @@ class Character {
     return this._picture.isAnimationRunning();
   }
 
-  setAction(action) {
-    if (!action.event) {
-      action.event = 'show';
+  setAction(options) {
+    if (!options.event) {
+      options.event = 'show';
     }
 
-    switch (action.event) {
-      case 'pose': {
-        this._pose = action.pose;
+    this._pose = options.pose || this._pose;
+    options.image = 'char_' + this._id + '_' + this._pose;
 
-        action.event = 'switch';
-        action.image = 'char_' + this._id + '_' + this._pose;
-        
-        break;
-      }
+    switch (options.event) {
+      case 'pose': options.event = 'switch'; break;
     }
 
-    this._picture.setAction(action);
+    this._picture.setAction(options);
   }
 
   getState() {

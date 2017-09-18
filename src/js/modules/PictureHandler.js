@@ -52,8 +52,8 @@ class PictureHandler {
     return this._animationRunning;
   }
 
-  setAction(action) {
-    this._options = action;
+  setAction(options) {
+    this._options = options;
     this._animationRunning = true;
 
     let position;
@@ -62,11 +62,11 @@ class PictureHandler {
       this._options.event = 'show';
     }
 
-    switch (action.event) {
-      case 'show': position = this._calculatePosition(); this._show(); break;
+    switch (options.event) {
+      case 'show': position = this._calculatePosition(); this._show(options.image); break;
       case 'hide': position = this._calculatePositionFrom(); break;
       case 'move': position = this._calculatePositionFrom(); break;
-      case 'switch': this._switch(action.image); break;
+      case 'switch': this._switch(options.image); break;
     }
 
     this._timer.setRunLimit(this._options.event, this._options.duration ? this._options.duration : 30);
@@ -109,7 +109,12 @@ class PictureHandler {
     this._sprite.visible = data.visible;
   }
 
-  _show() {
+  _show(image = false) {
+    if (image) {
+      this._image = PIXI.Texture.fromFrame(image);
+      this._sprite.setTexture(this._image);
+    }
+
     this._sprite.alpha = 0.001;
     this._sprite.position.z = 3;
 

@@ -5,7 +5,10 @@ class Wait {
     this._options = false;
 
     this._timer = new Timer();
-    this._timer.addEvent('wait', { callback: this._waitEvent.bind(this), useMillisec: true });
+    this._timer.addEvent('wait', {
+      callback: this._waitEvent.bind(this),
+      useMillisec: true
+    });
   }
 
   handleAction(options) {
@@ -19,7 +22,6 @@ class Wait {
   }
 
   _waitAction() {
-    D.ActionQueue.autoContinue();
     this._timer.setRunLimit('wait', this._options.duration ? this._options.duration : 1000);
     this._timer.start('wait');
   }

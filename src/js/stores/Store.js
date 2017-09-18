@@ -23,19 +23,19 @@ class Store {
 
     this._subscriptions.forEach((item) => {
       if (item.name === name && previousValue !== data) {
-        item.callback(data, previousValue, name);
+        item.callback(this._data[name], previousValue, name);
       }
     });
   }
 
-  triggerCallback(name, data = null) {
+  triggerCallback(name) {
     if (!this._subscriptions) {
       return;
     }
 
     this._subscriptions.forEach((item) => {
       if (name === item.name) {
-        item.callback(data, this._data[name], name);
+        item.callback(this._data[name], this._data[name], name);
       }
     });
   }

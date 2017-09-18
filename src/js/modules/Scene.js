@@ -27,8 +27,16 @@ class Scene {
 
   init() {
     D.SceneStore.subscribe('actionFired', () => {
-      D.SceneStore.unsubscribeAll('autoContinue');
+      D.SceneStore.setData('autoContinue', false);
       this.fastForward();
+    });
+
+    D.SceneStore.subscribe('autoContinue', value => {
+      if (!value) {
+        return;
+      }
+
+      D.SceneStore.triggerCallback('actionFired');
     });
 
     this._input();
@@ -187,7 +195,7 @@ class Scene {
       });
 
       if (action.autoContinue) {
-        D.ActionQueue.autoContinue();
+        D.SceneStore.setData('autoContinue', true, false);
       }
     } else {
       D.ActionQueue.add('frame', action);

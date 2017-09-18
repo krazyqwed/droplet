@@ -81,7 +81,7 @@ export default {
                 id: 1,
                 position: [50, 75],
                 from: [0, 0],
-                duration: 10
+                duration: 100
               },
               autoContinue: true
             },
@@ -99,13 +99,6 @@ export default {
             {
               autoContinue: true,
               actions: [
-                {
-                  module: 'picture',
-                  options: {
-                    id: 1,
-                    event: 'hide'
-                  }
-                },
                 {
                   module: 'background',
                   options: {
@@ -133,15 +126,12 @@ export default {
               }
             },
             {
-              module: 'wait',
+              module: 'picture',
               options: {
-                duration: 1000
-              }
-            },
-            {
-              module: 'dialog',
-              options: {
-                text: '3'
+                event: 'move',
+                id: 1,
+                position: [-10, 0],
+                duration: 100
               },
               autoContinue: true
             },
@@ -152,9 +142,12 @@ export default {
               }
             },
             {
-              module: 'dialog',
+              module: 'picture',
               options: {
-                text: '2'
+                event: 'move',
+                id: 1,
+                position: [-10, 0],
+                duration: 100
               },
               autoContinue: true
             },
@@ -165,17 +158,14 @@ export default {
               }
             },
             {
-              module: 'dialog',
+              module: 'picture',
               options: {
-                text: '1'
+                event: 'move',
+                id: 1,
+                position: [-10, 0],
+                duration: 100
               },
               autoContinue: true
-            },
-            {
-              module: 'wait',
-              options: {
-                duration: 1000
-              }
             },
             {
               module: 'dialog',
@@ -197,20 +187,92 @@ export default {
             {
               module: 'goto',
               options: {
-                scene: 1
+                scene: 2
               }
             }
           ]
         }
       ],
       post: [
-        // {
-        //   module: 'narrator',
-        //   options: {
-        //     event: 'hide'
-        //   }
-        // }
+        {
+          module: 'sound',
+          options: {
+            event: 'stop',
+            sound: 'birds'
+          }
+        }
       ]
+    },
+    {
+      id: 2,
+      title: 'Prologue',
+      description: 'Lorem ipsum dolor sit amet.',
+      pre: [
+        {
+          module: 'background',
+          options: {
+            event: 'load',
+            image: 'school_3'
+          }
+        },
+        {
+          module: 'sound',
+          options: {
+            event: 'bgm',
+            sound: 'bgm_2',
+            volume: 0.5
+          }
+        }
+      ],
+      keyframes: [
+        {
+          id: 1,
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Character shows up...'
+              }
+            },
+            [
+              {
+                module: 'character',
+                options: {
+                  id: 1,
+                  pose: 5,
+                  position: [50, 'bottom'],
+                  from: [-5, 0]
+                }
+              },
+              {
+                module: 'dialog',
+                options: {
+                  text: 'Hello!',
+                  character: 1
+                }
+              }
+            ]
+          ]
+        },
+        {
+          id: 2,
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Goto module'
+              }
+            },
+            {
+              module: 'goto',
+              options: {
+                scene: 1
+              }
+            }
+          ]
+        }
+      ],
+      post: []
     }
   ]
 };

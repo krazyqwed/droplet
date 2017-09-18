@@ -158,12 +158,9 @@ class Timer {
       return;
     }
 
-    if (event.runLimit === 0 && time - lastTime >= event.tickRate) {
+    if (time - lastTime >= event.tickRate) {
       event.ticker = time;
-
-      if (event.callback) {
-        event.callback(event);
-      }
+      event.callback(event);
     }
 
     if (event.callbackEvery) {
@@ -173,10 +170,7 @@ class Timer {
     if (event.runLimit > 0 && time - event.timeLimit >= event.runLimit) {
       event.over = true;
       event.running = false;
-
-      if (event.callback) {
-        event.callback(event);
-      }
+      event.callback(event);
     }
   }
 }

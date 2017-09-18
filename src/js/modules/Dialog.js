@@ -66,7 +66,7 @@ class DialogClass {
 
       if (!this._writeRunning && this._subframe < this._textList.length) {
         this._actionFired = false;
-        this._setText(false);
+        this._setText();
       }
     });
   }
