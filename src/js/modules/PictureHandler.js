@@ -23,7 +23,7 @@ class PictureHandler {
       callback: this._moveEvent.bind(this),
       runLimit: 30
     });
-    this._timer.addEvent('pose', {
+    this._timer.addEvent('switch', {
       callback: this._switchEvent.bind(this),
       runLimit: 30
     });
@@ -131,6 +131,7 @@ class PictureHandler {
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
     this._clone.setTexture(this._image);
+    console.log(image);
   }
 
   _calculatePosition() {

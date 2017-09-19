@@ -251,6 +251,23 @@ export default {
                   character: 1
                 }
               }
+            ],
+            [
+              {
+                module: 'character',
+                options: {
+                  id: 1,
+                  event: 'pose',
+                  pose: 2
+                }
+              },
+              {
+                module: 'dialog',
+                options: {
+                  text: 'Nani?',
+                  character: 1
+                }
+              }
             ]
           ]
         },
