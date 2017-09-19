@@ -35,6 +35,132 @@ export default {
       keyframes: [
         {
           id: 1,
+          goto: { keyframe: 2 },
+          actions: [
+            [
+              {
+                module: 'dialog',
+                options: {
+                  text: 'Enter your nickname...',
+                  noHistory: true
+                }
+              },
+              {
+                module: 'input',
+                options: {
+                  store: '__globals__.player.nickname'
+                }
+              }
+            ],
+            {
+              module: 'dialog',
+              options: {
+                text: 'Oh, my nickname is <d-text d-var="__globals__.player.nickname" d-color="#0f0"></d-text>.'
+              }
+            },
+            [
+              {
+                module: 'dialog',
+                options: {
+                  text: 'What do you want to do?'
+                }
+              },
+              {
+                module: 'choose',
+                options: {
+                  items: [
+                    {
+                      text: 'Set the variable to <d-text d-color="#0f0">1</d-text>',
+                      variable: [{
+                        name: 'test',
+                        value: '1'
+                      }],
+                      goTo: {
+                        keyframe: 102
+                      }
+                    },
+                    {
+                      text: 'Set the variable to <d-text d-color="#f00">-1</d-text>',
+                      variable: [{
+                        name: 'test',
+                        value: '-1'
+                      }],
+                      goTo: {
+                        keyframe: 103
+                      }
+                    },
+                    {
+                      text: '<d-text d-blink="4">Restart scene</d-text>',
+                      goTo: {
+                        scene: 1
+                      }
+                    },
+                    {
+                      text: 'Do nothing...',
+                      variable: [{
+                        name: 'test',
+                        value: '0'
+                      }],
+                      goTo: {
+                        keyframe: 101
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          ]
+        },
+        {
+          id: 101,
+          goto: { keyframe: 2 },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Variable is <d-text d-var="test" d-color="#aaa"></d-text>'
+              }
+            }
+          ]
+        },
+        {
+          id: 102,
+          goto: { keyframe: 2 },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Variable is <d-text d-var="test" d-color="#0f0"></d-text>'
+              }
+            }
+          ]
+        },
+        {
+          id: 103,
+          goto: { keyframe: 2 },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Variable is <d-text d-var="test" d-color="#f00"></d-text>'
+              }
+            }
+          ]
+        },
+        {
+          id: 321,
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'Never ever reach this keyframe'
+              }
+            }
+          ]
+        },
+        {
+          id: 2,
+          goto: { keyframe: 3 },
           actions: [
             {
               module: 'dialog',
@@ -51,7 +177,8 @@ export default {
           ]
         },
         {
-          id: 2,
+          id: 3,
+          goto: { keyframe: 4 },
           actions: [
             [
               {
@@ -73,7 +200,8 @@ export default {
           ]
         },
         {
-          id: 2,
+          id: 4,
+          goto: { keyframe: 5 },
           actions: [
             {
               module: 'picture',
@@ -94,7 +222,8 @@ export default {
           ]
         },
         {
-          id: 3,
+          id: 5,
+          goto: { keyframe: 6 },
           actions: [
             {
               autoContinue: true,
@@ -117,7 +246,8 @@ export default {
           ]
         },
         {
-          id: 4,
+          id: 6,
+          goto: { keyframe: 7 },
           actions: [
             {
               module: 'dialog',
@@ -176,18 +306,13 @@ export default {
           ]
         },
         {
-          id: 5,
+          id: 7,
+          goto: { scene: 2, keyframe: 1 },
           actions: [
             {
               module: 'dialog',
               options: {
                 text: 'Goto module'
-              }
-            },
-            {
-              module: 'goto',
-              options: {
-                scene: 2
               }
             }
           ]
@@ -227,6 +352,7 @@ export default {
       keyframes: [
         {
           id: 1,
+          goto: { keyframe: 2 },
           actions: [
             {
               module: 'dialog',
@@ -273,17 +399,12 @@ export default {
         },
         {
           id: 2,
+          goto: { scene: 1, keyframe: 1 },
           actions: [
             {
               module: 'dialog',
               options: {
                 text: 'Goto module'
-              }
-            },
-            {
-              module: 'goto',
-              options: {
-                scene: 1
               }
             }
           ]

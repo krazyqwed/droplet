@@ -131,7 +131,6 @@ class PictureHandler {
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
     this._clone.setTexture(this._image);
-    console.log(image);
   }
 
   _calculatePosition() {

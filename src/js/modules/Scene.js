@@ -51,17 +51,19 @@ class Scene {
   }
 
   loadKeyframeById(keyframeId) {
+    D.ActionQueue.empty('frame');
+
     this._loadedByAction = false;
 
-    this._scene.keyframes.some((keyframe, i) => {
-      if (keyframeId === keyframe.id) {
-        D.SceneStore.setData('fastForward', false);
-
-        this._keyframe = i;
-        this._loadKeyframe(this._scene.keyframes[this._keyframe]);
-
-        return true;
+    this._scene.keyframes.forEach((keyframe, i) => {
+      if (keyframeId !== keyframe.id) {
+        return;
       }
+
+      D.SceneStore.setData('fastForward', false);
+
+      this._keyframe = i;
+      this._loadKeyframe(this._scene.keyframes[i]);
     });
   }
 
@@ -89,8 +91,8 @@ class Scene {
       ++this._subframe;
       this._loadSubframe(this._scene.keyframes[this._keyframe].actions[this._subframe]);
     } else {
-      ++this._keyframe;
-      this._loadKeyframe(this._scene.keyframes[this._keyframe]);
+      const goto = this._scene.keyframes[this._keyframe].goto;
+      D.Goto.handleAction({ scene: goto.scene, keyframe: goto.keyframe });
     }
   }
 
@@ -143,11 +145,13 @@ class Scene {
   }
 
   _keydownEvent(event) {
-    if (!event.target.classList.contains('js_input')) {
-      if (event.which === 32 || event.which === 13) {
-        event.preventDefault();
-        D.SceneStore.triggerCallback('actionFired');
-      }
+    if (event.target.classList.contains('js_input')) {
+      return;
+    }
+
+    if (event.which === 32 || event.which === 13) {
+      event.preventDefault();
+      D.SceneStore.triggerCallback('actionFired');
     }
   }
 
@@ -157,6 +161,7 @@ class Scene {
     this._scene.pre.forEach((action) => {
       D.ActionQueue.add('pre', action);
     });
+
     this._scene.post.forEach((action) => {
       D.ActionQueue.add('post', action);
     });
@@ -187,12 +192,12 @@ class Scene {
     if (action.constructor === Array) {
       action.forEach(parallelAction => {
         D.ActionQueue.add('frame', parallelAction);
-        D.ActionQueue.run('frame');          
+        D.ActionQueue.run('frame');
       });
     } else if (action.actions) {
       action.actions.forEach(parallelAction => {
         D.ActionQueue.add('frame', parallelAction);
-        D.ActionQueue.run('frame');          
+        D.ActionQueue.run('frame');
       });
 
       if (action.autoContinue) {
@@ -226,6 +231,8 @@ class Scene {
     }
 
     if (event.runCount === event.runLimit / 2) {
+      D.ActionQueue.run('post');
+
       [].forEach.call(document.querySelectorAll('.d_gui-element--visible'), (element) => {
         element.classList.add('d_gui-element--no-fade');
         element.classList.remove('d_gui-element--visible');
@@ -244,7 +251,7 @@ class Scene {
     }
 
     if (event.over) {
-      this._loadKeyframe(this._scene.keyframes[this._keyframe]);
+      this.loadKeyframeById(this._keyframe);
 
       D.SceneStore.setData('loadFromSave', false);
       D.GameMenu.show();

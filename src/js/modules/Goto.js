@@ -14,8 +14,13 @@ class Goto {
   }
 
   _gotoAction() {
-    D.ActionQueue.run('post');
-    D.Story.loadScene(this._options.scene, this._options.keyframe);
+    const currentState = D.Scene.getState();
+
+    if (!this._options.scene || (this._options.scene && this._options.scene === currentState.scene.id)) {
+      D.Scene.loadKeyframeById(this._options.keyframe);
+    } else {
+      D.Story.loadScene(this._options.scene, this._options.keyframe);
+    }
   }
 }
 
