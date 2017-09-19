@@ -21,6 +21,10 @@ class Wait {
     this['_' + this._options.event + 'Action']();
   }
 
+  forceEnd() {
+    this._timer.destroy('wait');
+  }
+
   _waitAction() {
     this._timer.setRunLimit('wait', this._options.duration ? this._options.duration : 1000);
     this._timer.start('wait');

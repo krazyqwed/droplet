@@ -27,7 +27,7 @@ class Scene {
 
   init() {
     D.SceneStore.subscribe('actionFired', () => {
-      D.SceneStore.setData('autoContinue', false);
+      D.SceneStore.setData('autoContinue', false, false);
       this.fastForward();
     });
 
@@ -83,6 +83,7 @@ class Scene {
     D.SceneStore.setData('fastForward', false);
     D.Character.forceEndAnimations();
     D.Picture.forceEndAnimations();
+    D.Wait.forceEnd();
 
     if (this._subframe < this._scene.keyframes[this._keyframe].actions.length - 1) {
       ++this._subframe;

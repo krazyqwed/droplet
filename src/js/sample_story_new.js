@@ -81,7 +81,7 @@ export default {
                 id: 1,
                 position: [50, 75],
                 from: [0, 0],
-                duration: 100
+                duration: 30
               },
               autoContinue: true
             },

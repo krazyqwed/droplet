@@ -17,7 +17,7 @@ class ActionQueue {
       D[moduleClassName].handleAction(action.options);
       delete this._queue[type][index];
 
-      if (action.autoContinue) {
+      if (action.autoContinue || action.module === 'wait') {
         D.SceneStore.setData('autoContinue', true, false);
       }
     });
