@@ -135,8 +135,12 @@ class CharacterCollection {
   }
 
   getState() {
-    return this._characters.map((character) => {
-      return character.getState();
+    return this._characters.filter((character) => {
+      const state = character.getState();
+
+      if (state.visible) {
+        return state;
+      }
     });
   }
 

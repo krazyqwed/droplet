@@ -105,8 +105,12 @@ class PictureCollection {
   }
 
   getState() {
-    return this._pictures.map((picture) => {
-      return picture.getState();
+    return this._pictures.filter((picture) => {
+      const state = picture.getState();
+
+      if (state.visible) {
+        return state;
+      }
     });
   }
 

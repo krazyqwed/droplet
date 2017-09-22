@@ -120,7 +120,7 @@ class Sound {
     });
 
     CommonHelper.requestTimeout(() => {
-      this._createMusic(data.sound);
+      this._createMusic(data.bgm);
 
       data.sounds.forEach((sound) => {
         if (sound) {

@@ -6,6 +6,7 @@ class Scene {
     this._sceneLoaded = false;
 
     this._keyframe = 0;
+    this._keyframeId = 0;
     this._subframe = 0;
     this._loadedByAction = false;
 
@@ -42,10 +43,11 @@ class Scene {
     this._input();
   }
 
-  loadScene(scene, keyframe) {
+  loadScene(scene, keyframe, subframe = 0) {
     this._scene = scene;
     this._sceneLoaded = false;
     this._keyframe = keyframe;
+    this._subframe = subframe;
 
     this._prepareScene();
   }
@@ -63,6 +65,7 @@ class Scene {
       D.SceneStore.setData('fastForward', false);
 
       this._keyframe = i;
+      this._keyframeId = keyframe.id;
       this._loadKeyframe(this._scene.keyframes[i]);
     });
   }
@@ -99,7 +102,8 @@ class Scene {
   getState() {
     return {
       scene: this._scene,
-      keyframe: this._keyframe
+      keyframe: this._keyframeId,
+      subframe: this._subframe
     }
   }
 
@@ -178,6 +182,12 @@ class Scene {
   }
 
   _loadKeyframe(keyframe) {
+    if (D.SceneStore.getData('loadFromSave')) {
+      this._resetRunnings();
+      this._loadSubframe(keyframe.actions[this._subframe]);
+      return;
+    }
+
     this._subframe = 0;
 
     if (this._handleConditions()) {

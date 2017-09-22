@@ -90,12 +90,13 @@ class Save {
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const saveData = {
-        date: new Date().toString(),
+        date: new Date().getTime(),
         thumbnail: canvas.toDataURL('image/jpeg', 1),
         title: D.Scene.getState().scene.title,
         state: {
           scene: D.Scene.getState().scene.id,
           keyframe: D.Scene.getState().keyframe,
+          subframe: D.Scene.getState().subframe,
           characters: D.Character.getState(),
           pictures: D.Picture.getState(),
           variables: D.Variable.getState(),
@@ -148,7 +149,7 @@ class Save {
   _load(data) {
     D.SceneStore.setData('loadFromSave', true);
     D.Variable.setState(data.state.variables);
-    D.Story.loadScene(data.state.scene, data.state.keyframe);
+    D.Story.loadScene(data.state.scene, data.state.keyframe, data.state.subframe);
     D.Character.setState(data.state.characters);
     D.Picture.setState(data.state.pictures);
     D.Background.setState(data.state.background);

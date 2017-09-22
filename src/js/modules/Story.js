@@ -9,12 +9,12 @@ class Story {
     this.loadScene(sampleStory.startingScene);
   }
 
-  loadScene(sceneId, keyframe = 1) {
+  loadScene(sceneId, keyframe = 1, subframe = 0) {
     this._sceneId = sceneId;
 
     let scene = this._getSceneById(this._sceneId);
 
-    D.Scene.loadScene(scene, keyframe);
+    D.Scene.loadScene(scene, keyframe, subframe);
     D.SceneStore.setData('gameInProgress', true);
   }
 
