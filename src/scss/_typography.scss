@@ -2,6 +2,7 @@ $font-size-small: 14px;
 $font-size-medium: 20px;
 $font-size-large: 32px;
 $font-size-xlarge: 38px;
+$text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000, 2px 2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, -2px -2px 0 #000;
 
 %text-default {
   font-size: $font-size-xlarge;
@@ -16,4 +17,29 @@ $font-size-xlarge: 38px;
 %text-button-small {
   font-size: $font-size-medium;
   font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: bold;
+  src: url('static/fonts/Roboto-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 300;
+  src: url('static/fonts/Roboto-Light.woff2') format('woff2');
+}
+
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 500;
+  src: url('static/fonts/Roboto-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: normal;
+  src: url('static/fonts/Roboto-Regular.woff2') format('woff2');
 }

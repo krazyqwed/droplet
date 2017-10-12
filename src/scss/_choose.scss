@@ -17,7 +17,7 @@
     font-weight: bold;
     padding: 20px 30px;
     text-align: left;
-    text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: $text-shadow;
 
     &--active {
       background: linear-gradient(0deg, rgba(#000,.6), rgba(#000,0)), rgba(#2a8bff,.4);

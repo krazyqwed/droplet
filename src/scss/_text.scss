@@ -37,7 +37,7 @@ $textbox-width: 95%;
   padding: 10px 30px 60px;
   position: relative;
   text-align: left;
-  text-shadow: 4px 4px 0 rgba(#000,.6), 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+  text-shadow: $text-shadow;
   width: 100%;
   word-wrap: break-word;
 
@@ -140,7 +140,7 @@ $textbox-width: 95%;
   padding: 0 20px;
   position: absolute;
   text-align: center;
-  text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+  text-shadow: $text-shadow;
 }
 
 d-text {

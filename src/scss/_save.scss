@@ -53,7 +53,7 @@
     padding-left: 60px;
     position: absolute;
     text-align: left;
-    text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: $text-shadow;
     top: 0;
     width: 100%;
   }
@@ -94,7 +94,7 @@
     position: absolute;
     right: 380px;
     text-align: left;
-    text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: $text-shadow;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -105,7 +105,7 @@
     font-weight: bold;
     left: 380px;
     position: absolute;
-    text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: $text-shadow;
     top: 20px;
   }
 
@@ -134,7 +134,7 @@
     left: 20px;
     line-height: 40px;
     position: absolute;
-    text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: $text-shadow;
     top: 20px;
     width: 80px;
   }

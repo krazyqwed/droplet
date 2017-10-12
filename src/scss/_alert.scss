@@ -46,7 +46,7 @@
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 60px;
-    text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;
+    text-shadow: $text-shadow;
   }
 
   .d_button {
