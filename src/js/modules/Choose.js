@@ -25,6 +25,7 @@ class Choose {
     this._selected = false;
     D.SceneStore.setData('interactionRunning', true);
 
+    this.clearChoose();
     this._buildItems();
     this._showChoose();
   }
@@ -84,7 +85,6 @@ class Choose {
 
   _showChoose() {
     this._dom.chooseWrap.classList.add('d_gui-element--disable');
-
     this._dom.chooseWrap.offsetHeight;
     this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
     this._dom.chooseWrap.classList.add('d_gui-element--visible');
@@ -116,15 +116,15 @@ class Choose {
 
       D.SceneStore.setData('interactionRunning', false);
 
+      this._hideChoose();
+
       if (item.goTo) {
-        if (item.goTo.scene) {
-          D.Story.loadScene(item.goTo.scene);
-        } else {
-          D.Scene.loadKeyframeById(item.goTo.keyframe);
-        }
+        D.Goto.handleAction(item.goTo);
+      } else {
+        D.SceneStore.setData('autoContinue', true, false);
+        D.SceneStore.triggerCallback('autoContinue');
       }
 
-      this._hideChoose();
       this._timer.destroy('chose');
     }
   }

@@ -1,24 +1,8 @@
+import sampleVariables from '../sample_variables';
+
 class Variable {
   constructor() {
-    this._sampleVariables = {
-      __globals__: {
-        player: {
-          fullName: 'John Doe',
-          nickname: 'John',
-          color: '#f0f',
-          bgColor: '#56b30c'
-        }
-      },
-      test: 0,
-      test_group: {
-        inner: 'test inner',
-        inner_group: {
-          inner: 0
-        }
-      }
-    };
-
-    this._variables = this._sampleVariables;
+    this._variables = sampleVariables;
   }
 
   handleAction(action) {
@@ -74,8 +58,8 @@ class Variable {
     }
   }
 
-  if(condition) {
-    const equation = condition.match(/(.*) ([!><=]+) (.*)/);
+  if(expression) {
+    const equation = expression.match(/(.*) ([!><=]+) (.*)/);
     const variable = this.get(equation[1]);
     let result = false;
 

@@ -5,8 +5,8 @@ class Scene {
     this._scene = false;
     this._sceneLoaded = false;
 
+    this._keyframeId = false;
     this._keyframe = 0;
-    this._keyframeId = 0;
     this._subframe = 0;
     this._loadedByAction = false;
 
@@ -43,30 +43,29 @@ class Scene {
     this._input();
   }
 
-  loadScene(scene, keyframe, subframe = 0) {
+  loadScene(scene, keyframeId = false, subframe = 0) {
     this._scene = scene;
     this._sceneLoaded = false;
-    this._keyframe = keyframe;
+    this._keyframeId = keyframeId || scene.startingKeyframe;
     this._subframe = subframe;
 
     this._prepareScene();
   }
 
-  loadKeyframeById(keyframeId) {
+  loadKeyframeById(id) {
     D.ActionQueue.empty('frame');
 
     this._loadedByAction = false;
 
-    this._scene.keyframes.forEach((keyframe, i) => {
-      if (keyframeId !== keyframe.id) {
+    this._scene.keyframes.forEach((keyframe) => {
+      if (id !== keyframe.id) {
         return;
       }
 
       D.SceneStore.setData('fastForward', false);
 
-      this._keyframe = i;
-      this._keyframeId = keyframe.id;
-      this._loadKeyframe(this._scene.keyframes[i]);
+      this._keyframe = keyframe;
+      this._loadKeyframe(keyframe);
     });
   }
 
@@ -90,19 +89,18 @@ class Scene {
     D.Picture.forceEndAnimations();
     D.Wait.forceEnd();
 
-    if (this._subframe < this._scene.keyframes[this._keyframe].actions.length - 1) {
+    if (this._subframe < this._keyframe.actions.length - 1) {
       ++this._subframe;
-      this._loadSubframe(this._scene.keyframes[this._keyframe].actions[this._subframe]);
+      this._loadSubframe(this._keyframe.actions[this._subframe]);
     } else {
-      const goto = this._scene.keyframes[this._keyframe].goto;
-      D.Goto.handleAction({ scene: goto.scene, keyframe: goto.keyframe });
+      D.Goto.handleAction(this._keyframe.goto);
     }
   }
 
   getState() {
     return {
       scene: this._scene,
-      keyframe: this._keyframeId,
+      keyframe: this._keyframe.id,
       subframe: this._subframe
     }
   }
@@ -226,7 +224,7 @@ class Scene {
   }
 
   _handleConditions() {
-    if (this._scene.keyframes[this._keyframe].condition && !D.Variable.if(this._scene.keyframes[this._keyframe].condition)) {
+    if (this._keyframe.condition && !D.Variable.if(this._keyframe.condition)) {
       this.loadNextFrame();
 
       return true;
@@ -261,7 +259,7 @@ class Scene {
     }
 
     if (event.over) {
-      this.loadKeyframeById(this._keyframe);
+      this.loadKeyframeById(this._keyframeId);
 
       D.SceneStore.setData('loadFromSave', false);
       D.GameMenu.show();

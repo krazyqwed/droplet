@@ -1,11 +1,12 @@
 export default {
   title: 'My First Novel',
-  startingScene: 1,
+  startingScene: '1',
   scenes: [
     {
-      id: 1,
+      id: '1',
       title: 'Prologue',
       description: 'Lorem ipsum dolor sit amet.',
+      startingKeyframe: '0',
       pre: [
         {
           module: 'background',
@@ -34,8 +35,112 @@ export default {
       ],
       keyframes: [
         {
-          id: 1,
-          goto: { keyframe: 2 },
+          id: '0',
+          goto: {
+            conditions: [
+              {
+                expression: 'conditional_test < 0',
+                keyframe: '1001'
+              },
+              {
+                expression: 'conditional_test = 0',
+                keyframe: '1002'
+              },
+              {
+                expression: 'conditional_test > 0',
+                keyframe: '1003'
+              }
+            ]
+          },
+          actions: [
+            {
+              module: 'choose',
+              options: {
+                items: [
+                  {
+                    text: 'Set the variable to -1',
+                    variable: [{
+                      name: 'conditional_test',
+                      value: '-1'
+                    }],
+                  },
+                  {
+                    text: 'Set the variable to 0',
+                    variable: [{
+                      name: 'conditional_test',
+                      value: '0'
+                    }],
+                  },
+                  {
+                    text: 'Set the variable to 1',
+                    variable: [{
+                      name: 'conditional_test',
+                      value: '1'
+                    }],
+                  }
+                ]
+              }
+            },
+            {
+              module: 'dialog',
+              options: {
+                text: 'The next keyframe is based on the variable\'s value (<d-text d-var="conditional_test"></d-text>) you set.'
+              }
+            }
+          ]
+        },
+        {
+          id: '1001',
+          goto: { keyframe: '10001' },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'I\'m number 1'
+              }
+            }
+          ]
+        },
+        {
+          id: '1002',
+          goto: { keyframe: '10001' },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'I\'m number 2'
+              }
+            }
+          ]
+        },
+        {
+          id: '1003',
+          goto: { keyframe: '10001' },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'I\'m number 3'
+              }
+            }
+          ]
+        },
+        {
+          id: '10001',
+          condition: 'conditional_test = 0',
+          goto: { keyframe: '1' },
+          actions: [
+            {
+              module: 'dialog',
+              options: {
+                text: 'And this keyframe is only visible, when the variable was set to 0...'
+              }
+            }
+          ]
+        },
+        {
+          id: '1',
+          goto: { keyframe: '2' },
           actions: [
             [
               {
@@ -76,7 +181,7 @@ export default {
                         value: '1'
                       }],
                       goTo: {
-                        keyframe: 102
+                        keyframe: '102'
                       }
                     },
                     {
@@ -86,13 +191,13 @@ export default {
                         value: '-1'
                       }],
                       goTo: {
-                        keyframe: 103
+                        keyframe: '103'
                       }
                     },
                     {
                       text: '<d-text d-blink="4">Restart scene</d-text>',
                       goTo: {
-                        scene: 1
+                        scene: '1'
                       }
                     },
                     {
@@ -102,7 +207,7 @@ export default {
                         value: '0'
                       }],
                       goTo: {
-                        keyframe: 101
+                        keyframe: '101'
                       }
                     }
                   ]
@@ -112,8 +217,8 @@ export default {
           ]
         },
         {
-          id: 101,
-          goto: { keyframe: 2 },
+          id: '101',
+          goto: { keyframe: '2' },
           actions: [
             {
               module: 'dialog',
@@ -124,8 +229,8 @@ export default {
           ]
         },
         {
-          id: 102,
-          goto: { keyframe: 2 },
+          id: '102',
+          goto: { keyframe: '2' },
           actions: [
             {
               module: 'dialog',
@@ -136,8 +241,8 @@ export default {
           ]
         },
         {
-          id: 103,
-          goto: { keyframe: 2 },
+          id: '103',
+          goto: { keyframe: '2' },
           actions: [
             {
               module: 'dialog',
@@ -148,7 +253,7 @@ export default {
           ]
         },
         {
-          id: 321,
+          id: '321',
           actions: [
             {
               module: 'dialog',
@@ -159,8 +264,8 @@ export default {
           ]
         },
         {
-          id: 2,
-          goto: { keyframe: 3 },
+          id: '2',
+          goto: { keyframe: '3' },
           actions: [
             {
               module: 'dialog',
@@ -177,8 +282,8 @@ export default {
           ]
         },
         {
-          id: 3,
-          goto: { keyframe: 4 },
+          id: '3',
+          goto: { keyframe: '4' },
           actions: [
             [
               {
@@ -200,8 +305,8 @@ export default {
           ]
         },
         {
-          id: 4,
-          goto: { keyframe: 5 },
+          id: '4',
+          goto: { keyframe: '5' },
           actions: [
             {
               module: 'picture',
@@ -222,8 +327,8 @@ export default {
           ]
         },
         {
-          id: 5,
-          goto: { keyframe: 6 },
+          id: '5',
+          goto: { keyframe: '6' },
           actions: [
             {
               autoContinue: true,
@@ -246,8 +351,8 @@ export default {
           ]
         },
         {
-          id: 6,
-          goto: { keyframe: 7 },
+          id: '6',
+          goto: { keyframe: '7' },
           actions: [
             {
               module: 'dialog',
@@ -306,8 +411,8 @@ export default {
           ]
         },
         {
-          id: 7,
-          goto: { scene: 2, keyframe: 1 },
+          id: '7',
+          goto: { scene: '2' },
           actions: [
             {
               module: 'dialog',
@@ -329,9 +434,10 @@ export default {
       ]
     },
     {
-      id: 2,
+      id: '2',
       title: 'Prologue',
       description: 'Lorem ipsum dolor sit amet.',
+      startingKeyframe: '1',
       pre: [
         {
           module: 'background',
@@ -351,8 +457,8 @@ export default {
       ],
       keyframes: [
         {
-          id: 1,
-          goto: { keyframe: 2 },
+          id: '1',
+          goto: { keyframe: '2' },
           actions: [
             {
               module: 'dialog',
@@ -398,8 +504,8 @@ export default {
           ]
         },
         {
-          id: 2,
-          goto: { scene: 1, keyframe: 1 },
+          id: '2',
+          goto: { scene: '1' },
           actions: [
             {
               module: 'dialog',

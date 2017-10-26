@@ -9,7 +9,7 @@ class Story {
     this.loadScene(sampleStory.startingScene);
   }
 
-  loadScene(sceneId, keyframe = 1, subframe = 0) {
+  loadScene(sceneId, keyframe = false, subframe = 0) {
     this._sceneId = sceneId;
 
     let scene = this._getSceneById(this._sceneId);
