@@ -131,13 +131,8 @@ class CharacterCollection {
   }
 
   getState() {
-    return this._characters.filter(character => {
-      const state = character.getState();
-
-      if (state.visible) {
-        return state;
-      }
-    });
+    const characters = this._characters.filter(character => character.getState().visible);
+    return characters.map(character => character.getState());
   }
 
   setState(data) {
