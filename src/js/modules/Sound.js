@@ -98,9 +98,7 @@ class Sound {
       volume: this._bgm._volume
     };
 
-    let sounds = this._sounds.map((sound) => {
-      return sound.getState();
-    });
+    const sounds = this._sounds.map(sound => sound.getState());
 
     return {
       bgm: bgm,
@@ -168,27 +166,19 @@ class Sound {
   }
 
   _playSound(options) {
-    let foundSound = this._sounds.some((sound) => {
-      if (sound.getSound() === options.sound) {
-        sound.handleAction(options);
-        return true;
-      }
-    });
+    let foundSound = this._sounds.find(sound => sound.getSound() === options.sound);
 
     if (!foundSound) {
-      let sound = new Audio();
-      sound.handleAction(options);
-      this._sounds.push(sound);
+      foundSound = new Audio();
+      this._sounds.push(foundSound);
     }
+
+    foundSound.handleAction(options);
   }
 
   _stopSound(options) {
-    this._sounds.some((sound) => {
-      if (sound.getSound() === options.sound) {
-        sound.handleAction(options);
-        return true;
-      }
-    });
+    const foundSound = this._sounds.some(sound => sound.getSound() === options.sound);
+    foundSound.handleAction(options);
   }
 }
 

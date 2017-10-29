@@ -114,28 +114,24 @@ class CharacterCollection {
     character.setAction(action);
   }
 
-  loadCharacterById(id) {
-    return this._characters.filter((character) => {
-      if (character.getId() === parseInt(id, 10)) {
-        return character;
-      }
-    })[0];
+  loadCharacterById(characterId) {
+    return this._characters.find(character => character.getId() === parseInt(characterId, 10));
   }
 
   hideCharacters() {
-    this._characters.forEach((character) => {
+    this._characters.forEach(character => {
       character.hide();
     });
   }
 
   forceEndAnimations() {
-    this._characters.forEach((character) => {
+    this._characters.forEach(character => {
       character.forceEndAnimations();
     });
   }
 
   getState() {
-    return this._characters.filter((character) => {
+    return this._characters.filter(character => {
       const state = character.getState();
 
       if (state.visible) {
@@ -147,7 +143,7 @@ class CharacterCollection {
   setState(data) {
     CommonHelper.requestTimeout(() => {
       data.forEach((state, i) => {
-        this._characters.forEach((character) => {
+        this._characters.forEach(character => {
           if (character.getId() === data[i].id) {
             character.setState(state);
           }

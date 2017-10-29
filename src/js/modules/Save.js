@@ -105,6 +105,8 @@ class Save {
         }
       };
 
+      console.log(saveData.state.characters);
+
       this._saves[this._selectedSaveSlot] = saveData;
 
       if (SystemHelper.isElectron()) {

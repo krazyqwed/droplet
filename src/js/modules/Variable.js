@@ -15,7 +15,7 @@ class Variable {
     name = name.split('.');
 
     let obj = Object.assign({}, this._variables);
-    let len = name.length;
+    const len = name.length;
 
     for (let i = 0; i < len - 1; i++) {
       obj = obj[name[i]];
