@@ -154,6 +154,7 @@ class Save {
     D.Picture.setState(data.state.pictures);
     D.Background.setState(data.state.background);
     D.Sound.setState(data.state.sounds);
+    D.History.erase();
 
     CommonHelper.requestTimeout(() => {
       this._hide();

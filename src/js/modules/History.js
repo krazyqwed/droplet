@@ -16,13 +16,17 @@ class History {
     this._events.transitionEnd = this._transitionEndEvent.bind(this);
   }
 
-  writeHistory(actor, text) {
+  write(actor, text) {
     const entry = {
       actor: actor,
       text: text
     };
 
     this._history.push(entry);
+  }
+
+  erase() {
+    this._history = [];
   }
 
   show() {
