@@ -136,6 +136,8 @@ class CharacterCollection {
   }
 
   setState(data) {
+    this.hideCharacters();
+
     CommonHelper.requestTimeout(() => {
       data.forEach((state, i) => {
         this._characters.forEach(character => {
