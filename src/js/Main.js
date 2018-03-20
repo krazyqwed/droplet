@@ -127,7 +127,7 @@ class Main {
     gameMenuSave.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
 
     const gameMenuSettings = this._dom.mainWarpper.querySelector('.js_settings .js_gui_element');
-    gameMenuSettings.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
+    gameMenuSettings.style.transform = 'scale(' + scale + ')';
 
     const gameMenuAlert = this._dom.mainWarpper.querySelector('.js_alert .js_gui_element');
     gameMenuAlert.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';

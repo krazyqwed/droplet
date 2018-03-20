@@ -1,5 +1,8 @@
 .d_settings-wrap {
+  align-items: center;
   bottom: 0;
+  display: flex;
+  justify-content: center;
   left: 0;
   opacity: 0;
   position: fixed;
@@ -20,12 +23,9 @@
 
 .d_settings {
   height: 1080px;
-  left: 50%;
   overflow: hidden;
   position: absolute;
-  padding: 120px 30px;
-  top: 50%;
-  transform-origin: left top;
+  transform-origin: center;
   width: 1920px;
 
   &:before {
@@ -66,7 +66,8 @@
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    height: 100%;
+    height: calc(100% - 240px);
+    margin: 120px 30px;
     overflow: auto;
     overflow-y: visible;
     padding: 30px;
@@ -89,7 +90,7 @@
 
   &__back {
     bottom: 20px;
-    left: 60px;
+    left: 30px;
     position: absolute;
   }
 }
