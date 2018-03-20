@@ -150,7 +150,7 @@ class DialogClass {
     textHelper.parentNode.removeChild(textHelper);
 
     if (!this._options.noHistory) {
-      D.History.writeHistory(this._options.character, this._text);
+      D.History.write(this._options.character, this._text);
     }
 
     this._textLength = this._text.length;
