@@ -105,16 +105,13 @@ class PictureCollection {
   }
 
   getState() {
-    return this._pictures.filter((picture) => {
-      const state = picture.getState();
-
-      if (state.visible) {
-        return state;
-      }
-    });
+    const pictures = this._pictures.filter(picture => picture.getState().visible);
+    return pictures.map(picture => picture.getState());
   }
 
   setState(data) {
+    this.hidePictures();
+
     CommonHelper.requestTimeout(() => {
       data.forEach((state, i) => {
         this._pictures.forEach((picture) => {
