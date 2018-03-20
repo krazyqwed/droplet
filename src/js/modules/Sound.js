@@ -109,13 +109,14 @@ class Sound {
   setState(data) {
     if (this._bgm) {
       this._bgm.unload();
-      delete this._bgm;
     }
 
-    this._sounds.forEach((sound, i) => {
+    this._sounds.forEach((sound) => {
       sound.stopImmidiately();
-      delete this._sounds[i];
     });
+
+    this._bgm = false;
+    this._sounds = [];
 
     CommonHelper.requestTimeout(() => {
       this._createMusic(data.bgm);
@@ -166,7 +167,9 @@ class Sound {
   }
 
   _playSound(options) {
-    let foundSound = this._sounds.find(sound => sound.getSound() === options.sound);
+    let foundSound;
+
+    foundSound = this._sounds.find(sound => sound.getSound() === options.sound);
 
     if (!foundSound) {
       foundSound = new Audio();
@@ -177,7 +180,7 @@ class Sound {
   }
 
   _stopSound(options) {
-    const foundSound = this._sounds.some(sound => sound.getSound() === options.sound);
+    const foundSound = this._sounds.find(sound => sound.getSound() === options.sound);
     foundSound.handleAction(options);
   }
 }
