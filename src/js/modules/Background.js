@@ -33,10 +33,7 @@ class Background {
     this._dom.blink = document.querySelector('.js_blink');
 
     this._timer = new Timer();
-    this._timer.addEvent('load', {
-      callback: this._loadEvent.bind(this),
-      runLimit: 30
-    });
+    this._timer.addEvent('load', { callback: this._loadEvent.bind(this) });
     this._timer.addEvent('unload', {
       callback: this._unloadEvent.bind(this),
       runLimit: 30
@@ -134,7 +131,7 @@ class Background {
     let background = PIXI.Texture.fromImage(this._options.image);
 
     this._background.setTexture(background);
-    this._background.alpha = 0.001;
+    this._background.alpha = 1;
     this._background.position.z = 1;
 
     this._dom.fader.classList.remove('d_fader--visible');
@@ -142,10 +139,6 @@ class Background {
   }
 
   _loadEvent(event) {
-    const percent = event.runCount / event.runLimit;
-
-    this._background.alpha = percent + 0.001;
-
     if (event.over) {
       this._timer.destroy('load');
       D.SceneStore.triggerCallback('autoContinue');
