@@ -90,7 +90,7 @@ class Timer {
   setRunLimit(name, limit) {
     for (let i in this._events) {
       if (this._events[i].name === name) {
-        this._events[i].runLimit = limit;
+        this._events[i].runLimit = limit ? limit : this._events[i].runLimit;
       }
     }
   }
