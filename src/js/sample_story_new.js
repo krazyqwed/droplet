@@ -490,7 +490,7 @@ export default {
                 options: {
                   id: 1,
                   event: 'pose',
-                  pose: 2
+                  pose: 6
                 }
               },
               {

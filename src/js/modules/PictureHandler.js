@@ -9,6 +9,7 @@ class PictureHandler {
     this._sprite = new PIXI.Sprite();
     this._sprite.setTexture(this._image);
     this._clone = new PIXI.Sprite();
+    this._mask = new PIXI.Sprite();
     this._timer = new Timer();
     this._animationRunning = false;
     this._timer.addEvent('show', {
@@ -46,6 +47,12 @@ class PictureHandler {
     this._clone.anchor.y = 0.5;
     this._clone.position.z = 3;
     D.Stage.addChild(this._clone);
+
+    this._mask.alpha = 1;
+    this._mask.anchor.x = 0.5;
+    this._mask.anchor.y = 0.5;
+    this._mask.position.z = 3;
+    D.Stage.addChild(this._mask);
   }
 
   isAnimationRunning() {
@@ -125,12 +132,41 @@ class PictureHandler {
   _switch(image) {
     this._image = PIXI.Texture.fromFrame(image);
     this._sprite.position.z = 2;
+    this._sprite.mask = this._mask;
 
     this._clone.alpha = 0.001;
     this._clone.position.z = 3;
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
     this._clone.setTexture(this._image);
+
+    const imageWidth = this._image.frame.width;
+    const imageHeight = this._image.frame.height;
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = imageWidth;
+    maskCanvas.height = imageHeight;
+    const maskContext = maskCanvas.getContext('2d');
+    maskContext.drawImage(this._image.baseTexture.source, this._image.frame.x, this._image.frame.y, this._image.frame.width, this._image.frame.height, 0, 0, this._image.frame.width, this._image.frame.height);
+    const imgPixels = maskContext.getImageData(0, 0, imageWidth, imageHeight);
+
+    for (let y = 0; y < imageHeight; ++y){
+      for (let x = 0; x < imageWidth; ++x){
+        let i = (y * 4) * imageWidth + x * 4;
+        imgPixels.data[i] = 255;
+        imgPixels.data[i + 1] = 255;
+        imgPixels.data[i + 2] = 255;
+      }
+    }
+
+    maskContext.putImageData(imgPixels, 0, 0, 0, 0, imageWidth, imageHeight);
+    const maskImage = new Image();
+    maskImage.src = maskCanvas.toDataURL();
+
+    console.log(maskImage.src);
+
+    this._mask.position.x = this._sprite.position.x;
+    this._mask.position.y = this._sprite.position.y;
+    this._mask.setTexture(new PIXI.Texture(new PIXI.BaseTexture(maskImage)));
 
     this._clone.visible = true;
   }
@@ -268,14 +304,14 @@ class PictureHandler {
   _switchEvent(event) {
     const percent = event.runCount / event.runLimit;
 
-    this._sprite.alpha = 1 - percent + 0.001;
-    const clampAlpha = Math.min(Math.max(this._sprite.alpha, 0), 0.97);
-    this._clone.alpha = (0.97 - clampAlpha) / (1 - clampAlpha);
+    //this._sprite.alpha = 1 - percent + 0.001;
+    //this._clone.alpha = percent + 0.001;
 
     if (event.over) {
-      this._sprite.setTexture(this._image);
+      //this._sprite.setTexture(this._image);
       this._sprite.alpha = 1;
       this._sprite.position.z = 3;
+      //this._sprite.mask = false;
       this._clone.alpha = 0.001;
       this._clone.position.z = 2;
 
