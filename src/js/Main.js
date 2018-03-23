@@ -1,7 +1,7 @@
 import hyperHTML from 'hyperhtml';
 
 import StringHelper from './helpers/String';
-import Loader from './modules/Loader';
+import ResourceLoader from './modules/ResourceLoader';
 import MainMenu from './modules/MainMenu';
 import GameMenu from './modules/GameMenu';
 import Variable from './modules/Variable';
@@ -32,7 +32,7 @@ class Main {
       App: null,
       Renderer: null,
       Stage: null,
-      Loader: Loader,
+      ResourceLoader: ResourceLoader,
 
       EngineStore: new EngineStore(),
       SceneStore: new SceneStore(),
@@ -162,7 +162,7 @@ class Main {
       'birds.mp3'
     ];
 
-    D.Loader.on('after', (resource, next) => {
+    D.ResourceLoader.on('after', (resource, next) => {
       const filename = resource.data.meta.image;
       assetsToLoader.push(filename + '_avatar.png');
 
@@ -181,10 +181,10 @@ class Main {
       next();
     });
 
-    D.Loader.on('complete', (loader) => {
-      D.Loader.reset();
+    D.ResourceLoader.on('complete', (loader) => {
+      D.ResourceLoader.reset();
 
-      D.Loader.on('after', (resource, next) => {
+      D.ResourceLoader.on('after', (resource, next) => {
         if (resource.type === 3) {
           const image = new Image();
           image.src = resource.url;
@@ -208,12 +208,12 @@ class Main {
         }
       });
 
-      D.Loader.on('progress', this._loadProgress.bind(this));
-      D.Loader.on('complete', this._loadFinished.bind(this));
-      D.Loader.load(assetsToLoader);
+      D.ResourceLoader.on('progress', this._loadProgress.bind(this));
+      D.ResourceLoader.on('complete', this._loadFinished.bind(this));
+      D.ResourceLoader.load(assetsToLoader);
     });
 
-    D.Loader.load(assetDefinersToLoader);
+    D.ResourceLoader.load(assetDefinersToLoader);
   }
 
   _loadProgress(progress, resource) {

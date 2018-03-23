@@ -1,10 +1,10 @@
-class Loader {
+class ResourceLoader {
   constructor() {
     this.reset();
   }
 
   reset() {
-    this._loader = new ResourceLoader('static/');
+    this._loader = new Loader('static/');
     this._onBefore = function() {};
     this._onAfter = function() {};
     this._onProgress = function() {};
@@ -37,4 +37,4 @@ class Loader {
   }
 }
 
-export default new Loader();
+export default new ResourceLoader();
