@@ -37,6 +37,7 @@
     "cpy-cli": "1.0.1",
     "cross-env": "5.1.4",
     "git-latest-semver-tag": "1.0.2",
+    "hyperhtml": "2.6.0",
     "javascript-obfuscator": "0.14.3",
     "ncp": "2.0.0",
     "node-sass": "4.7.2",
@@ -45,6 +46,8 @@
     "rimraf": "2.6.2",
     "rollup": "0.57.0",
     "rollup-plugin-babel": "3.0.3",
+    "rollup-plugin-node-resolve": "3.3.0",
+    "rollup-plugin-string": "2.0.2",
     "rollup-plugin-uglify": "3.0.0",
     "semver": "5.5.0",
     "uglify-es": "3.3.9"

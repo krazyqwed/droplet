@@ -1,3 +1,5 @@
+import hyperHTML from 'hyperhtml';
+
 import StringHelper from './helpers/String';
 import Loader from './modules/Loader';
 import MainMenu from './modules/MainMenu';
