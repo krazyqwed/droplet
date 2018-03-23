@@ -7,7 +7,7 @@ class PictureHandler {
 
     this._image = PIXI.Texture.fromFrame(image);
     this._sprite = new PIXI.Sprite();
-    this._sprite.setTexture(this._image);
+    this._sprite.texture = this._image;
     this._clone = new PIXI.Sprite();
     this._timer = new Timer();
     this._animationRunning = false;
@@ -100,7 +100,7 @@ class PictureHandler {
   }
 
   setState(data) {
-    this._sprite.setTexture(PIXI.Texture.fromFrame(data.image));
+    this._sprite.texture = PIXI.Texture.fromFrame(data.image);
     this._sprite.position.x = data.position[0];
     this._sprite.position.y = data.position[1];
     this._sprite.position.new_x = data.position[2];
@@ -112,7 +112,7 @@ class PictureHandler {
   _show(image = false) {
     if (image) {
       this._image = PIXI.Texture.fromFrame(image);
-      this._sprite.setTexture(this._image);
+      this._sprite.texture = this._image;
     }
 
     this._sprite.alpha = 0.001;
@@ -130,7 +130,7 @@ class PictureHandler {
     this._clone.position.z = 3;
     this._clone.position.x = this._sprite.position.x;
     this._clone.position.y = this._sprite.position.y;
-    this._clone.setTexture(this._image);
+    this._clone.texture = this._image;
 
     this._clone.visible = true;
   }
@@ -273,7 +273,7 @@ class PictureHandler {
     this._clone.alpha = (0.97 - clampAlpha) / (1 - clampAlpha); 
 
     if (event.over) {
-      this._sprite.setTexture(this._image);
+      this._sprite.texture = this._image;
       this._sprite.alpha = 1;
       this._sprite.position.z = 3;
       this._clone.alpha = 0.001;

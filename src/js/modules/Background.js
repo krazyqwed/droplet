@@ -23,10 +23,11 @@ class Background {
     this._sceneFader.beginFill(0xFFFFFF);
     this._sceneFader.drawRect(0, 0, 1920, 1080);
     this._sceneFader.endFill();
-    this._sceneFader = new PIXI.Sprite(this._sceneFader.generateTexture());
+    this._sceneFader = new PIXI.Sprite();
     this._sceneFader.tint = 0x000000;
     this._sceneFader.alpha = 0.001;
     this._sceneFader.position.z = 0;
+    D.Renderer.generateTexture(this._sceneFader);
 
     this._dom = {};
     this._dom.fader = document.querySelector('.js_fader');
@@ -84,7 +85,7 @@ class Background {
   }
 
   setState(data) {
-    this._background.setTexture(PIXI.Texture.fromImage(data.background.texture));
+    this._background.texture = PIXI.Texture.fromImage(data.background.texture);
     this._sceneFader.alpha = data.fader.alpha;
     this._sceneFader.z = data.fader.z;
     this._sceneFader.tint = data.fader.tint;
@@ -130,7 +131,7 @@ class Background {
   _load() {
     let background = PIXI.Texture.fromImage(this._options.image);
 
-    this._background.setTexture(background);
+    this._background.texture = background;
     this._background.alpha = 1;
     this._background.position.z = 1;
 
@@ -159,11 +160,11 @@ class Background {
   _change() {
     let background = PIXI.Texture.fromImage(this._options.image);
 
-    this._backgroundClone.setTexture(this._background.texture);
+    this._backgroundClone.texture = this._background.texture;
     this._backgroundClone.alpha = this._background.alpha;
     this._backgroundClone.position.z = 1;
 
-    this._background.setTexture(background);
+    this._background.texture = background;
     this._background.alpha = 0.001;
     this._background.position.z = 0;
 

@@ -172,8 +172,8 @@ class Main {
           const baseTexture = new PIXI.BaseTexture(image);
           const texture = new PIXI.Texture(baseTexture);
           const f = resource.data.frames[frame].frame;
-          texture.setFrame(new PIXI.Rectangle(f.x, f.y, f.w, f.h));
-          PIXI.Texture.addTextureToCache(texture, frame);
+          texture.frame = new PIXI.Rectangle(f.x, f.y, f.w, f.h);
+          PIXI.Texture.addToCache(texture, frame);
         }
         image.src = 'static/' + filename + '.png';
       });
@@ -192,7 +192,7 @@ class Main {
           const texture = new PIXI.Texture(baseTexture);
           const filename = StringHelper.extractFilename(resource.url);
 
-          PIXI.Texture.addTextureToCache(texture, filename);
+          PIXI.Texture.addToCache(texture, filename);
 
           next();
         } else if (resource.type === 4) {
