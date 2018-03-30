@@ -3,11 +3,11 @@ import Timer from './Timer';
 class Choose {
   constructor() {
     this._options = false;
-    this._selected = false;
 
-    this._dom = {};
-    this._dom.chooseWrap = document.querySelector('.js_choose_wrap');
-    this._dom.choose = document.querySelector('.js_choose');
+    this._events = {};
+    this._events.mouseenter = this._setActive.bind(this);
+    this._events.mouseleave = this._unsetActive.bind(this);
+    this._events.select = this._select.bind(this);
 
     this._timer = new Timer();
     this._timer.addEvent('show', {
@@ -20,59 +20,33 @@ class Choose {
     });
   }
 
+  init() {
+    D.HTMLState.set('gui.choose.event.mouseenter', this._events.mouseenter);
+    D.HTMLState.set('gui.choose.event.mouseleave', this._events.mouseenter);
+    D.HTMLState.set('gui.choose.event.select', this._events.select);
+  }
+
   handleAction(options) {
     this._options = options;
     this._selected = false;
     D.SceneStore.setData('interactionRunning', true);
 
-    this.clearChoose();
-    this._buildItems();
     this._showChoose();
   }
 
-  clearChoose() {
-    this._hideChoose();
-    this._dom.choose.innerHTML = '';
+  _setActive(option) {
+    D.HTMLState.set('gui.choose.activeItem', option.index);
   }
 
-  _buildItems() {
-    this._options.items.forEach((item) => {
-      let itemElement = document.createElement('div');
-      itemElement.className = 'd_choose__item';
-      itemElement.innerHTML = item.text;
-      itemElement.addEventListener('mouseenter', this._setActive.bind(this, itemElement));
-      itemElement.addEventListener('mouseleave', this._unsetActive.bind(this, itemElement));
-      itemElement.addEventListener('click', this._select.bind(this, item, itemElement));
-
-      this._dom.choose.appendChild(itemElement);
-    });
-  }
-
-  _setActive(item) {
-    if (this._selected) {
-      return;
-    }
-
-    item.classList.add('d_choose__item--active');
-  }
-
-  _unsetActive(item) {
-    if (this._selected) {
-      return;
-    }
-
-    item.classList.remove('d_choose__item--active');
+  _unsetActive() {
+    D.HTMLState.set('gui.choose.activeItem', false);
   }
 
   _select(item, elem) {
-    if (this._selected) {
-      return;
-    }
-
-    this._selected = true;
+    D.HTMLState.set('gui.choose.enabled', false);
 
     if (item.variable) {
-      item.variable.forEach((variable) => {
+      item.variable.forEach(variable => {
         D.Variable.set(variable.name, variable.value);
       });
     }
@@ -84,36 +58,33 @@ class Choose {
   }
 
   _showChoose() {
-    this._dom.chooseWrap.classList.add('d_gui-element--disable');
-    this._dom.chooseWrap.offsetHeight;
-    this._dom.chooseWrap.classList.remove('d_gui-element--no-fade');
-    this._dom.chooseWrap.classList.add('d_gui-element--visible');
+    this._options.items = this._options.items.map((option, index) => Object.assign(option, { index: index }));
+
+    D.HTMLState.set('gui.choose.enabled', false);
+    D.HTMLState.set('gui.choose.visible', true);
+    D.HTMLState.set('gui.choose.items', this._options.items);
 
     this._timer.start('show');
   }
 
   _hideChoose() {
-    this._dom.chooseWrap.classList.remove('d_gui-element--visible');
+    D.HTMLState.set('gui.choose.visible', false);
   }
 
   _showEvent(event) {
     if (event.over) {
-      this._dom.chooseWrap.classList.remove('d_gui-element--disable');
+      D.HTMLState.set('gui.choose.enabled', true);
       this._timer.destroy('show');
     }
   }
 
   _blinkEvent(event) {
     const item = event.params.item;
-    const itemElement = event.params.itemElement;
 
-    if (event.runCount === 1) {
-      itemElement.classList.add('d_choose__item--blink');
-    }
+    D.HTMLState.set('gui.choose.selectedItem', item.index);
 
     if (event.over) {
-      itemElement.classList.remove('d_choose__item--blink');
-
+      D.HTMLState.set('gui.choose.selectedItem', false);
       D.SceneStore.setData('interactionRunning', false);
 
       this._hideChoose();

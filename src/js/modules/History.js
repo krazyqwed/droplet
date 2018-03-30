@@ -5,15 +5,12 @@ class History {
   constructor() {
     this._history = [];
 
-    this._dom = {};
-    this._dom.wrap = document.querySelector('.js_history');
-    this._dom.content = document.querySelector('.js_history_content');
-    this._dom.back = document.querySelector('.js_history_back');
-    this._dom.back.addEventListener('mousedown', this._hide.bind(this));
-
     this._events = {};
-    this._events.show = this._showEvent.bind(this);
-    this._events.transitionEnd = this._transitionEndEvent.bind(this);
+    this._events.hide = this._hideEvent.bind(this);
+  }
+
+  init() {
+    D.HTMLState.set('history.event.back', this._hide.bind(this));
   }
 
   write(actor, text) {
@@ -30,17 +27,14 @@ class History {
   }
 
   show() {
-    this._generateEntries();
+    D.HTMLState.set('history.visible', true);
+    D.HTMLState.set('history.entries', this._generateEntries());
+    D.SceneStore.setData('menuOpen', true);
 
-    this._dom.wrap.style.removeProperty('display');
-    this._dom.wrap.offsetHeight;
-    this._dom.wrap.removeEventListener('transitionEnd', this._events.transitionEnd);
-    this._dom.wrap.classList.add('d_history-wrap--visible');
-    this._dom.content.scrollTop = this._dom.content.scrollHeight;
-    window.addEventListener('keydown', this._events.show);
+    window.addEventListener('keydown', this._events.hide);
   }
 
-  _showEvent(event) {
+  _hideEvent(event) {
     if (event.which === 27) {
       event.preventDefault();
       this._hide();
@@ -48,49 +42,38 @@ class History {
   }
 
   _hide() {
-    this._dom.wrap.addEventListener('transitionEnd', this._events.transitionEnd);
-    this._dom.wrap.classList.remove('d_history-wrap--visible');
-    this._dom.wrap.style.display = 'none';
+    D.HTMLState.set('history.visible', false);
+    D.SceneStore.setData('menuOpen', false);
 
-    window.removeEventListener('keydown', this._events.show);
+    window.removeEventListener('keydown', this._events.hide);
   }
 
   _generateEntries() {
-    this._dom.content.innerHTML = '';
-
-    this._history.forEach((entry) => {
-      const element = document.createElement('div');
-      element.classList.add('d_history__entry');
-      element.innerHTML = entry.text;
+    const entries = this._history.map((entry, index) => {
+      const properties = {
+        index: index,
+        text: entry.text,
+        avatar: false,
+        color: false
+      };
 
       if (entry.actor !== undefined) {
-        element.classList.add('d_history__entry--avatar');
-
-        const avatar = document.createElement('div');
-        const avatarImage = document.createElement('img');
-        avatar.classList.add('d_history__avatar');
-
         if (entry.actor !== false && entry.actor !== 'player') {
           let actor = D.Character.loadCharacterById(entry.actor);
           actor = actor.getData();
 
-          avatarImage.src = 'static/char_' + actor.id + '_avatar.png';
-          element.style.backgroundColor = 'rgba(' + StringHelper.hexToRgb(actor.color) + ',.4)';
+          properties.avatar = 'static/char_' + actor.id + '_avatar.png';
+          properties.color = 'rgba(' + StringHelper.hexToRgb(actor.color) + ',.4)';
         } else if (entry.actor === 'player') {
-          avatarImage.src = 'static/player_avatar.png';
-          element.style.backgroundColor = 'rgba(' + StringHelper.hexToRgb(D.Variable.get('__globals__.player.bgColor')) + ',.4)';
+          properties.avatar = 'static/player_avatar.png';
+          properties.color = 'rgba(' + StringHelper.hexToRgb(D.Variable.get('__globals__.player.bgColor')) + ',.4)';
         }
-
-        avatar.appendChild(avatarImage);
-        element.appendChild(avatar);
       }
 
-      this._dom.content.appendChild(element);
+      return properties;
     });
-  }
 
-  _transitionEndEvent() {
-    this._dom.wrap.style.display = 'none';
+    return entries;
   }
 }
 

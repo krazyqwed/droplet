@@ -1,40 +1,31 @@
 class GameMenu {
   constructor() {
-    this._dom = {};
-    this._dom.gameMenu = document.querySelector('.js_game_menu');
-    this._dom.history = document.querySelector('.js_game_menu_history');
-    this._dom.save = document.querySelector('.js_game_menu_save');
+    this._events = {};
+    this._events.showHistory = this._showHistory.bind(this);
+    this._events.showSave = this._showSave.bind(this);
+    this._events.showSettings = this._showSettings.bind(this);
+  }
 
-    this._dom.history.addEventListener('mousedown', (event) => {
-      if (event.which !== 1) {
-        return;
-      }
-
-      D.History.show();
-    });
-
-    this._dom.history.addEventListener('mousedown', this._history.bind(this));
-    this._dom.save.addEventListener('mousedown', this._save.bind(this));
+  init() {
+    D.HTMLState.set('gui.gameMenu.event.showHistory', this._events.showHistory);
+    D.HTMLState.set('gui.gameMenu.event.showSave', this._events.showSave);
+    D.HTMLState.set('gui.gameMenu.event.showSettings', this._events.showSettings);
   }
 
   show() {
-    this._dom.gameMenu.classList.add('d_game-menu--visible');
+    D.HTMLState.set('gui.gameMenu.visible', true);
   }
 
-  _history(event) {
-    if (event.which !== 1) {
-      return;
-    }
-
+  _showHistory(event) {
     D.History.show();
   }
 
-  _save(event) {
-    if (event.which !== 1) {
-      return;
-    }
-
+  _showSave(event) {
     D.Save.show(true);
+  }
+
+  _showSettings(event) {
+    D.Settings.show(true);
   }
 }
 

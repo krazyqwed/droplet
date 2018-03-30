@@ -17,6 +17,8 @@
 @import 'backgrounds';
 @import 'button';
 @import 'input';
+@import 'layer';
+@import 'gui';
 @import 'choose';
 @import 'main_menu';
 @import 'game_menu';
@@ -50,7 +52,7 @@ body {
   *:after {
     pointer-events: none;
     user-select: none;
-    -webkit-tap-highlight-color: rgba(#fff,0);
+    -webkit-tap-highlight-color: rgba(#fff, 0);
   }
 }
 
@@ -63,6 +65,16 @@ canvas {
   top: 0;
   transform-origin: left center;
   vertical-align: top;
+}
+
+.d_main-container {
+  flex: 1 0 100%;
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
 }
 
 .d_dimension-helper {
@@ -87,7 +99,7 @@ canvas {
   }
 }
 
-.d_main-wrapper {
+.d_game-wrapper {
   bottom: 0;
   display: flex;
   left: 0;
@@ -114,12 +126,6 @@ canvas {
     left: auto;
     right: -10px;
   }
-
-  *,
-  *:before,
-  *:after {
-    box-sizing: border-box;
-  }
 }
 
 .d_version {
@@ -131,43 +137,6 @@ canvas {
   text-shadow: 2px 2px 0 #000, 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
   top: 20px;
   z-index: 10;
-}
-
-.d_gui-element {
-  opacity: 0;
-  transition: opacity .3s linear;
-
-  &--no-fade {
-    transition: none;
-  }
-
-  &--visible {
-    opacity: 1;
-
-    &.d_gui-interactive * {
-      pointer-events: all;
-    }
-  }
-
-  &--disable,
-  &--disable * {
-    pointer-events: none;
-  }
-}
-
-.d_choose-wrap {
-  align-items: center;
-  display: flex;
-  height: 1080px;
-  justify-content: center;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  padding-bottom: 250px;
-  position: absolute;
-  top: 0;
-  transform-origin: left top;
-  width: 1920px;
 }
 
 .d_fader {

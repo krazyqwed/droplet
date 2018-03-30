@@ -10,9 +10,11 @@ class SceneStore extends Store {
       autoContinue: false,
       nextScene: false,
 
-      dialogRunning: false,
+      textboxRunning: false,
       narratorRunning: false,
       interactionRunning: false,
+
+      menuOpen: false,
 
       loadFromSave: false
     };

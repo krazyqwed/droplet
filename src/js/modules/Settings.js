@@ -3,27 +3,21 @@ import StringHelper from '../helpers/String';
 
 class Settings {
   constructor() {
-    this._dom = {};
-    this._dom.wrap = document.querySelector('.js_settings');
-    this._dom.content = document.querySelector('.js_settings_content');
-    this._dom.back = document.querySelector('.js_settings_back');
-    this._dom.back.addEventListener('mousedown', this._hide.bind(this));
-
     this._events = {};
-    this._events.show = this._showEvent.bind(this);
-    this._events.transitionEnd = this._transitionEndEvent.bind(this);
+    this._events.hide = this._hideEvent.bind(this);
+  }
+
+  init() {
+    D.HTMLState.set('settings.event.back', this._hide.bind(this));
   }
 
   show() {
-    this._dom.wrap.style.removeProperty('display');
-    this._dom.wrap.offsetHeight;
-    this._dom.wrap.removeEventListener('transitionEnd', this._events.transitionEnd);
-    this._dom.wrap.classList.add('d_settings-wrap--visible');
-
-    window.addEventListener('keydown', this._events.show);
+    D.HTMLState.set('settings.visible', true);
+    D.SceneStore.setData('menuOpen', true);
+    window.addEventListener('keydown', this._events.hide);
   }
 
-  _showEvent(event) {
+  _hideEvent(event) {
     if (event.which === 27) {
       event.preventDefault();
       this._hide();
@@ -31,14 +25,13 @@ class Settings {
   }
 
   _hide() {
-    this._dom.wrap.addEventListener('transitionEnd', this._events.transitionEnd);
-    this._dom.wrap.classList.remove('d_settings-wrap--visible');
+    D.HTMLState.set('settings.visible', false);
+    D.SceneStore.setData('menuOpen', false);
+    window.removeEventListener('keydown', this._events.hide);
 
-    window.removeEventListener('keydown', this._events.show);
-  }
-
-  _transitionEndEvent() {
-    this._dom.wrap.style.display = 'none';
+    if (!D.SceneStore.getData('gameInProgress')) {
+      D.HTMLState.set('mainMenu.visible', true);
+    }
   }
 }
 

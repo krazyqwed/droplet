@@ -2,16 +2,7 @@
   align-items: center;
   display: flex;
   flex-direction: row-reverse;
-  height: 1080px;
   justify-content: flex-start;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  padding: 30px;
-  position: absolute;
-  top: 0;
-  transform-origin: left top;
-  width: 1920px;
 
   &__inner {
     @include stripe;

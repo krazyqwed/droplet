@@ -1,19 +1,18 @@
 .d_input-wrap {
-  align-items: center;
   display: flex;
-  height: 1080px;
-  justify-content: center;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  padding-bottom: 250px;
+  left: 50%;
   position: absolute;
-  top: 0;
-  transform-origin: left top;
-  width: 1920px;
+  top: calc(50% - 127px);
+  transform: translate(-50%, -50%);
+  width: 50%;
 
+  .d_input {
+    flex: 1 0 auto;
+    width: auto;
+  }
 
   .d_button {
+    flex: 0 0 auto;
     margin-left: 16px;
   }
 }

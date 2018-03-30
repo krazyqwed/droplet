@@ -23,15 +23,15 @@ export default {
               volume: 0.3
             },
             {
-              type: 'dialog',
-              dialog: [
-                'Ok, that\'s the first dialog!',
+              type: 'textbox',
+              textbox: [
+                'Ok, that\'s the first textbox!',
                 'And that\'s the second...'
               ]
             },
             {
               type: 'narrator',
-              dialog: 'Sed distinctio placeat ea vitae, cupiditate voluptates alias.',
+              textbox: 'Sed distinctio placeat ea vitae, cupiditate voluptates alias.',
               position: 'top',
               noNext: true
             }
@@ -48,9 +48,9 @@ export default {
               duration: 10
             },
             {
-              type: 'dialog',
-              dialog: [
-                'Ok, that\'s the first dialog!',
+              type: 'textbox',
+              textbox: [
+                'Ok, that\'s the first textbox!',
                 'And that\'s the second...'
               ]
             }
@@ -64,8 +64,8 @@ export default {
               store: '__globals__.player.nickname'
             },
             {
-              type: 'dialog',
-              dialog: 'Enter your nickname...',
+              type: 'textbox',
+              textbox: 'Enter your nickname...',
               noHistory: true
             }
           ]
@@ -91,8 +91,8 @@ export default {
               event: 'hide'
             },
             {
-              type: 'dialog',
-              dialog: [
+              type: 'textbox',
+              textbox: [
                 'Look! An actor has appeared!',
                 'She wants to say something'
               ],
@@ -120,8 +120,8 @@ export default {
               duration: 10
             },
             {
-              type: 'dialog',
-              dialog: 'Look! Another actor has appeared!'
+              type: 'textbox',
+              textbox: 'Look! Another actor has appeared!'
             }
           ]
         },
@@ -129,8 +129,8 @@ export default {
           id: 4,
           actions: [
             {
-              type: 'dialog',
-              dialog: 'Teehee!',
+              type: 'textbox',
+              textbox: 'Teehee!',
               character: 2
             }
           ]
@@ -146,8 +146,8 @@ export default {
               duration: 30
             },
             {
-              type: 'dialog',
-              dialog: 'Whoa... What was that?!',
+              type: 'textbox',
+              textbox: 'Whoa... What was that?!',
               character: 1
             }
           ]
@@ -197,8 +197,8 @@ export default {
               ]
             },
             {
-              type: 'dialog',
-              dialog: 'Choose your destiny!',
+              type: 'textbox',
+              textbox: 'Choose your destiny!',
               noHistory: true
             }
           ]
@@ -208,8 +208,8 @@ export default {
           condition: 'test = 0',
           actions: [
             {
-              type: 'dialog',
-              dialog: 'You are L-A-Z-Y!'
+              type: 'textbox',
+              textbox: 'You are L-A-Z-Y!'
             }
           ]
         },
@@ -218,8 +218,8 @@ export default {
           condition: 'test = 1',
           actions: [
             {
-              type: 'dialog',
-              dialog: 'Oh, you\'ve just set a variable to <d-text d-var="test" d-color="#0f0"></d-text>'
+              type: 'textbox',
+              textbox: 'Oh, you\'ve just set a variable to <d-text d-var="test" d-color="#0f0"></d-text>'
             }
           ]
         },
@@ -228,8 +228,8 @@ export default {
           condition: 'test = -1',
           actions: [
             {
-              type: 'dialog',
-              dialog: 'Why you so negative? Your variable is <d-text d-var="test" d-color="#f00"></d-text> now<d-text d-speed="20">...</d-text>'
+              type: 'textbox',
+              textbox: 'Why you so negative? Your variable is <d-text d-var="test" d-color="#f00"></d-text> now<d-text d-speed="20">...</d-text>'
             }
           ]
         },
@@ -237,7 +237,7 @@ export default {
           id: 11,
           actions: [
             {
-              type: 'dialog',
+              type: 'textbox',
               event: 'hide'
             },
             {
@@ -270,7 +270,7 @@ export default {
             },
             {
               type: 'narrator',
-              dialog: [
+              textbox: [
                 '<d-actor d-id="player" d-prop="nickname" d-color></d-actor> has the perfect life working as a detective in the city and drinking with his patient girlfriend, <d-actor d-id="2" d-prop="fullName" d-color></d-actor>.',
                 'However, when he finds a solid book in his cellar, he begins to realise that things are not quite as they seem in the <d-actor d-id="player" d-prop="nickname" d-color></d-actor> family.',
                 'A Halloween party leaves <d-actor d-id="player" d-prop="nickname" d-color></d-actor> with some startling questions about his past, and he sets off to creepy <d-actor d-id="2" d-prop="nickname" d-color></d-actor> to find some answers.'
@@ -298,8 +298,8 @@ export default {
           id: 1,
           actions: [
             {
-              type: 'dialog',
-              dialog: 'dsadsad sadsads addsa'
+              type: 'textbox',
+              textbox: 'dsadsad sadsads addsa'
             }
           ],
           goTo: {

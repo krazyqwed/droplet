@@ -1,128 +1,49 @@
-import Timer from './Timer'; 
-import CommonHelper from '../helpers/Common';
-
-class SubMenu {
-  constructor() {
-    this._dom = {};
-    this._dom.submenu = {};
-    this._dom.submenu.load = document.querySelector('.js_submenu_load');
-    this._dom.submenu.settings = document.querySelector('.js_submenu_settings');
-  }
-
-  show(name) {
-    switch (name) {
-      case 'load': D.Save.show(); break;
-      case 'settings': D.Settings.show(); break;
-    }
-  }
-}
-
 class MainMenu {
   constructor() {
-    this._subMenu = new SubMenu();
     this._dom = {};
     this._dom.menuWrap = document.querySelector('.js_main_menu_wrap');
     this._dom.menu = document.querySelector('.js_main_menu');
-    this._timer = new Timer();
-    this._timer.addEvent('show', {
-      callback: this._showEvent.bind(this),
-      runLimit: 45
-    });
+  }
 
-    this._menuItems = [
-      {
-        text: 'New Game',
-        callback: this._newGameCallback.bind(this)
-      },
-      {
-        text: 'Load Game',
-        callback: this._loadGameCallback.bind(this)
-      },
-      {
-        text: 'Settings',
-        callback: this._settingsCallback.bind(this)
-      },
-      {
-        text: 'Exit',
-        callback: this._exitCallback.bind(this)
-      }
-    ];
+  init() {
+    D.HTMLState.set('mainMenu.event.new', this._newGameCallback.bind(this));
+    D.HTMLState.set('mainMenu.event.load', this._loadGameCallback.bind(this));
+    D.HTMLState.set('mainMenu.event.settings', this._settingsCallback.bind(this));
+    D.HTMLState.set('mainMenu.event.exit', this._exitCallback.bind(this));
+    D.HTMLState.set('mainMenu.event.mouseenter', this._setActive.bind(this));
+    D.HTMLState.set('mainMenu.event.mouseleave', this._unsetActive.bind(this));
   }
 
   show() {
+    D.HTMLState.set('mainMenu.visible', true);
     D.SceneStore.setData('gameInProgress', false);
-    D.Background.handleAction({
-      event: 'load',
-      image: 'main_menu'
-    });
-
-    this._buildItems();
-    this._showMenu();
+    D.Background.handleAction({ event: 'load', image: 'main_menu' });
   }
 
   _newGameCallback() {
-    this._hideMenu();
-
     D.Story.start();
   }
 
   _loadGameCallback() {
-    this._subMenu.show('load');
+    D.HTMLState.set('mainMenu.visible', false);
+    D.Save.show();
   }
 
   _settingsCallback() {
-    this._subMenu.show('settings');
+    D.HTMLState.set('mainMenu.visible', false);
+    D.Settings.show();
   }
 
   _exitCallback() {
     console.log('exit');
   }
 
-  _buildItems() {
-    this._dom.menu.innerHTML = '';
-
-    this._menuItems.forEach((item) => {
-      let itemElement = document.createElement('div');
-      itemElement.className = 'd_main-menu__item';
-      itemElement.innerHTML = item.text;
-      itemElement.addEventListener('mouseenter', this._setActive.bind(this, itemElement));
-      itemElement.addEventListener('mouseleave', this._unsetActive.bind(this, itemElement));
-      itemElement.addEventListener('click', this._select.bind(this, item.callback));
-
-      this._dom.menu.appendChild(itemElement);
-    });
+  _setActive(index) {
+    D.HTMLState.set('mainMenu.activeItem', index);
   }
 
-  _setActive(item) {
-    item.classList.add('d_main-menu__item--active');
-  }
-
-  _unsetActive(item) {
-    item.classList.remove('d_main-menu__item--active');
-  }
-
-  _select(callback) {
-    callback();
-  }
-
-  _showMenu() {
-    this._dom.menuWrap.classList.add('d_gui-element--disable');
-    this._dom.menuWrap.offsetHeight;
-    this._dom.menuWrap.classList.remove('d_gui-element--no-fade');
-    this._dom.menuWrap.classList.add('d_gui-element--visible');
-
-    this._timer.start('show');
-  }
-
-  _hideMenu() {
-    this._dom.menuWrap.classList.remove('d_gui-element--visible');
-  }
-
-  _showEvent(event) {
-    if (event.over) {
-      this._dom.menuWrap.classList.remove('d_gui-element--disable');
-      this._timer.destroy('show');
-    }
+  _unsetActive(index) {
+    D.HTMLState.set('mainMenu.activeItem', false);
   }
 }
 

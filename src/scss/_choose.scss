@@ -3,13 +3,17 @@
 
   border: 2px solid rgba(#000,.4);
   box-shadow: 8px 8px 0 0 rgba(#000,.4);
+  left: 50%;
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 8px;
+  position: absolute;
+  top: calc(50% - 127px);
+  transform: translate(-50%, -50%);
   width: 70%;
   word-wrap: break-word;
 
-  &__item {
+  &__option {
     border: 2px solid transparent;
     color: #fff;
     cursor: pointer;

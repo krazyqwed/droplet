@@ -1,7 +1,7 @@
-import hyperHTML from 'hyperhtml';
-
 import StringHelper from './helpers/String';
 import ResourceLoader from './modules/ResourceLoader';
+import HTMLRenderer from './modules/HTMLRenderer';
+import HTMLState from './modules/HTMLState';
 import MainMenu from './modules/MainMenu';
 import GameMenu from './modules/GameMenu';
 import Variable from './modules/Variable';
@@ -12,7 +12,7 @@ import Story from './modules/Story';
 import Scene from './modules/Scene';
 import Goto from './modules/Goto';
 import Wait from './modules/Wait';
-import { Dialog, Narrator } from './modules/Dialog';
+import { Textbox, Narrator } from './modules/Textbox';
 import Character from './modules/Character';
 import Picture from './modules/Picture';
 import Choose from './modules/Choose';
@@ -25,6 +25,7 @@ import Alert from './modules/Alert';
 import EngineStore from './stores/EngineStore';
 import SceneStore from './stores/SceneStore';
 import Slider from './modules/Slider';
+import { version } from '../../version.json';
 
 class Main {
   constructor() {
@@ -33,6 +34,9 @@ class Main {
       Renderer: null,
       Stage: null,
       ResourceLoader: ResourceLoader,
+
+      HTMLState: HTMLState,
+      HTMLRenderer: HTMLRenderer,
 
       EngineStore: new EngineStore(),
       SceneStore: new SceneStore(),
@@ -48,7 +52,7 @@ class Main {
       Scene: Scene,
       Goto: Goto,
       Wait: Wait,
-      Dialog: Dialog,
+      Textbox: Textbox,
       Narrator: Narrator,
       Character: Character,
       Picture: Picture,
@@ -67,13 +71,19 @@ class Main {
     this._stageChildrenCount = 0;
 
     this._dom = {};
-    this._dom.dimensionHelper = document.querySelector('.js_dimension_helper');
-    this._dom.scaleHelper = document.querySelector('.js_scale_helper');
-    this._dom.mainWarpper = document.querySelector('.js_main_wrapper');
+    this._dom.mainContainer = document.querySelector('.js_main_container');
+    this._dom.gameWarpper = document.querySelector('.js_game_wrapper');
     this._dom.effectWrapper = document.querySelector('.js_effect_wrapper');
+
+    D.HTMLRenderer.state = D.HTMLState;
+    D.HTMLRenderer.container = this._dom.mainContainer;
+
+    D.HTMLState.set('version', version);
 
     this._windowWidth = 1920;
     this._windowHeight = 1080;
+    D.HTMLState.set('window.width', this._windowWidth);
+    D.HTMLState.set('window.height', this._windowHeight);
 
     this._init();
   }
@@ -88,7 +98,7 @@ class Main {
     D.App.view.style.display = 'none';
     D.Renderer = D.App.renderer;
 
-    document.body.insertBefore(D.App.view, this._dom.dimensionHelper.nextSibling);
+    document.body.insertBefore(D.App.view, document.body.firstElementChild);
     window.addEventListener('resize', this._resize.bind(this));
 
     D.Stage = D.App.stage;
@@ -99,49 +109,30 @@ class Main {
   }
 
   _resize() {
-    this._windowWidth = this._dom.dimensionHelper.offsetWidth;
-    this._windowHeight = this._dom.dimensionHelper.offsetHeight;
+    this._windowWidth = window.innerWidth;
+    this._windowHeight = window.innerHeight;
 
     const canvas = D.App.view;
     const scaleX = this._windowWidth / 1920;
     const scaleY = this._windowHeight / 1080;
     const scale = scaleX > scaleY ? this._windowHeight / 1080 : this._windowWidth / 1920;
+    D.HTMLState.set('scale', scale);
+
     const wrapperWidth = scaleX > scaleY ? parseInt(1920 * scaleY) : this._windowWidth;
     const wrapperHeight = scaleX > scaleY ? this._windowHeight : parseInt(1080 * scaleX);
+    const wrapperLeft = (this._windowWidth - wrapperWidth) / 2;
+    D.HTMLState.set('wrapper.width', wrapperWidth);
+    D.HTMLState.set('wrapper.height', wrapperHeight);
+    D.HTMLState.set('wrapper.left', wrapperLeft);
 
-    this._dom.mainWarpper.style.width = wrapperWidth + 'px';
-    this._dom.mainWarpper.style.height = wrapperHeight + 'px';
-    this._dom.effectWrapper.style.width = wrapperWidth + 'px';
-    this._dom.effectWrapper.style.height = wrapperHeight + 'px';
-    this._dom.scaleHelper.style.width = wrapperWidth + 'px';
-    this._dom.scaleHelper.style.height = wrapperHeight + 'px';
-
-    const guiElements = document.querySelectorAll('.js_gui_element');
-
-    [].forEach.call(guiElements, (elem) => {
-      elem.style.transform = 'scale(' + scale + ')';
-    });
-
-    const gameMenuHistory = this._dom.mainWarpper.querySelector('.js_history .js_gui_element');
-    gameMenuHistory.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
-
-    const gameMenuSave = this._dom.mainWarpper.querySelector('.js_save .js_gui_element');
-    gameMenuSave.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
-
-    const gameMenuSettings = this._dom.mainWarpper.querySelector('.js_settings .js_gui_element');
-    gameMenuSettings.style.transform = 'scale(' + scale + ')';
-
-    const gameMenuAlert = this._dom.mainWarpper.querySelector('.js_alert .js_gui_element');
-    gameMenuAlert.style.transform = 'scale(' + scale + ') translateX(-50%) translateY(-50%)';
-
-    canvas.style.transform = 'scale(' + scale + ')';
-    canvas.style.marginLeft = this._dom.scaleHelper.offsetLeft + 'px';
+    canvas.style.transform = `scale(${scale})`;
+    canvas.style.marginLeft = `${wrapperLeft}px`;
     canvas.style.display = 'block';
+
+    D.HTMLRenderer.render();
   }
 
   _load() {
-    this._dom.mainWarpper.style.display = 'none';
-
     const assetDefinersToLoader = [
       'char_1.json',
       'char_2.json'
@@ -222,15 +213,21 @@ class Main {
 
   _loadFinished() {
     this._resize();
-    this._dom.mainWarpper.style.removeProperty('display');
 
     D.Background.init();
+    D.GameMenu.init();
+    D.History.init();
     D.Save.init();
-    D.Dialog.init();
+    D.Settings.init();
+    D.Textbox.init();
     D.Narrator.init();
     D.Character.init();
     D.Picture.init();
     D.Scene.init();
+    D.Alert.init();
+    D.Choose.init();
+    D.Input.init();
+    D.MainMenu.init();
     D.MainMenu.show();
 
     this._update();

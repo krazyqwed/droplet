@@ -2,61 +2,47 @@ import CommonHelper from '../helpers/Common';
 
 class Alert {
   constructor() {
-    this._dom = {};
-    this._dom.alert = document.querySelector('.js_alert');
-    this._dom.desc = document.querySelector('.js_alert_desc');
-    this._dom.confirm = document.querySelector('.js_alert_confirm');
-    this._dom.cancel = document.querySelector('.js_alert_cancel');
-    this._dom.confirm.addEventListener('mousedown', this._confirm.bind(this));
-    this._dom.cancel.addEventListener('mousedown', this._cancel.bind(this));
-
     this._events = {};
-    this._events.keyboard = this._keyboardEvent.bind(this);
-    this._events.transitionEnd = this._transitionEndEvent.bind(this);
+    this._events.hide = this._hideEvent.bind(this);
+  }
+
+  init() {
+    D.HTMLState.set('alert.event.confirm', this._confirm.bind(this));
+    D.HTMLState.set('alert.event.cancel', this._cancel.bind(this));
   }
 
   show(options) {
+    D.HTMLState.set('alert.visible', true);
+    D.HTMLState.set('alert.description', options.description);
+    D.HTMLState.set('alert.confirm', options.confirm);
+    D.HTMLState.set('alert.cancel', options.cancel);
     D.EngineStore.setData('alertOpen', true);
 
-    this._dom.desc.innerHTML = options.description;
-    this._dom.cancel.textContent = options.cancel;
-    this._dom.confirm.textContent = options.confirm;
-
-    this._dom.alert.style.removeProperty('display');
-
-    this._dom.alert.offsetHeight;
-    this._dom.alert.removeEventListener('transitionEnd', this._events.transitionEnd);
-    this._dom.alert.classList.add('d_alert-wrap--visible');
-
-    window.addEventListener('keydown', this._events.keyboard);
+    window.addEventListener('keydown', this._events.hide);
   }
 
   hide() {
+    D.HTMLState.set('alert.visible', false);
     D.EngineStore.setData('alertOpen', false);
 
-    this._dom.alert.addEventListener('transitionEnd', this._events.transitionEnd);
-    this._dom.alert.classList.remove('d_alert-wrap--visible');
-
-    window.removeEventListener('keydown', this._events.keyboard);
+    window.removeEventListener('keydown', this._events.hide);
   }
 
   _confirm() {
+    D.HTMLState.set('alert.visible', false);
     D.EngineStore.setData('alertAnswer', true);
   }
 
   _cancel() {
+    D.HTMLState.set('alert.visible', false);
     D.EngineStore.setData('alertAnswer', false);
   }
 
-  _keyboardEvent(event) {
+  _hideEvent(event) {
     if (event.which === 27) {
       event.preventDefault();
       this._cancel();
     }
-  }
-
-  _transitionEndEvent() {
-    this._dom.alert.style.display = 'none';
   }
 }
 

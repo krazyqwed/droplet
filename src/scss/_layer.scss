@@ -1,0 +1,54 @@
+.d_layer {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  &__background {
+    background: url('./static/submenu_1.jpg');
+    background-size: 100%;
+    background-position: center center;
+    bottom: -100px;
+    content: '';
+    filter: blur(10px);
+    left: -100px;
+    opacity: 0;
+    position: absolute;
+    right: -100px;
+    top: -100px;
+  }
+
+  &__content {
+    height: 1080px;
+    left: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    transform-origin: left top;
+    transition: opacity .3s;
+    width: 1920px;
+
+    &--visible {
+      opacity: 1;
+      z-index: 1;
+
+      *,
+      *:before,
+      *:after {
+        pointer-events: all;
+        user-select: all;
+      }
+
+      ~ .d_layer__background {
+        opacity: 1;
+        z-index: 0;
+      }
+    }
+
+    &--flex {
+      display: flex;
+    }
+  }
+}

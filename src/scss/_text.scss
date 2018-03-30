@@ -1,48 +1,26 @@
 $textbox-width: 95%;
 
-.d_textbox-wrap,
-.d_narrator-wrap {
-  align-items: flex-end;
-  display: flex;
-  height: 1080px;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transform-origin: left top;
-  width: 1920px;
-}
-
-.d_narrator-wrap {
-  align-items: center;
-  padding-bottom: 250px;
-
-  &--top {
-    align-items: flex-start;
-  }
-}
-
 .d_textbox,
 .d_narrator {
   @extend %text-default;
   
   backface-visibility: hidden;
   border-top: 2px solid rgba(#000,.4);
+  bottom: 2px;
   color: #fff;
   height: 250px;
+  left: 2px;
   line-height: 1.35;
   outline: 2px solid #fff;
   padding: 10px 30px 60px;
-  position: relative;
+  position: absolute;
   text-align: left;
   text-shadow: $text-shadow;
   width: 100%;
   word-wrap: break-word;
 
-  &:not([running]):not([no-next]) .d_textbox__next,
-  &:not([running]):not([no-next]) .d_narrator__next {
+  &:not(.d_textbox--running):not(.d_textbox--no-next) .d_textbox__next,
+  &:not(.d_narrator--running):not(.d_narrator--no-next) .d_narrator__next {
     animation: blink 1s ease-out infinite;
     bottom: 0;
     left: 0;
@@ -88,16 +66,23 @@ $textbox-width: 95%;
   @include stripe;
 
   border-top: 0;
+  bottom: auto;
   height: auto;
   outline: 0;
   padding: 30px 200px 60px;
+  top: 0;
 
-  &[no-next] {
+  &.d_narrator--no-next {
     padding: 30px 200px;
   }
 
-  &[no-background] {
+  &.d_narrator--no-background {
     background: none;
+  }
+
+  &.d_narrator--position-center {
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
@@ -149,7 +134,7 @@ d-text {
       animation: blink $i * .2s ease-out infinite;
     }
 
-    .d_textbox[running] &[d-blink="#{$i}"] {
+    .d_textbox--running &[d-blink="#{$i}"] {
       animation: none;
     }
   }

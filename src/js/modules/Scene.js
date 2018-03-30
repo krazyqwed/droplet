@@ -22,7 +22,7 @@ class Scene {
 
     this._event = {};
     this._event.scrollEvent = this._scrollEvent.bind(this);
-    this._event.mousedownEvent = this._mousedownEvent.bind(this);
+    this._event.clickEvent = this._clickEvent.bind(this);
     this._event.keydownEvent = this._keydownEvent.bind(this);
   }
 
@@ -108,7 +108,7 @@ class Scene {
   _input() {
     window.addEventListener('mousewheel', this._event.scrollEvent, false);
     window.addEventListener('DOMMouseScroll', this._event.scrollEvent, false);
-    window.addEventListener('mousedown', this._event.mousedownEvent, false);
+    window.addEventListener('click', this._event.clickEvent, false);
     window.addEventListener('keydown', this._event.keydownEvent, false);
   }
 
@@ -125,7 +125,7 @@ class Scene {
     }
   }
 
-  _mousedownEvent(event) {
+  _clickEvent(event) {
     if (event.which !== 1 || !event.target) {
       return;
     }
@@ -142,7 +142,6 @@ class Scene {
       return;
     }
 
-    event.preventDefault();
     D.SceneStore.triggerCallback('actionFired');
   }
 
@@ -172,11 +171,12 @@ class Scene {
   }
 
   _canJumpToNext() {
-    const dialog = !D.SceneStore.getData('dialogRunning');
+    const textbox = !D.SceneStore.getData('textboxRunning');
     const narrator = !D.SceneStore.getData('narratorRunning');
     const interaction = !D.SceneStore.getData('interactionRunning');
+    const menu = !D.SceneStore.getData('menuOpen');
 
-    return dialog && narrator && interaction;
+    return textbox && narrator && interaction && menu;
   }
 
   _loadKeyframe(keyframe) {
@@ -241,18 +241,19 @@ class Scene {
     if (event.runCount === event.runLimit / 2) {
       D.ActionQueue.run('post');
 
-      [].forEach.call(document.querySelectorAll('.d_gui-element--visible'), (element) => {
-        element.classList.add('d_gui-element--no-fade');
-        element.classList.remove('d_gui-element--visible');
-      });
-
       if (!D.SceneStore.getData('loadFromSave')) {
         D.Character.hideCharacters();
         D.Picture.hidePictures();
       }
 
-      D.Choose.clearChoose();
-      D.Input.clearInput();
+      D.HTMLState.set('mainMenu.visible', false);
+      D.HTMLState.set('gui.visible', true);
+      D.HTMLState.set('gui.gameMenu.visible', true);
+      D.HTMLState.set('gui.textbox.visible', false);
+      D.HTMLState.set('gui.narrator.visible', false);
+      D.HTMLState.set('gui.choose.visible', false);
+      D.HTMLState.set('gui.input.visible', false);
+
       D.Sound.stopAll();
 
       D.ActionQueue.run('pre');

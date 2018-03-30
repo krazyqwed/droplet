@@ -58,7 +58,7 @@ export default {
               options: {
                 items: [
                   {
-                    text: 'Set the variable to -1',
+                    text: 'Set the variable to <d-text d-color="#f00">-1</d-text>',
                     variable: [{
                       name: 'conditional_test',
                       value: '-1'
@@ -72,7 +72,7 @@ export default {
                     }],
                   },
                   {
-                    text: 'Set the variable to 1',
+                    text: 'Set the variable to <d-text d-color="#0f0">1</d-text>',
                     variable: [{
                       name: 'conditional_test',
                       value: '1'
@@ -82,7 +82,7 @@ export default {
               }
             },
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'The next keyframe is based on the variable\'s value (<d-text d-var="conditional_test"></d-text>) you set.'
               }
@@ -94,7 +94,7 @@ export default {
           goto: { keyframe: '10001' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'I\'m number 1'
               }
@@ -106,7 +106,7 @@ export default {
           goto: { keyframe: '10001' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'I\'m number 2'
               }
@@ -118,7 +118,7 @@ export default {
           goto: { keyframe: '10001' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'I\'m number 3'
               }
@@ -131,7 +131,7 @@ export default {
           goto: { keyframe: '1' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'And this keyframe is only visible, when the variable was set to 0...'
               }
@@ -144,10 +144,11 @@ export default {
           actions: [
             [
               {
-                module: 'dialog',
+                module: 'textbox',
                 options: {
                   text: 'Enter your nickname...',
-                  noHistory: true
+                  noHistory: true,
+                  noNext: true
                 }
               },
               {
@@ -158,14 +159,14 @@ export default {
               }
             ],
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Oh, my nickname is <d-text d-var="__globals__.player.nickname" d-color="#0f0"></d-text>.'
               }
             },
             [
               {
-                module: 'dialog',
+                module: 'textbox',
                 options: {
                   text: 'What do you want to do?'
                 }
@@ -221,7 +222,7 @@ export default {
           goto: { keyframe: '2' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Variable is <d-text d-var="test" d-color="#aaa"></d-text>'
               }
@@ -233,7 +234,7 @@ export default {
           goto: { keyframe: '2' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Variable is <d-text d-var="test" d-color="#0f0"></d-text>'
               }
@@ -245,7 +246,7 @@ export default {
           goto: { keyframe: '2' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Variable is <d-text d-var="test" d-color="#f00"></d-text>'
               }
@@ -256,7 +257,7 @@ export default {
           id: '321',
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Never ever reach this keyframe'
               }
@@ -268,13 +269,13 @@ export default {
           goto: { keyframe: '3' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Default sync action'
               }
             },
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Im next!'
               }
@@ -290,13 +291,12 @@ export default {
                 module: 'narrator',
                 options: {
                   text: 'I can be parallel',
-                  position: 'top',
                   speed: 0,
                   noNext: true
                 }
               },
               {
-                module: 'dialog',
+                module: 'textbox',
                 options: {
                   text: 'I can be parallel too'
                 }
@@ -319,9 +319,29 @@ export default {
               autoContinue: true
             },
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Auto continue after picture'
+              }
+            },
+            {
+              module: 'narrator',
+              options: {
+                text: 'Narrator line #1'
+              }
+            },
+            {
+              module: 'narrator',
+              options: {
+                text: 'Narrator line #2',
+                position: 'center'
+              }
+            },
+            {
+              module: 'narrator',
+              options: {
+                text: 'Narrator line #3',
+                noNext: true
               }
             }
           ]
@@ -339,11 +359,17 @@ export default {
                     event: 'change',
                     image: 'school_2'
                   }
+                },
+                {
+                  module: 'narrator',
+                  options: {
+                    event: 'hide'
+                  }
                 }
               ]
             },
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Auto continue after parallel actions'
               }
@@ -355,7 +381,7 @@ export default {
           goto: { keyframe: '7' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Wait module'
               }
@@ -403,7 +429,7 @@ export default {
               autoContinue: true
             },
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Done!'
               }
@@ -415,7 +441,7 @@ export default {
           goto: { scene: '2' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Goto module'
               }
@@ -461,7 +487,7 @@ export default {
           goto: { keyframe: '2' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Character shows up...'
               }
@@ -477,7 +503,7 @@ export default {
                 }
               },
               {
-                module: 'dialog',
+                module: 'textbox',
                 options: {
                   text: 'Hello!',
                   character: 1
@@ -494,7 +520,7 @@ export default {
                 }
               },
               {
-                module: 'dialog',
+                module: 'textbox',
                 options: {
                   text: 'Nani?',
                   character: 1
@@ -508,7 +534,7 @@ export default {
           goto: { scene: '1' },
           actions: [
             {
-              module: 'dialog',
+              module: 'textbox',
               options: {
                 text: 'Goto module'
               }
