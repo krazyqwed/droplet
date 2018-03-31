@@ -65,14 +65,11 @@ class Main {
       Settings: Settings,
       Alert: Alert,
 
-      FPSMeter: new FPSMeter()
+      Stats: new Stats()
     };
-
-    this._stageChildrenCount = 0;
 
     this._dom = {};
     this._dom.mainContainer = document.querySelector('.js_main_container');
-    this._dom.gameWarpper = document.querySelector('.js_game_wrapper');
     this._dom.effectWrapper = document.querySelector('.js_effect_wrapper');
 
     D.HTMLRenderer.state = D.HTMLState;
@@ -85,11 +82,16 @@ class Main {
     D.HTMLState.set('window.width', this._windowWidth);
     D.HTMLState.set('window.height', this._windowHeight);
 
+    D.Stats.showPanel(0); 
+    document.body.appendChild(D.Stats.dom); 
+
     this._init();
   }
 
   _init() {
-    D.App = new PIXI.Application(this._windowWidth, this._windowHeight, {
+    D.App = new PIXI.Application({
+      width: this._windowWidth,
+      height: this._windowHeight,
       antialias: false,
       transparent: true,
       resolution: 1,
@@ -248,7 +250,7 @@ class Main {
   }
 
   _update() {
-    D.FPSMeter.tickStart();
+    D.Stats.begin();
     D.Filter.tick();
 
     this._updateLayersOrder();
@@ -261,7 +263,7 @@ class Main {
 
   _render() {
     D.Renderer.render(D.Stage);
-    D.FPSMeter.tick();
+    D.Stats.end();
   }
 }
 
