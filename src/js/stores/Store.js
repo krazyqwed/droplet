@@ -35,7 +35,7 @@ class Store {
 
     this._subscriptions.forEach((item) => {
       if (name === item.name) {
-        item.callback(this._data[name], this._data[name], name);
+        item.callback(this._data[name], name);
       }
     });
   }
