@@ -68,6 +68,10 @@ class Main {
       Stats: new Stats()
     };
 
+    this._ticker = PIXI.Ticker.shared;
+    this._ticker.autoStart = false;
+    this._ticker.stop();
+
     this._dom = {};
     this._dom.mainContainer = document.querySelector('.js_main_container');
     this._dom.effectWrapper = document.querySelector('.js_effect_wrapper');
@@ -82,20 +86,22 @@ class Main {
     D.HTMLState.set('window.width', this._windowWidth);
     D.HTMLState.set('window.height', this._windowHeight);
 
-    D.Stats.showPanel(0); 
-    document.body.appendChild(D.Stats.dom); 
+    D.Stats.showPanel(0);
+    document.body.appendChild(D.Stats.dom);
 
     this._init();
   }
 
   _init() {
     D.App = new PIXI.Application({
+      autoStart: false,
       width: this._windowWidth,
       height: this._windowHeight,
       antialias: false,
       transparent: true,
       resolution: 1,
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: true,
+      sharedTicker: true
     });
     D.App.view.style.display = 'none';
     D.Renderer = D.App.renderer;
@@ -232,7 +238,17 @@ class Main {
     D.MainMenu.init();
     D.MainMenu.show();
 
-    this._update();
+    this._update = this._update.bind(this);
+    this._ticker.add(this._update);
+    this._ticker.start();
+  }
+
+  _update() {
+    D.Stats.begin();
+    D.Filter.tick();
+
+    this._updateLayersOrder();
+    this._render();
   }
 
   _updateLayersOrder() {
@@ -246,18 +262,6 @@ class Main {
       }
 
       return 0;
-    });
-  }
-
-  _update() {
-    D.Stats.begin();
-    D.Filter.tick();
-
-    this._updateLayersOrder();
-
-    requestAnimationFrame(() => {
-      this._render();
-      this._update();
     });
   }
 
