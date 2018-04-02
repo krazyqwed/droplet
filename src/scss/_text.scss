@@ -1,5 +1,3 @@
-$textbox-width: 95%;
-
 .d_textbox,
 .d_narrator {
   @extend %text-default;
@@ -59,7 +57,7 @@ $textbox-width: 95%;
 .d_textbox {
   @include gradient-stripe;
 
-  width: $textbox-width;
+  width: 95%;
 }
 
 .d_narrator {
@@ -102,7 +100,7 @@ $textbox-width: 95%;
 }
 
 .d_textbox-helper {
-  width: $textbox-width;
+  width: calc(1920px * .95);
 }
 
 .d_narrator-helper {
