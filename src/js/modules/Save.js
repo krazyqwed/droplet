@@ -43,13 +43,13 @@ class Save {
 
   _promptSave(file) {
     if (!this._saves[file.index]) {
-      D.EngineStore.setData('createSave', true);
+      D.EngineStore.setData('createSave', file);
       return;
     }
 
     const saveSubscription = D.EngineStore.subscribe('alertAnswer', (data) => {
       if (data === true) {
-        D.EngineStore.setData('createSave', true);
+        D.EngineStore.setData('createSave', file);
       }
 
       D.Alert.hide();

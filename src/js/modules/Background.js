@@ -70,7 +70,7 @@ class Background {
   }
 
   getState() {
-    let texturePath = this._background.texture.baseTexture.source.src;
+    let texturePath = this._background.texture.baseTexture.resource.source.src;
 
     return {
       background: {
