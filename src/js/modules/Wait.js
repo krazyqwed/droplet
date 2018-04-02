@@ -23,7 +23,7 @@ class Wait {
   }
 
   _waitAction() {
-    this._timer.setEventOptions('wait', { tickLimit: this._options.duration ? this._options.duration : 1000 });
+    this._timer.setEventOptions('wait', { tickLimit: this._options.duration ? this._options.duration : 60 });
     this._timer.startEvent('wait');
   }
 

@@ -399,7 +399,7 @@ export default {
             {
               module: 'wait',
               options: {
-                duration: 1000
+                duration: 60
               }
             },
             {
@@ -415,7 +415,7 @@ export default {
             {
               module: 'wait',
               options: {
-                duration: 1000
+                duration: 60
               }
             },
             {
