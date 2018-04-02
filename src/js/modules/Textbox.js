@@ -84,7 +84,7 @@ class TextboxClass {
     this._actionFired = false;
     this._subframe = 0;
     this._textList = false;
-    this._writeSpeedArray = [this._options.speed || this._writeSpeed];
+    this._writeSpeedArray = [this._options.speed !== undefined ? this._options.speed : this._writeSpeed];
 
     D.HTMLState.set(`gui.${this._elementType}.text`, '');
     D.HTMLState.set(`gui.${this._elementType}.position`, 'top');
@@ -140,12 +140,11 @@ class TextboxClass {
 
     this._textLength = this._text.length;
 
-    this._timer.setEventOptions('write', { tickRate: this._options.speed || this._writeSpeed });
-    
+    this._timer.setEventOptions('write', { tickRate: this._options.speed !== undefined ? this._options.speed : this._writeSpeed });
+    this._timer.startEvent('write');
+
     if (this._options.speed === 0) {
       this._timer.endEvent('write');
-    } else {
-      this._timer.startEvent('write');
     }
   }
 
