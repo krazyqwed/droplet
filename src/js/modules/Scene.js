@@ -16,8 +16,8 @@ class Scene {
 
     this._timer = new Timer();
     this._timer.addEvent('load', {
-      callback: this._loadEvent.bind(this),
-      runLimit: 90
+      onTick: this._loadEvent.bind(this),
+      tickLimit: 90
     });
 
     this._event = {};
@@ -167,7 +167,7 @@ class Scene {
       D.ActionQueue.add('post', action);
     });
 
-    this._timer.start('load');
+    this._timer.startEvent('load');
   }
 
   _canJumpToNext() {
@@ -233,12 +233,12 @@ class Scene {
     return false;
   }
 
-  _loadEvent(event) {
-    if (event.runCount === 1) {
+  _loadEvent(state, options) {
+    if (state.runCount === 1) {
       D.Background.handleAction({ event: 'unload' });
     }
 
-    if (event.runCount === event.runLimit / 2) {
+    if (state.tickCount === options.tickLimit / 2) {
       D.ActionQueue.run('post');
 
       if (!D.SceneStore.getData('loadFromSave')) {
@@ -259,14 +259,13 @@ class Scene {
       D.ActionQueue.run('pre');
     }
 
-    if (event.over) {
+    if (state.over) {
       this.loadKeyframeById(this._keyframeId);
 
       D.SceneStore.setData('loadFromSave', false);
       D.GameMenu.show();
 
       this._sceneLoaded = true;
-      this._timer.destroy('load');
     }
   }
 }

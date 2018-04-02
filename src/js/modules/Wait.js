@@ -5,10 +5,7 @@ class Wait {
     this._options = false;
 
     this._timer = new Timer();
-    this._timer.addEvent('wait', {
-      callback: this._waitEvent.bind(this),
-      useMillisec: true
-    });
+    this._timer.addEvent('wait', { onTick: this._waitEvent.bind(this) });
   }
 
   handleAction(options) {
@@ -22,17 +19,16 @@ class Wait {
   }
 
   forceEnd() {
-    this._timer.destroy('wait');
+    this._timer.endEvent('wait');
   }
 
   _waitAction() {
-    this._timer.setRunLimit('wait', this._options.duration ? this._options.duration : 1000);
-    this._timer.start('wait');
+    this._timer.setEventOptions('wait', { tickLimit: this._options.duration ? this._options.duration : 1000 });
+    this._timer.startEvent('wait');
   }
 
-  _waitEvent(event) {
-    if (event.over) {
-      this._timer.destroy('wait');
+  _waitEvent(state) {
+    if (state.over) {
       D.SceneStore.triggerCallback('autoContinue');
     }
   }

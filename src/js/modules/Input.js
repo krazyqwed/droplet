@@ -9,12 +9,12 @@ class Input {
 
     this._timer = new Timer();
     this._timer.addEvent('show', {
-      callback: this._showEvent.bind(this),
-      runLimit: 45
+      onTick: this._showEvent.bind(this),
+      tickLimit: 45
     });
     this._timer.addEvent('input', {
-      callback: this._inputEvent.bind(this),
-      runLimit: 24
+      onTick: this._inputEvent.bind(this),
+      tickLimit: 24
     });
   }
 
@@ -33,7 +33,7 @@ class Input {
     D.HTMLState.set('gui.input.enabled', false);
     D.Variable.set(this._options.store, input.value, 'string');
 
-    this._timer.start('input');
+    this._timer.startEvent('input');
   }
 
   _showInput() {
@@ -47,30 +47,28 @@ class Input {
       D.HTMLState.set('gui.input.value', currentValue);
     }
 
-    this._timer.start('show');
+    this._timer.startEvent('show');
   }
 
   _hideInput() {
     D.HTMLState.set('gui.input.visible', false);
   }
 
-  _showEvent(event) {
-    if (event.over) {
+  _showEvent(state) {
+    if (state.over) {
       D.HTMLState.set('gui.input.enabled', true);
-      this._timer.destroy('show');
     }
   }
 
-  _inputEvent(event) {
+  _inputEvent(state) {
     D.HTMLState.set('gui.input.confirmed', true);
 
-    if (event.over) {
+    if (state.over) {
       D.HTMLState.set('gui.input.confirmed', false);
       D.SceneStore.setData('interactionRunning', false);
       D.Scene.loadNextFrame();
 
       this._hideInput();
-      this._timer.destroy('input');
     }
   }
 }

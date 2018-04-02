@@ -1,177 +1,116 @@
-class Timer {
-  constructor() {
+class Event {
+  constructor(options, params) {
     this._defaultOptions = {
-      name: '',
-      running: false,
-      callback: false,
-      callbackEvery: false,
+      tickLimit: false,
       tickRate: 1,
-      repeat: true,
-      params: {},
-      over: false,
-      runCount: 0,
-      runLimit: 0,
-      ticker: 0,
-      useMillisec: false
+      repeat: false,
+      onTick: () => {}
     };
 
-    this._events = [];
+    this._options = Object.assign({}, this._defaultOptions, options);
+    this._params = Object.assign({}, this._params, params);
 
-    this._tick();
-    this._tickMillisec();
-  }
+    this._state = {};
+    this._state.tickCount = 0;
+    this._state.over = false;
 
-  addEvent(name, options) {
-    const event = Object.assign({}, this._defaultOptions, options, { name: name });
-    this._events.push(event);
+    this._elapsedTime = 0;
 
-    return event;
-  }
+    this._ticker = new PIXI.Ticker();
+    this._ticker.autoStart = false;
+    this._ticker.speed = this._options.tickRate;
+    this._ticker.stop();
 
-  start(name, options = {}, params = {}) {
-    for (let i in this._events) {
-      if (this._events[i].name === name && !this._events[i].running) {
-        this._events[i] = Object.assign(this._events[i], options);
-        this._events[i].params = Object.assign(this._events[i].params, params);
-        this._events[i].over = false;
-        this._events[i].runCount = 0;
-        this._events[i].running = true;
-        this._events[i].ticker = this._events[i].useMillisec ? new Date().getTime() : 0;
-        this._events[i].timeLimit = new Date().getTime();
-      }
-    }
-  }
+    this._ticker.add(time => {
+      this._elapsedTime += time;
 
-  stop(name) {
-    for (let i in this._events) {
-      if (this._events[i].name === name && this._events[i].running) {
-        this._events[i].running = false;
-      }
-    }
-  }
+      if (Math.floor(this._elapsedTime) >= 1) {
+        const elapsedTicks = Math.round(this._elapsedTime);
 
-  over(name) {
-    for (let i in this._events) {
-      if (this._events[i].name === name && this._events[i].running) {
-        this._events[i].over = true;
-        this._events[i].running = false;
-
-        if (this._events[i].callback) {
-          this._events[i].callback(this._events[i]);
+        for (let i = 0; i < elapsedTicks && !this._state.over; ++i) {
+          this._state.tickCount++;
+          this._tick();
         }
 
-        if (this._events[i].callbackEvery) {
-          this._events[i].callbackEvery(this._events[i]);
-        }
+        this._elapsedTime = 0;
       }
-    }
-  }
-
-  destroy(name) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].over = true;
-        this._events[i].running = false;
-        this._events[i].runCount = 0;
-        this._events[i].ticker = 0;
-      }
-    }
-  }
-
-  setTickRate(name, rate) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].ticker = 0;
-        this._events[i].tickRate = rate;
-      }
-    }
-  }
-
-  setRunLimit(name, limit) {
-    for (let i in this._events) {
-      if (this._events[i].name === name) {
-        this._events[i].runLimit = limit ? limit : this._events[i].runLimit;
-      }
-    }
-  }
-
-  _tick() {
-    requestAnimationFrame(() => {
-      for (let i in this._events) {
-        if (this._events[i].useMillisec) {
-          continue;
-        }
-
-        this._tickFunction(this._events[i]);
-      }
-
-      this._tick();
     });
   }
 
-  _tickFunction(event) {
-    if (!event.running || event.over || event.tickRate === 0) {
-      return;
-    }
-
-    event.ticker++;
-
-    if (event.ticker % event.tickRate === 0) {
-      event.runCount++;
-
-      if (!event.repeat || (event.repeat && event.runCount === event.runLimit)) {
-        event.over = true;
-        event.running = false;
-      }
-
-      event.callback(event);
-    }
-
-    if (event.callbackEvery) {
-      event.callbackEvery(event);
-    }
-
-    if (event && event.ticker == event.tickRate) {
-      event.ticker = 0;
-    }
+  set options(options) {
+    this._options = Object.assign({}, this._options, options);
+    this._ticker.speed = this._options.tickRate;
   }
 
-  _tickMillisec() {
-    setTimeout(() => {
-      for (let i in this._events) {
-        if (!this._events[i].useMillisec) {
-          continue;
-        }
-
-        this._tickMillisecFunction(this._events[i]);
-      }
-
-      this._tickMillisec();
-    }, 1);
+  set params(params) {
+    this._params = Object.assign({}, this._params, params);
   }
 
-  _tickMillisecFunction(event) {
-    const time = new Date().getTime();
-    const lastTime = event.ticker;
+  start() {
+    this._state.over = false;
+    this._state.tickCount = 0;
+    this._ticker.start();
+  }
 
-    if (!event.running || event.over || event.tickRate === 0) {
-      return;
+  stop() {
+    this._state.tickCount = 0;
+    this._ticker.stop();
+  }
+
+  end() {
+    if (this._state.over) { return; }
+
+    this._state.over = true;
+    
+    this._ticker.stop();
+    this._callOnTick();
+  }
+
+  _tick() {
+    if (this._options.tickLimit !== false && this._state.tickCount >= this._options.tickLimit) {
+      this._state.over = true;
+      this.stop();
+
+      if (this._options.repeat) {
+        this.start();
+      }
     }
 
-    if (time - lastTime >= event.tickRate) {
-      event.ticker = time;
-      event.callback(event);
-    }
+    this._callOnTick();
+  }
 
-    if (event.callbackEvery) {
-      event.callbackEvery(event);
-    }
+  _callOnTick() {
+    this._options.onTick(this._state, this._options, this._params);
+  }
+}
 
-    if (event.runLimit > 0 && time - event.timeLimit >= event.runLimit) {
-      event.over = true;
-      event.running = false;
-      event.callback(event);
-    }
+class Timer {
+  constructor() {
+    this._events = {};
+  }
+
+  addEvent(name, options, params) {
+    this._events[name] = new Event(options, params);
+  }
+
+  setEventOptions(name, options) {
+    this._events[name].options = options;
+  }
+
+  setEventParams(name, params) {
+    this._events[name].params = params;
+  }
+
+  startEvent(name) {
+    this._events[name].start();
+  }
+
+  stopEvent(name) {
+    this._events[name].stop();
+  }
+
+  endEvent(name) {
+    this._events[name].end();
   }
 }
 

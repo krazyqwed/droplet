@@ -42,16 +42,11 @@ class TextboxClass {
     this._text = '';
     this._textLength = 0;
     this._textFormatActive = false;
-    this._writeSpeedMs = 20;
+    this._writeSpeed = 1;
     this._writeSpeedArray = [];
 
     this._timer = new Timer();
-    this._timer.addEvent('write', {
-      callback: this._writeEvent.bind(this),
-      callbackEvery: this._writeEventEvery.bind(this),
-      runLimit: 0,
-      useMillisec: true
-    });
+    this._timer.addEvent('write', { onTick: this._writeEvent.bind(this) });
   }
 
   init() {
@@ -89,7 +84,7 @@ class TextboxClass {
     this._actionFired = false;
     this._subframe = 0;
     this._textList = false;
-    this._writeSpeedArray = [this._options.speed || this._writeSpeedMs];
+    this._writeSpeedArray = [this._options.speed || this._writeSpeed];
 
     D.HTMLState.set(`gui.${this._elementType}.text`, '');
     D.HTMLState.set(`gui.${this._elementType}.position`, 'top');
@@ -145,10 +140,12 @@ class TextboxClass {
 
     this._textLength = this._text.length;
 
-    this._timer.start('write', { tickRate: this._options.speed || this._writeSpeedMs });
-
+    this._timer.setEventOptions('write', { tickRate: this._options.speed || this._writeSpeed });
+    
     if (this._options.speed === 0) {
-      this._timer.over('write');
+      this._timer.endEvent('write');
+    } else {
+      this._timer.startEvent('write');
     }
   }
 
@@ -214,10 +211,10 @@ class TextboxClass {
 
       container.innerHTML = this._text.substring(0, i);
 
-      if (height * 1.5 < container.offsetHeight) {
+      if (height * 1.5 <= container.offsetHeight) {
         height = container.offsetHeight;
 
-        if (this._text[i - 1] !== ' ' && container.textContent.indexOf(' ') !== -1 && container.textContent.indexOf('-') !== -1) {
+        if (this._text[i - 1] !== ' ' && this._text[i - 1] !== '-') {
           do {
             i--;
           } while (i > 0 && this._text[i] !== ' ' && this._text[i] !== '-' && this._text[i] !== '>');
@@ -252,7 +249,7 @@ class TextboxClass {
     }
   }
 
-  _writeEvent(event) {
+  _writeEvent(state) {
     const cursorBefore = this._cursorPosition;
 
     if (this._cursorIsOnText(this._text, this._cursorPosition - 1, '<d-text')) {
@@ -293,21 +290,15 @@ class TextboxClass {
     D.HTMLState.set(`gui.${this._elementType}.text`, tempText);
 
     this._cursorPosition++;
-  }
 
-  _cursorIsOnText(source, position, keyword) {
-    return source.substring(position, position + keyword.length) === keyword;
-  }
+    if (this._cursorPosition > this._textLength || this._actionFired || state.over) {
+      this._timer.endEvent('write');
 
-  _writeEventEvery(event) {
-    if (this._cursorPosition > this._textLength || this._actionFired || event.over) {
       this._actionFired = false;
       this._writeRunning = false;
 
       D.HTMLState.set(`gui.${this._elementType}.running`, false);
       D.HTMLState.set(`gui.${this._elementType}.text`, this._text);
-
-      this._timer.destroy('write');
 
       if (this._textList === false || this._subframe >= this._textList.length) {
         D.SceneStore.setData(`${this._elementType}Running`, false);
@@ -315,6 +306,10 @@ class TextboxClass {
 
       D.SceneStore.triggerCallback('autoContinue');
     }
+  }
+
+  _cursorIsOnText(source, position, keyword) {
+    return source.substring(position, position + keyword.length) === keyword;
   }
 
   _getAttributes(elem) {
@@ -331,18 +326,17 @@ class TextboxClass {
 
   _handleSpeedAdd(speed) {
     if (speed) {
-      this._writeSpeedArray.push(parseInt(speed));
+      this._writeSpeedArray.push(parseFloat(speed));
     } else {
       this._writeSpeedArray.push(this._writeSpeedArray.slice(-1)[0]);
     }
 
-    this._timer.setTickRate('write', this._writeSpeedArray.slice(-1)[0]);
+    this._timer.setEventOptions('write', { tickRate: this._writeSpeedArray.slice(-1)[0] });
   }
 
   _handleSpeedRemove() {
     this._writeSpeedArray.pop();
-
-    this._timer.setTickRate('write', this._writeSpeedArray.slice(-1)[0]);
+    this._timer.setEventOptions('write', { tickRate: this._writeSpeedArray.slice(-1)[0] });
   }
 
   _handleVar(name, i) {

@@ -62,21 +62,21 @@ export default {
                     variable: [{
                       name: 'conditional_test',
                       value: '-1'
-                    }],
+                    }]
                   },
                   {
                     text: 'Set the variable to 0',
                     variable: [{
                       name: 'conditional_test',
                       value: '0'
-                    }],
+                    }]
                   },
                   {
                     text: 'Set the variable to <d-text d-color="#0f0">1</d-text>',
                     variable: [{
                       name: 'conditional_test',
                       value: '1'
-                    }],
+                    }]
                   }
                 ]
               }

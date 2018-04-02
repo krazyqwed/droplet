@@ -11,12 +11,12 @@ class Choose {
 
     this._timer = new Timer();
     this._timer.addEvent('show', {
-      callback: this._showEvent.bind(this),
-      runLimit: 45
+      onTick: this._showEvent.bind(this),
+      tickLimit: 45
     });
     this._timer.addEvent('chose', {
-      callback: this._blinkEvent.bind(this),
-      runLimit: 24
+      onTick: this._blinkEvent.bind(this),
+      tickLimit: 24
     });
   }
 
@@ -42,7 +42,7 @@ class Choose {
     D.HTMLState.set('gui.choose.activeItem', false);
   }
 
-  _select(item, elem) {
+  _select(item) {
     D.HTMLState.set('gui.choose.enabled', false);
 
     if (item.variable) {
@@ -51,10 +51,8 @@ class Choose {
       });
     }
 
-    this._timer.start('chose', {}, {
-      item: item,
-      itemElement: elem
-    });
+    this._timer.setEventParams('chose', { item: item });
+    this._timer.startEvent('chose');
   }
 
   _showChoose() {
@@ -64,26 +62,25 @@ class Choose {
     D.HTMLState.set('gui.choose.visible', true);
     D.HTMLState.set('gui.choose.items', this._options.items);
 
-    this._timer.start('show');
+    this._timer.startEvent('show');
   }
 
   _hideChoose() {
     D.HTMLState.set('gui.choose.visible', false);
   }
 
-  _showEvent(event) {
-    if (event.over) {
+  _showEvent(state) {
+    if (state.over) {
       D.HTMLState.set('gui.choose.enabled', true);
-      this._timer.destroy('show');
     }
   }
 
-  _blinkEvent(event) {
-    const item = event.params.item;
+  _blinkEvent(state, options, params) {
+    const item = params.item;
 
     D.HTMLState.set('gui.choose.selectedItem', item.index);
 
-    if (event.over) {
+    if (state.over) {
       D.HTMLState.set('gui.choose.selectedItem', false);
       D.SceneStore.setData('interactionRunning', false);
 
@@ -95,8 +92,6 @@ class Choose {
         D.SceneStore.setData('autoContinue', true, false);
         D.SceneStore.triggerCallback('autoContinue');
       }
-
-      this._timer.destroy('chose');
     }
   }
 }

@@ -34,17 +34,17 @@ class Background {
     this._dom.blink = document.querySelector('.js_blink');
 
     this._timer = new Timer();
-    this._timer.addEvent('load', { callback: this._loadEvent.bind(this) });
+    this._timer.addEvent('load', { onTick: this._loadEvent.bind(this) });
     this._timer.addEvent('unload', {
-      callback: this._unloadEvent.bind(this),
-      runLimit: 30
+      onTick: this._unloadEvent.bind(this),
+      tickLimit: 30
     });
-    this._timer.addEvent('showScene', { callback: this._showSceneEvent.bind(this) });
-    this._timer.addEvent('hideScene', { callback: this._hideSceneEvent.bind(this) });
-    this._timer.addEvent('blink', { callback: this._blinkEvent.bind(this) });
+    this._timer.addEvent('showScene', { onTick: this._showSceneEvent.bind(this) });
+    this._timer.addEvent('hideScene', { onTick: this._hideSceneEvent.bind(this) });
+    this._timer.addEvent('blink', { onTick: this._blinkEvent.bind(this) });
     this._timer.addEvent('change', {
-      callback: this._changeEvent.bind(this),
-      runLimit: 60
+      onTick: this._changeEvent.bind(this),
+      tickLimit: 60
     });
 
     D.Stage.addChild(this._background);
@@ -93,18 +93,18 @@ class Background {
 
   _showScene() {
     this._sceneFader.position.z = 0;
-    this._timer.setRunLimit('showScene', this._options.duration ? this._options.duration : 60);
-    this._timer.start('showScene');
+    this._timer.setEventOptions('showScene', { tickLimit: this._options.duration ? this._options.duration : 60 });
+    this._timer.startEvent('showScene');
   }
 
-  _showSceneEvent(event) {
-    const percent = event.runCount / event.runLimit;
+  _showSceneEvent(state, options) {
+    const percent = state.tickCount / options.tickLimit;
 
     this._sceneFader.alpha = 1 - percent + 0.001;
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (state.over || D.SceneStore.getData('fastForward')) {
       this._sceneFader.alpha = 0.001;
-      this._timer.destroy('showScene');
+      this._timer.endEvent('showScene');
       D.SceneStore.triggerCallback('autoContinue');
     }
   }
@@ -112,18 +112,18 @@ class Background {
   _hideScene() {
     this._sceneFader.tint = this._options.tint ? parseInt('0x' + this._options.tint) : 0x000000;
     this._sceneFader.position.z = 100;
-    this._timer.setRunLimit('hideScene', this._options.duration ? this._options.duration : 60);
-    this._timer.start('hideScene');
+    this._timer.setEventOptions('hideScene', { tickLimit: this._options.duration ? this._options.duration : 60 });
+    this._timer.startEvent('hideScene');
   }
 
-  _hideSceneEvent(event) {
-    const percent = event.runCount / event.runLimit;
+  _hideSceneEvent(state, options) {
+    const percent = state.tickCount / options.tickLimit;
 
     this._sceneFader.alpha = percent + 0.001;
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (state.over || D.SceneStore.getData('fastForward')) {
       this._sceneFader.alpha = 1;
-      this._timer.destroy('hideScene');
+      this._timer.endEvent('hideScene');
       D.SceneStore.triggerCallback('autoContinue');
     }
   }
@@ -136,12 +136,11 @@ class Background {
     this._background.position.z = 1;
 
     this._dom.fader.classList.remove('d_fader--visible');
-    this._timer.start('load');
+    this._timer.startEvent('load');
   }
 
-  _loadEvent(event) {
-    if (event.over) {
-      this._timer.destroy('load');
+  _loadEvent(state) {
+    if (state.over) {
       D.SceneStore.triggerCallback('autoContinue');
     }
   }
@@ -150,9 +149,8 @@ class Background {
     this._dom.fader.classList.add('d_fader--visible');
   }
 
-  _unloadEvent(event) {
-    if (event.over) {
-      this._timer.destroy('unload');
+  _unloadEvent(state) {
+    if (state.over) {
       D.SceneStore.triggerCallback('autoContinue');
     }
   }
@@ -168,43 +166,42 @@ class Background {
     this._background.alpha = 0.001;
     this._background.position.z = 0;
 
-    this._timer.start('change');
+    this._timer.startEvent('change');
   }
 
-  _changeEvent(event) {
-    const percent = event.runCount / event.runLimit;
+  _changeEvent(state, options) {
+    const percent = state.tickCount / options.tickLimit;
 
     this._background.alpha = percent + 0.001;
     this._background.position.z = 1;
     this._backgroundClone.alpha = (1 - percent) + 0.001;
     this._backgroundClone.position.z = 0;
 
-    if (event.over) {
+    if (state.over) {
       this._background.alpha = 1;
       this._backgroundClone.alpha = 0.001;
-      this._timer.destroy('change');
       D.SceneStore.triggerCallback('autoContinue');
     }
   }
 
   _blink() {
     this._dom.blink.classList.add('d_blink--visible');
-    this._timer.setRunLimit('blink', this._options.duration ? this._options.duration : 30);
-    this._timer.start('blink');
+    this._timer.setEventOptions('blink', { tickLimit: this._options.duration ? this._options.duration : 30 });
+    this._timer.startEvent('blink');
   }
 
-  _blinkEvent(event) {
-    const closePercent = event.runCount * 2 / event.runLimit;
+  _blinkEvent(state, options) {
+    const closePercent = state.tickCount * 2 / options.tickLimit;
 
-    if (event.runCount <= event.runLimit / 2) {
+    if (state.tickCount <= options.tickLimit / 2) {
       this._dom.blink.querySelector('#Mask ellipse').setAttribute('ry', Math.round((0.75 - closePercent * 0.75) * 100) + '%');
-    } else if (event.runCount > event.runLimit / 2) {
+    } else if (state.tickCount > options.tickLimit / 2) {
       this._dom.blink.querySelector('#Mask ellipse').setAttribute('ry', Math.round((closePercent - 1) * 100) + '%');
     }
 
-    if (event.over || D.SceneStore.getData('fastForward')) {
+    if (state.over || D.SceneStore.getData('fastForward')) {
+      this._timer.endEvent('blink');
       this._dom.blink.classList.remove('d_blink--visible');
-      this._timer.destroy('blink');
       D.SceneStore.triggerCallback('autoContinue');
     }
   }

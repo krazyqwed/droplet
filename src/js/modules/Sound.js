@@ -6,7 +6,7 @@ class Audio {
     this._options = false;
     this._sound = false;
     this._timer = new Timer();
-    this._timer.addEvent('sound', { callback: this._soundEvent.bind(this) });
+    this._timer.addEvent('sound', { onTick: this._soundEvent.bind(this) });
   }
 
   handleAction(options) {
@@ -44,8 +44,11 @@ class Audio {
     });
     this._sound.fade(0, (this._options.volume || this._options.volume === 0) ? this._options.volume : 1, 250);
 
-    this._timer.setRunLimit(Math.ceil(this._sound._duration * 60));
-    this._timer.start('sound');
+    this._timer.setEventOptions('sound', {
+      tickLimit: Math.ceil(this._sound._duration * 60),
+      repeat: true
+    });
+    this._timer.startEvent('sound');
   }
 
   _stop() {
@@ -54,17 +57,17 @@ class Audio {
     });
 
     this._sound.fade(this._sound._volume, 0, 500);
-    this._timer.destroy('sound');
+    this._timer.endEvent('sound');
   }
 
-  _soundEvent(event) {
-    if ((event.over || D.SceneStore.getData('fastForward')) && !this._options.persist) {
+  _soundEvent(state) {
+    if ((state.over || D.SceneStore.getData('fastForward')) && !this._options.persist) {
       this._sound.on('fade', () => {
         this._sound.unload();
       });
 
       this._sound.fade(this._sound._volume, 0, 500);
-      this._timer.destroy('sound');
+      this._timer.endEvent('sound');
       D.SceneStore.triggerCallback('autoContinue');
     }
   }
