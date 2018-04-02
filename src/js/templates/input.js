@@ -27,7 +27,10 @@ export default state => {
 
   const scaleStyle = `transform: scale(${state.get('scale')});`;
   const inputElement = generateInput(state);
-  inputElement.focus();
+
+  if (state.get('gui.input.visible')) {
+    inputElement.focus();
+  }
 
   return hyperHTML.wire(state, ':input')`
     <div class=${guiClasses.join(' ')} style=${scaleStyle}>
